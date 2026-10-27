@@ -267,7 +267,7 @@ function updateTeethLabel() {
   }
 }
 
-// --- УМНЫЙ ИМПОРТ ИЗ JSON ---
+// --- СУПЕР-УМНЫЙ ИМПОРТ ИЗ JSON ---
 window.importJSON = function(input) {
   const file = input.files[0];
   if (!file) return;
@@ -281,28 +281,35 @@ window.importJSON = function(input) {
       
       let calcArr = [], docArr = [], detArr = [];
 
-      // Пытаемся понять структуру файла (объект или массив)
-      if (Array.isArray(rawData)) {
-          // Если это массив (DB Browser часто делает так при экспорте нескольких таблиц)
-          rawData.forEach(tableObj => {
-              if (tableObj.calculations) calcArr = tableObj.calculations;
-              if (tableObj.doctors) docArr = tableObj.doctors;
-              if (tableObj.details) detArr = tableObj.details;
-          });
-      } else if (rawData && typeof rawData === 'object') {
-          // Если это обычный объект
-          calcArr = rawData.calculations || [];
-          docArr = rawData.doctors || [];
-          detArr = rawData.details || [];
+      // Рекурсивная функция поиска нужных массивов, независимо от структуры файла
+      function findData(obj) {
+          if (!obj) return;
+          if (Array.isArray(obj)) {
+              if (obj.length > 0 && typeof obj[0] === 'object' && obj[0] !== null) {
+                  const keys = Object.keys(obj[0]);
+                  // Определяем тип таблицы по ключам
+                  if (keys.includes('_id') && keys.includes('doctorId') && keys.includes('money')) calcArr = obj;
+                  else if (keys.includes('surname') && keys.includes('activeOrders_count')) docArr = obj;
+                  else if (keys.includes('teeth') && keys.includes('color') && keys.includes('elementsProsthesis')) detArr = obj;
+              }
+              obj.forEach(item => findData(item));
+          } else if (typeof obj === 'object') {
+              if (obj.calculations) calcArr = obj.calculations;
+              if (obj.doctors) docArr = obj.doctors;
+              if (obj.details) detArr = obj.details;
+              Object.values(obj).forEach(val => findData(val));
+          }
       }
+      
+      findData(rawData);
 
       if (calcArr.length === 0) {
-        showToast('❌ В файле не найдено нарядов (calculations)', 'err');
+        showToast('❌ В файле не найдено нарядов (calculations). Проверьте галочки экспорта.', 'err');
         return;
       }
 
       let successCount = 0;
-      showToast(`⏳ Найдено ${calcArr.length} записей. Загружаем...`, 'info');
+      showToast(`⏳ Найдено ${calcArr.length} нарядов. Загружаем...`, 'info');
 
       const doctorsMap = {};
       docArr.forEach(d => doctorsMap[d.id] = d);

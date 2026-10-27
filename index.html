@@ -45,7 +45,7 @@ button.small { padding: 6px 10px; font-size: 11px; }
 .search-wrap input { border: none; background: transparent; padding: 4px 0; font-size: 14px; }
 .search-wrap input:focus { border: none; }
 
-/* === КРАСИВАЯ СХЕМА ЗУБОВ (FDI) === */
+/* === БАЗОВАЯ СХЕМА ЗУБОВ (ПК - АРКА) === */
 .teeth-wrapper { margin-top: 16px; }
 .teeth-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
 .teeth-title { font-size: 12px; font-weight: bold; color: var(--dim); }
@@ -58,7 +58,7 @@ button.small { padding: 6px 10px; font-size: 11px; }
   padding: 30px 10px; border-radius: 16px;
   border: 1px solid var(--border);
   box-shadow: inset 0 0 50px rgba(0,0,0,0.9);
-  overflow-x: auto; position: relative;
+  position: relative;
 }
 .jaw { display: flex; justify-content: center; position: relative; }
 .jaw.upper { align-items: flex-end; margin-bottom: 15px; }
@@ -76,7 +76,6 @@ button.small { padding: 6px 10px; font-size: 11px; }
   padding-bottom: 8px;
   cursor: pointer; user-select: none; z-index: 1;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
   box-shadow: 0 4px 6px rgba(0,0,0,0.3);
 }
 .jaw.lower .tooth-btn {
@@ -90,13 +89,11 @@ button.small { padding: 6px 10px; font-size: 11px; }
   border-color: #34d399; color: #fff; z-index: 5;
   box-shadow: 0 0 15px rgba(16,185,129,0.6);
 }
-.jaw.lower .tooth-btn.selected {
-  background: linear-gradient(0deg, #10b981 0%, #059669 100%);
-}
+.jaw.lower .tooth-btn.selected { background: linear-gradient(0deg, #10b981 0%, #059669 100%); }
 .jaw.upper .tooth-btn { transform-origin: bottom center; }
 .jaw.lower .tooth-btn { transform-origin: top center; }
 
-/* Изгибы челюстей */
+/* Изгибы челюстей для ПК */
 [data-n="18"] { transform: translateY(-22px) rotate(-38deg); }
 [data-n="17"] { transform: translateY(-14px) rotate(-28deg); }
 [data-n="16"] { transform: translateY(-7px) rotate(-18deg); }
@@ -117,9 +114,6 @@ button.small { padding: 6px 10px; font-size: 11px; }
 [data-n="36"] { transform: translateY(7px) rotate(-18deg); }
 [data-n="37"] { transform: translateY(14px) rotate(-28deg); }
 [data-n="38"] { transform: translateY(22px) rotate(-38deg); }
-
-/* Кнопка для мобильных */
-.mobile-teeth-btn { display: none; width: 100%; margin-top: 8px; background: var(--accent); color: #fff; padding: 12px; font-size: 14px; }
 
 .card { background: var(--card); border: 1px solid var(--border); border-left: 4px solid var(--mute); border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; }
 .card.status-received { border-left-color: var(--info); }
@@ -163,21 +157,31 @@ button.small { padding: 6px 10px; font-size: 11px; }
 details[open] > .date-summary { margin-bottom: 8px; }
 .date-content { padding-left: 12px; border-left: 2px solid var(--border); }
 
-/* Мобильная адаптация */
+/* === МОБИЛЬНАЯ СЕТКА (ВМЕСТО АРКИ) === */
 @media (max-width: 768px) { 
   body { padding: 10px; } 
   .form-grid { grid-template-columns: 1fr 1fr; } 
   .card-header b { font-size: 14px; } 
   
-  /* Скрываем встроенную схему и показываем кнопку */
-  .teeth-wrapper.desktop-only { display: none; }
-  .mobile-teeth-btn { display: block; }
+  /* Убираем арку, делаем красивую сетку */
+  .teeth-chart { padding: 10px; border-radius: 8px; }
+  .jaw { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; margin: 0 0 8px 0; }
+  .jaw.upper, .jaw.lower { margin: 0; }
+  .midline { display: none; } /* Убираем разделитель */
+  .quadrant { display: contents; } /* Игнорируем обертку */
   
-  /* Чуть уменьшаем зубы в модальном окне, чтобы точно влезли */
-  .modal .tooth-btn { width: 30px; height: 42px; font-size: 11px; padding-bottom: 6px; }
-  .modal .jaw.lower .tooth-btn { padding-top: 6px; padding-bottom: 0; }
-  .modal .quadrant { gap: 2px; }
-  .modal .midline { margin: 0 4px; }
+  .tooth-btn, .jaw.lower .tooth-btn {
+    width: 100%; height: 46px; /* Большие кнопки для пальцев */
+    transform: none !important; /* Убиваем все повороты */
+    border-radius: 6px; /* Делаем квадратными */
+    font-size: 14px;
+    padding: 0;
+    align-items: center; justify-content: center;
+    box-shadow: none;
+  }
+  
+  /* Отступ между верхней и нижней челюстью на мобилке */
+  .jaw.upper { margin-bottom: 10px; }
 }
 </style>
 </head>
@@ -211,22 +215,18 @@ details[open] > .date-summary { margin-bottom: 8px; }
     <input id="fNotes" placeholder="Примечания" style="grid-column: 1 / -1;" />
   </div>
 
-  <!-- ВЫБОР ЗУБОВ (ПК версия - встроенная) -->
-  <div class="teeth-wrapper desktop-only">
+  <!-- ЗУБЫ -->
+  <div class="teeth-wrapper">
     <div class="teeth-header">
       <span class="teeth-title">🦷 Отметь зубы на схеме:</span>
-      <div class="teeth-label">Выбрано: <b id="selectedTeethLabelDesktop">—</b></div>
+      <div class="teeth-label">Выбрано: <b id="selectedTeethLabel">—</b></div>
     </div>
-    <div class="teeth-chart" id="teethChartDesktop"></div>
+    <div class="teeth-chart" id="teethChart">
+      <!-- Генерируется через JS -->
+    </div>
     <div style="margin-top: 8px;">
       <button class="ghost small" onclick="clearTeeth()">Сбросить всё</button>
     </div>
-  </div>
-
-  <!-- ВЫБОР ЗУБОВ (Мобильная версия - кнопка) -->
-  <div class="teeth-wrapper mobile-only" style="margin-top: 16px;">
-    <div class="teeth-label" style="margin-bottom: 8px;">Выбрано: <b id="selectedTeethLabelMobile">—</b></div>
-    <button class="mobile-teeth-btn" onclick="openTeethModal()">🦷 Выбрать зубы на схеме</button>
   </div>
 
   <div class="actions" style="margin-top: 16px;"><button onclick="addOrder()">💾 Сохранить наряд</button></div>
@@ -245,21 +245,6 @@ details[open] > .date-summary { margin-bottom: 8px; }
 </div>
 
 <div id="content" class="empty">Загрузка…</div>
-
-<!-- МОДАЛЬНОЕ ОКНО ДЛЯ ЗУБОВ (Мобильные) -->
-<div class="overlay" id="teethModal" style="display: none; z-index: 10005;">
-  <div class="modal" style="max-width: 600px; padding: 15px; width: 95%;">
-    <h3 style="font-size: 15px;">🦷 Выбор зубов</h3>
-    
-    <!-- Схема внутри окна -->
-    <div class="teeth-chart" id="teethChartMobile" style="padding: 20px 5px;"></div>
-    
-    <div class="teeth-controls" style="margin-top: 15px; display: flex; justify-content: space-between;">
-      <button class="ghost small" onclick="clearTeeth()">Сбросить</button>
-      <button onclick="closeTeethModal()" style="padding: 8px 20px;">✅ Готово</button>
-    </div>
-  </div>
-</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
@@ -285,10 +270,9 @@ let orders = [], currentTab = 'active', searchQuery = '';
 
 // --- ЛОГИКА ЗУБОВ ---
 let selectedTeeth = new Set();
-const teethArr = [18,17,16,15,14,13,12,11,21,22,23,24,25,26,27,28,48,47,46,45,44,43,42,41,31,32,33,34,35,36,37,38];
 
-function renderTeethToContainer(containerId) {
-  const el = document.getElementById(containerId);
+function initTeethChart() {
+  const el = document.getElementById('teethChart');
   if (!el) return;
 
   const q1 = [18, 17, 16, 15, 14, 13, 12, 11];
@@ -310,17 +294,6 @@ function renderTeethToContainer(containerId) {
       <div class="quadrant">${buildQuad(q3)}</div>
     </div>
   `;
-
-  // Восстанавливаем визуальное выделение для уже выбранных зубов
-  selectedTeeth.forEach(num => {
-    const btn = el.querySelector(`.tooth-btn[data-n="${num}"]`);
-    if (btn) btn.classList.add('selected');
-  });
-}
-
-function initTeethCharts() {
-  renderTeethToContainer('teethChartDesktop');
-  renderTeethToContainer('teethChartMobile');
 }
 
 window.toggleTooth = (num) => {
@@ -330,40 +303,27 @@ window.toggleTooth = (num) => {
     selectedTeeth.add(num);
   }
   
-  // Обновляем кнопки во ВСЕХ контейнерах (на ПК и в модалке)
-  document.querySelectorAll(`.tooth-btn[data-n="${num}"]`).forEach(btn => {
-    btn.classList.toggle('selected', selectedTeeth.has(num));
-  });
+  const btn = document.querySelector(`.tooth-btn[data-n="${num}"]`);
+  if (btn) btn.classList.toggle('selected', selectedTeeth.has(num));
   
-  updateTeethLabels();
+  updateTeethLabel();
 };
 
 window.clearTeeth = () => {
   selectedTeeth.clear();
   document.querySelectorAll('.tooth-btn').forEach(btn => btn.classList.remove('selected'));
-  updateTeethLabels();
+  updateTeethLabel();
 };
 
-function updateTeethLabels() {
-  let text = '—';
-  if (selectedTeeth.size > 0) {
+function updateTeethLabel() {
+  const label = document.getElementById('selectedTeethLabel');
+  if (selectedTeeth.size === 0) {
+    label.textContent = '—';
+  } else {
     const sorted = Array.from(selectedTeeth).sort((a, b) => a - b);
-    text = sorted.join(', ');
+    label.textContent = sorted.join(', ');
   }
-  
-  const el1 = document.getElementById('selectedTeethLabelDesktop');
-  const el2 = document.getElementById('selectedTeethLabelMobile');
-  if (el1) el1.textContent = text;
-  if (el2) el2.textContent = text;
 }
-
-window.openTeethModal = () => {
-  document.getElementById('teethModal').style.display = 'flex';
-};
-
-window.closeTeethModal = () => {
-  document.getElementById('teethModal').style.display = 'none';
-};
 // --------------------
 
 // Календарь
@@ -512,7 +472,7 @@ function subscribe() {
   onSnapshot(q, snapshot => { orders = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); document.getElementById('connBadge').textContent = '🟢 Онлайн'; document.getElementById('connBadge').className = 'badge on'; render(); }, err => { document.getElementById('connBadge').textContent = '🔴 Ошибка'; document.getElementById('connBadge').className = 'badge'; document.getElementById('content').innerHTML = `<div class="empty">Ошибка загрузки: ${esc(err.message)}</div>`; });
 }
 (async function init() {
-  initTeethCharts();
+  initTeethChart();
   await initAuth(); 
   await checkPin(); 
   document.getElementById('meInfo').textContent = '🛠 Техник • Лаборатория Евгения Мешкова'; 
@@ -520,7 +480,7 @@ function subscribe() {
   subscribe(); 
   setInterval(render, 60000);
 })();
-Object.assign(window, { addOrder, setStatus, removeOrder, printOrder, setTab, render, toggleTooth, clearTeeth, openTeethModal, closeTeethModal });
+Object.assign(window, { addOrder, setStatus, removeOrder, printOrder, setTab, render, toggleTooth, clearTeeth });
 </script>
 </body>
 </html>

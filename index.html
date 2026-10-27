@@ -129,53 +129,51 @@ button.small { padding: 6px 10px; font-size: 11px; }
 details[open] > .date-summary { margin-bottom: 8px; }
 .date-content { padding-left: 12px; border-left: 2px solid var(--border); }
 
-/* === МОБИЛЬНАЯ ВЕРСИЯ (ФОРМУЛА ТЕКСТОМ) === */
+/* === МОБИЛЬНАЯ ВЕРСИЯ (СЕТКА) === */
 @media (max-width: 768px) { 
   body { padding: 10px; } 
   .form-grid { grid-template-columns: 1fr 1fr; } 
   .card-header b { font-size: 14px; }
   
-  /* Отключаем все повороты и делаем текстовый вид */
+  /* Убираем темный фон и делаем аккуратную сетку */
   .teeth-chart { 
-    padding: 10px; 
+    display: flex; 
+    flex-direction: column; 
+    padding: 12px; 
     border-radius: 8px; 
-    display: flex;
-    flex-direction: column;
     background: var(--inner);
     border: 1px solid var(--border);
-    gap: 10px;
-  }
-  
-  .jaw { 
-    display: flex; 
-    width: 100%;
-    margin: 0;
     gap: 8px;
   }
   
-  /* Делим на 2 половины (левая/правая) */
-  .quadrant { 
-    display: flex; 
-    flex: 1; 
-    justify-content: space-between;
-    gap: 2px;
+  .jaw { 
+    display: grid;
+    grid-template-columns: repeat(8, 1fr); /* Жестко 8 колонок */
+    gap: 4px;
+    width: 100%;
+    margin: 0 !important;
   }
   
+  /* Растворяем квадрант, чтобы кнопки попали прямо в сетку jaw */
+  .quadrant { display: contents; } 
   .midline { display: none; } 
   
-  /* Делаем крупные, читаемые цифры */
+  /* Стиль самих кнопок (зубов) */
   .tooth-btn, .jaw.lower .tooth-btn {
-    flex: 1;
-    padding: 10px 0;
+    width: 100%; 
+    height: auto; 
+    aspect-ratio: 1 / 1; /* Делаем квадратными */
+    padding: 0;
+    margin: 0;
     transform: none !important; 
-    border-radius: 6px; 
-    font-size: 16px;
+    border-radius: 4px; 
+    font-size: 14px;
     font-weight: 600;
     display: flex;
     align-items: center; 
     justify-content: center;
     background: transparent;
-    border: none;
+    border: 1px solid transparent;
     color: var(--text);
     box-shadow: none;
   }
@@ -184,6 +182,7 @@ details[open] > .date-summary { margin-bottom: 8px; }
   .tooth-btn.selected, .jaw.lower .tooth-btn.selected {
     background: var(--accent2);
     color: #fff;
+    border-color: var(--accent2);
     box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
   }
 }

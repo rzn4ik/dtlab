@@ -267,12 +267,12 @@ function updateTeethLabel() {
   }
 }
 
-// --- СУПЕР-УМНЫЙ ИМПОРТ ИЗ JSON ---
+// --- СУПЕР-УМНЫЙ ИМПОРТ ИЗ JSON (ОБНОВЛЕННЫЙ) ---
 window.importJSON = function(input) {
   const file = input.files[0];
   if (!file) return;
 
-  showToast('⏳ Читаем базу данных...', 'info');
+  showToast('⏳ Читаем базу данных... Это займет время.', 'info');
 
   const reader = new FileReader();
   reader.onload = async function(e) {
@@ -281,71 +281,81 @@ window.importJSON = function(input) {
       
       let calcArr = [], docArr = [], detArr = [];
 
-      // Рекурсивная функция поиска нужных массивов, независимо от структуры файла
-      function findData(obj) {
-          if (!obj) return;
-          if (Array.isArray(obj)) {
-              if (obj.length > 0 && typeof obj[0] === 'object' && obj[0] !== null) {
-                  const keys = Object.keys(obj[0]);
-                  // Определяем тип таблицы по ключам
-                  if (keys.includes('_id') && keys.includes('doctorId') && keys.includes('money')) calcArr = obj;
-                  else if (keys.includes('surname') && keys.includes('activeOrders_count')) docArr = obj;
-                  else if (keys.includes('teeth') && keys.includes('color') && keys.includes('elementsProsthesis')) detArr = obj;
-              }
-              obj.forEach(item => findData(item));
-          } else if (typeof obj === 'object') {
-              if (obj.calculations) calcArr = obj.calculations;
-              if (obj.doctors) docArr = obj.doctors;
-              if (obj.details) detArr = obj.details;
-              Object.values(obj).forEach(val => findData(val));
-          }
+      if (rawData.calculations) calcArr = rawData.calculations;
+      if (rawData.doctors) docArr = rawData.doctors;
+      if (rawData.details) detArr = rawData.details;
+
+      // ХИТРОСТЬ: Если calculations пуст, но есть details - генерируем наряды из details
+      if (calcArr.length === 0 && detArr.length > 0) {
+        calcArr = detArr.map(det => {
+          return {
+            _id: det._id,
+            doctorId: det.doctor,
+            detailId: det._id,
+            money: det.endPrice,
+            calcDate: det.date_created
+          };
+        });
       }
-      
-      findData(rawData);
 
       if (calcArr.length === 0) {
-        showToast('❌ В файле не найдено нарядов (calculations). Проверьте галочки экспорта.', 'err');
+        showToast('❌ В файле не найдено ни calculations, ни details.', 'err');
         return;
       }
 
       let successCount = 0;
-      showToast(`⏳ Найдено ${calcArr.length} нарядов. Загружаем...`, 'info');
+      showToast(`⏳ Найдено ${calcArr.length} нарядов. Начинаем загрузку...`, 'info');
 
       const doctorsMap = {};
-      docArr.forEach(d => doctorsMap[d.id] = d);
+      docArr.forEach(d => doctorsMap[d._id || d.id] = d);
 
       const detailsMap = {};
-      detArr.forEach(d => detailsMap[d.id] = d);
+      detArr.forEach(d => detailsMap[d._id || d.id] = d);
 
-      for (const calc of calcArr) {
-        const doc = doctorsMap[calc.doctorId] || {};
-        const det = detailsMap[calc.detailId] || {};
+      for (let i = 0; i < calcArr.length; i++) {
+        const calc = calcArr[i];
+        const doc = doctorsMap[calc.doctorId || calc.doctor] || {};
+        const det = detailsMap[calc.detailId || calc._id] || {};
 
         let deadlineStr = '';
-        if (calc.calcDate) {
-          const d = new Date(calc.calcDate);
-          deadlineStr = d.toISOString().split('T')[0];
+        if (calc.calcDate || det.date_updated || det.date_created) {
+          try {
+            const timeMs = Number(calc.calcDate || det.date_updated || det.date_created);
+            const d = new Date(timeMs);
+            if (!isNaN(d.getTime())) deadlineStr = d.toISOString().split('T')[0];
+          } catch(err) {}
         }
 
+        // Достаем зубы из JSON-строки
         let teethStr = '';
-        if (det.teeth) teethStr = String(det.teeth).replace(/\[|\]|\"|\'/g, '');
+        if (det.teeth) {
+            try {
+                const teethData = JSON.parse(det.teeth);
+                if (teethData.teeth && Array.isArray(teethData.teeth)) {
+                    teethStr = teethData.teeth.map(t => t.tooth).join(', ');
+                }
+            } catch(e) {
+                teethStr = String(det.teeth).replace(/\[|\]|\"|\'/g, ''); 
+            }
+        }
 
         let clinicStr = '';
-        if (doc.name || doc.surname) clinicStr = `${doc.name || ''} ${doc.surname || ''}`.trim();
+        if (doc.soname || doc.name) clinicStr = `${doc.soname || ''} ${doc.name || ''}`.trim();
+        if (doc.patronymic) clinicStr += ' ' + doc.patronymic;
 
         const orderData = {
-          patientName: 'Пациент (импорт)',
-          orderNumber: calc._id || '—',
+          patientName: det.patientSoname || 'Пациент (импорт)',
+          orderNumber: calc._id || calc.id || '—',
           clinic: clinicStr,
           orderType: det.elementsProsthesis || '',
           material: '',
           vitaColor: det.color || '',
           teeth: teethStr,
-          price: parseFloat(calc.money) || 0,
-          prepaid: 0,
+          price: parseFloat(calc.money || det.endPrice) || 0,
+          prepaid: parseFloat(det.payedMoney) || 0,
           deadline: deadlineStr,
-          notes: '',
-          status: 'delivered',
+          notes: det.informationOrder || '',
+          status: 'delivered', 
           createdAt: serverTimestamp(),
           payments: []
         };
@@ -353,7 +363,12 @@ window.importJSON = function(input) {
         try {
           await addDoc(collection(db, COLLECTION), orderData);
           successCount++;
-        } catch(err) { console.error(err); }
+          if (successCount % 100 === 0) {
+              showToast(`⏳ Загружено: ${successCount} из ${calcArr.length}...`, 'info');
+          }
+        } catch(err) { 
+            console.error("Ошибка при добавлении:", err); 
+        }
       }
 
       showToast(`✅ Успешно импортировано: ${successCount} нарядов!`);
@@ -518,7 +533,7 @@ function subscribe() {
   subscribe(); 
   setInterval(render, 60000);
 })();
-Object.assign(window, { addOrder, setStatus, removeOrder, printOrder, setTab, render, toggleTooth, clearTeeth });
+Object.assign(window, { addOrder, setStatus, removeOrder, printOrder, setTab, render, toggleTooth, clearTeeth, importJSON });
 </script>
 </body>
 </html>

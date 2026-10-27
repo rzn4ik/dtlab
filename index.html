@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>DTLab — Панель техника</title>
+<title>Лаборатория Евгения Мешкова — Панель техника</title>
 
 <!-- Календарь Flatpickr -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -106,7 +106,7 @@ details[open] > .date-summary { margin-bottom: 8px; }
 </style>
 </head>
 <body>
-<h1>🦷 DTLab <span id="connBadge" class="badge">⏳</span></h1>
+<h1>🦷 Лаборатория Евгения Мешкова <span id="connBadge" class="badge">⏳</span></h1>
 <div class="me" id="meInfo">Загрузка…</div>
 
 <div class="section" id="addSection" style="display:none;">
@@ -235,7 +235,6 @@ function updateTeethLabel() {
   if (selectedTeeth.size === 0) {
     label.textContent = '—';
   } else {
-    // Сортируем зубы по порядку (11, 12, 21...)
     const sorted = Array.from(selectedTeeth).sort((a, b) => a - b);
     label.textContent = sorted.join(', ');
   }
@@ -285,7 +284,7 @@ function showPinSetup() {
 function showPinPrompt() {
   return new Promise((resolve) => {
     const ov = document.createElement('div'); ov.className = 'overlay'; ov.id = 'pinOverlay';
-    ov.innerHTML = `<div class="modal"><h3>🔐 Вход в DTLab</h3><p>Введи PIN</p><div class="pin-row"><input type="text" inputmode="numeric" maxlength="6" id="pinInput" placeholder="••••" autofocus></div><div class="pin-error" id="pinErr"></div><div class="actions" style="justify-content:center;margin-top:14px;"><button onclick="verifyPin()">Войти</button></div></div>`;
+    ov.innerHTML = `<div class="modal"><h3>🔐 Вход в Лабораторию</h3><p>Введи PIN</p><div class="pin-row"><input type="text" inputmode="numeric" maxlength="6" id="pinInput" placeholder="••••" autofocus></div><div class="pin-error" id="pinErr"></div><div class="actions" style="justify-content:center;margin-top:14px;"><button onclick="verifyPin()">Войти</button></div></div>`;
     document.body.appendChild(ov);
     document.getElementById('pinInput').addEventListener('keydown', e => { if (e.key === 'Enter') window.verifyPin(); });
     window.verifyPin = async () => {
@@ -314,7 +313,6 @@ async function addOrder() {
   const orderNumber = document.getElementById('fOrderNum').value.trim(), patientName = document.getElementById('fPatient').value.trim();
   if (!patientName) { showToast('Укажи ФИО пациента', 'err'); return; }
   
-  // Забираем выбранные зубы
   const teethStr = Array.from(selectedTeeth).sort((a,b)=>a-b).join(', ');
 
   const data = {
@@ -332,7 +330,7 @@ async function addOrder() {
     const fp = document.getElementById('fDeadline')._flatpickr;
     if (fp) fp.clear();
 
-    clearTeeth(); // Сбрасываем зубы
+    clearTeeth();
     showToast('✅ Наряд создан');
   } catch(e) { showToast('Ошибка: ' + e.message, 'err'); }
 }
@@ -346,7 +344,7 @@ async function removeOrder(id) { if (!confirm('Удалить наряд нав�
 function printOrder(id) {
   const o = orders.find(x => x.id === id); if (!o) return;
   const win = window.open('', '_blank');
-  win.document.write(`<html><head><meta charset="utf-8"><title>Наряд ${esc(o.orderNumber)}</title><style>body{font-family:Arial,sans-serif;padding:30px;max-width:700px;margin:auto}h1{font-size:20px;border-bottom:2px solid #000;padding-bottom:8px}table{width:100%;border-collapse:collapse;margin-top:16px}td{padding:8px;border-bottom:1px solid #ccc;font-size:14px}td:first-child{font-weight:bold;width:40%}</style></head><body><h1>🦷 DTLab — Наряд ${esc(o.orderNumber)}</h1><table><tr><td>Пациент</td><td>${esc(o.patientName)}</td></tr><tr><td>Клиника / врач</td><td>${esc(o.clinic || '—')}</td></tr><tr><td>Тип работы</td><td>${esc(o.orderType || '—')}</td></tr><tr><td>Материал</td><td>${esc(o.material || '—')}</td></tr><tr><td>Цвет VITA</td><td>${esc(o.vitaColor || '—')}</td></tr><tr><td>Зубы</td><td>${esc(o.teeth || '—')}</td></tr><tr><td>Срок сдачи</td><td>${esc(o.deadline || '—')}</td></tr><tr><td>Стоимость</td><td>${fmtMoney(o.price)}</td></tr><tr><td>Предоплата</td><td>${fmtMoney(o.prepaid)}</td></tr><tr><td>Примечания</td><td>${esc(o.notes || '—')}</td></tr></table><p style="margin-top:24px;font-size:12px;color:#666">Создан: ${o.createdAt ? new Date(o.createdAt.seconds * 1000).toLocaleString('ru-RU') : '—'}</p></body></html>`);
+  win.document.write(`<html><head><meta charset="utf-8"><title>Наряд ${esc(o.orderNumber)}</title><style>body{font-family:Arial,sans-serif;padding:30px;max-width:700px;margin:auto}h1{font-size:20px;border-bottom:2px solid #000;padding-bottom:8px}table{width:100%;border-collapse:collapse;margin-top:16px}td{padding:8px;border-bottom:1px solid #ccc;font-size:14px}td:first-child{font-weight:bold;width:40%}</style></head><body><h1>🦷 Лаборатория Евгения Мешкова — Наряд ${esc(o.orderNumber)}</h1><table><tr><td>Пациент</td><td>${esc(o.patientName)}</td></tr><tr><td>Клиника / врач</td><td>${esc(o.clinic || '—')}</td></tr><tr><td>Тип работы</td><td>${esc(o.orderType || '—')}</td></tr><tr><td>Материал</td><td>${esc(o.material || '—')}</td></tr><tr><td>Цвет VITA</td><td>${esc(o.vitaColor || '—')}</td></tr><tr><td>Зубы</td><td>${esc(o.teeth || '—')}</td></tr><tr><td>Срок сдачи</td><td>${esc(o.deadline || '—')}</td></tr><tr><td>Стоимость</td><td>${fmtMoney(o.price)}</td></tr><tr><td>Предоплата</td><td>${fmtMoney(o.prepaid)}</td></tr><tr><td>Примечания</td><td>${esc(o.notes || '—')}</td></tr></table><p style="margin-top:24px;font-size:12px;color:#666">Создан: ${o.createdAt ? new Date(o.createdAt.seconds * 1000).toLocaleString('ru-RU') : '—'}</p></body></html>`);
   win.document.close(); win.print();
 }
 
@@ -389,10 +387,10 @@ function subscribe() {
   onSnapshot(q, snapshot => { orders = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); document.getElementById('connBadge').textContent = '🟢 Онлайн'; document.getElementById('connBadge').className = 'badge on'; render(); }, err => { document.getElementById('connBadge').textContent = '🔴 Ошибка'; document.getElementById('connBadge').className = 'badge'; document.getElementById('content').innerHTML = `<div class="empty">Ошибка загрузки: ${esc(err.message)}</div>`; });
 }
 (async function init() {
-  initTeethChart(); // Рисуем зубы
+  initTeethChart();
   await initAuth(); 
   await checkPin(); 
-  document.getElementById('meInfo').textContent = '🛠 Техник • DTLab'; 
+  document.getElementById('meInfo').textContent = '🛠 Техник • Лаборатория Евгения Мешкова'; 
   document.getElementById('addSection').style.display = 'block'; 
   subscribe(); 
   setInterval(render, 60000);

@@ -46,6 +46,12 @@ button.small { padding: 6px 10px; font-size: 11px; }
 .search-wrap input:focus { border: none; }
 
 /* === КРАСИВАЯ СХЕМА ЗУБОВ (FDI) === */
+.teeth-wrapper { margin-top: 16px; }
+.teeth-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.teeth-title { font-size: 12px; font-weight: bold; color: var(--dim); }
+.teeth-label { font-size: 13px; color: var(--dim); display: flex; align-items: center; gap: 8px; }
+.teeth-label b { color: var(--accent2); font-family: monospace; font-size: 15px; }
+
 .teeth-chart {
   display: flex; flex-direction: column; align-items: center;
   background: radial-gradient(circle at center, #151522 0%, #0a0a12 100%);
@@ -87,52 +93,33 @@ button.small { padding: 6px 10px; font-size: 11px; }
 .jaw.lower .tooth-btn.selected {
   background: linear-gradient(0deg, #10b981 0%, #059669 100%);
 }
-
-/* Изгибы челюстей */
 .jaw.upper .tooth-btn { transform-origin: bottom center; }
 .jaw.lower .tooth-btn { transform-origin: top center; }
 
-/* Q1 (Верх слева - 18..11) */
+/* Изгибы челюстей */
 [data-n="18"] { transform: translateY(-22px) rotate(-38deg); }
 [data-n="17"] { transform: translateY(-14px) rotate(-28deg); }
 [data-n="16"] { transform: translateY(-7px) rotate(-18deg); }
 [data-n="15"] { transform: translateY(-2px) rotate(-8deg); }
-[data-n="14"] { transform: translateY(0px) rotate(0deg); }
-[data-n="13"] { transform: translateY(0px) rotate(0deg); }
-[data-n="12"] { transform: translateY(0px) rotate(0deg); }
-[data-n="11"] { transform: translateY(0px) rotate(0deg); }
-/* Q2 (Верх справа - 21..28) */
-[data-n="21"] { transform: translateY(0px) rotate(0deg); }
-[data-n="22"] { transform: translateY(0px) rotate(0deg); }
-[data-n="23"] { transform: translateY(0px) rotate(0deg); }
-[data-n="24"] { transform: translateY(0px) rotate(0deg); }
+[data-n="14"], [data-n="13"], [data-n="12"], [data-n="11"] { transform: translateY(0px) rotate(0deg); }
+[data-n="21"], [data-n="22"], [data-n="23"], [data-n="24"] { transform: translateY(0px) rotate(0deg); }
 [data-n="25"] { transform: translateY(-2px) rotate(8deg); }
 [data-n="26"] { transform: translateY(-7px) rotate(18deg); }
 [data-n="27"] { transform: translateY(-14px) rotate(28deg); }
 [data-n="28"] { transform: translateY(-22px) rotate(38deg); }
-/* Q4 (Низ слева - 48..41) */
 [data-n="48"] { transform: translateY(22px) rotate(38deg); }
 [data-n="47"] { transform: translateY(14px) rotate(28deg); }
 [data-n="46"] { transform: translateY(7px) rotate(18deg); }
 [data-n="45"] { transform: translateY(2px) rotate(8deg); }
-[data-n="44"] { transform: translateY(0px) rotate(0deg); }
-[data-n="43"] { transform: translateY(0px) rotate(0deg); }
-[data-n="42"] { transform: translateY(0px) rotate(0deg); }
-[data-n="41"] { transform: translateY(0px) rotate(0deg); }
-/* Q3 (Низ справа - 31..38) */
-[data-n="31"] { transform: translateY(0px) rotate(0deg); }
-[data-n="32"] { transform: translateY(0px) rotate(0deg); }
-[data-n="33"] { transform: translateY(0px) rotate(0deg); }
-[data-n="34"] { transform: translateY(0px) rotate(0deg); }
+[data-n="44"], [data-n="43"], [data-n="42"], [data-n="41"] { transform: translateY(0px) rotate(0deg); }
+[data-n="31"], [data-n="32"], [data-n="33"], [data-n="34"] { transform: translateY(0px) rotate(0deg); }
 [data-n="35"] { transform: translateY(2px) rotate(-8deg); }
 [data-n="36"] { transform: translateY(7px) rotate(-18deg); }
 [data-n="37"] { transform: translateY(14px) rotate(-28deg); }
 [data-n="38"] { transform: translateY(22px) rotate(-38deg); }
 
-.teeth-controls { display: flex; justify-content: space-between; margin-top: 12px; }
-.teeth-label { font-size: 13px; color: var(--dim); display: flex; align-items: center; gap: 8px; }
-.teeth-label b { color: var(--accent2); font-family: monospace; font-size: 15px; }
-/* ================================= */
+/* Кнопка для мобильных */
+.mobile-teeth-btn { display: none; width: 100%; margin-top: 8px; background: var(--accent); color: #fff; padding: 12px; font-size: 14px; }
 
 .card { background: var(--card); border: 1px solid var(--border); border-left: 4px solid var(--mute); border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; }
 .card.status-received { border-left-color: var(--info); }
@@ -176,14 +163,21 @@ button.small { padding: 6px 10px; font-size: 11px; }
 details[open] > .date-summary { margin-bottom: 8px; }
 .date-content { padding-left: 12px; border-left: 2px solid var(--border); }
 
-@media (max-width: 600px) { 
+/* Мобильная адаптация */
+@media (max-width: 768px) { 
   body { padding: 10px; } 
   .form-grid { grid-template-columns: 1fr 1fr; } 
   .card-header b { font-size: 14px; } 
-  .tooth-btn { width: 28px; height: 40px; font-size: 11px; padding-bottom: 6px; }
-  .jaw.lower .tooth-btn { padding-top: 6px; padding-bottom: 0; }
-  .quadrant { gap: 2px; }
-  .midline { margin: 0 4px; }
+  
+  /* Скрываем встроенную схему и показываем кнопку */
+  .teeth-wrapper.desktop-only { display: none; }
+  .mobile-teeth-btn { display: block; }
+  
+  /* Чуть уменьшаем зубы в модальном окне, чтобы точно влезли */
+  .modal .tooth-btn { width: 30px; height: 42px; font-size: 11px; padding-bottom: 6px; }
+  .modal .jaw.lower .tooth-btn { padding-top: 6px; padding-bottom: 0; }
+  .modal .quadrant { gap: 2px; }
+  .modal .midline { margin: 0 4px; }
 }
 </style>
 </head>
@@ -217,20 +211,22 @@ details[open] > .date-summary { margin-bottom: 8px; }
     <input id="fNotes" placeholder="Примечания" style="grid-column: 1 / -1;" />
   </div>
 
-  <!-- ИНТЕРАКТИВНАЯ FDI СХЕМА -->
-  <div style="margin-top: 16px;">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-      <span style="font-size:12px; font-weight:bold; color:var(--dim);">🦷 Отметь зубы на схеме:</span>
-      <div class="teeth-label">Выбрано: <b id="selectedTeethLabel">—</b></div>
+  <!-- ВЫБОР ЗУБОВ (ПК версия - встроенная) -->
+  <div class="teeth-wrapper desktop-only">
+    <div class="teeth-header">
+      <span class="teeth-title">🦷 Отметь зубы на схеме:</span>
+      <div class="teeth-label">Выбрано: <b id="selectedTeethLabelDesktop">—</b></div>
     </div>
-    
-    <div class="teeth-chart" id="teethChart">
-      <!-- Схема генерируется через JS -->
-    </div>
-    
-    <div class="teeth-controls">
+    <div class="teeth-chart" id="teethChartDesktop"></div>
+    <div style="margin-top: 8px;">
       <button class="ghost small" onclick="clearTeeth()">Сбросить всё</button>
     </div>
+  </div>
+
+  <!-- ВЫБОР ЗУБОВ (Мобильная версия - кнопка) -->
+  <div class="teeth-wrapper mobile-only" style="margin-top: 16px;">
+    <div class="teeth-label" style="margin-bottom: 8px;">Выбрано: <b id="selectedTeethLabelMobile">—</b></div>
+    <button class="mobile-teeth-btn" onclick="openTeethModal()">🦷 Выбрать зубы на схеме</button>
   </div>
 
   <div class="actions" style="margin-top: 16px;"><button onclick="addOrder()">💾 Сохранить наряд</button></div>
@@ -249,6 +245,21 @@ details[open] > .date-summary { margin-bottom: 8px; }
 </div>
 
 <div id="content" class="empty">Загрузка…</div>
+
+<!-- МОДАЛЬНОЕ ОКНО ДЛЯ ЗУБОВ (Мобильные) -->
+<div class="overlay" id="teethModal" style="display: none; z-index: 10005;">
+  <div class="modal" style="max-width: 600px; padding: 15px; width: 95%;">
+    <h3 style="font-size: 15px;">🦷 Выбор зубов</h3>
+    
+    <!-- Схема внутри окна -->
+    <div class="teeth-chart" id="teethChartMobile" style="padding: 20px 5px;"></div>
+    
+    <div class="teeth-controls" style="margin-top: 15px; display: flex; justify-content: space-between;">
+      <button class="ghost small" onclick="clearTeeth()">Сбросить</button>
+      <button onclick="closeTeethModal()" style="padding: 8px 20px;">✅ Готово</button>
+    </div>
+  </div>
+</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
@@ -272,12 +283,13 @@ const COLLECTION = 'orders';
 const PIN_KEY = 'dtlab_pin_hash';
 let orders = [], currentTab = 'active', searchQuery = '';
 
-// --- ЛОГИКА КРАСИВОЙ СХЕМЫ ЗУБОВ ---
+// --- ЛОГИКА ЗУБОВ ---
 let selectedTeeth = new Set();
+const teethArr = [18,17,16,15,14,13,12,11,21,22,23,24,25,26,27,28,48,47,46,45,44,43,42,41,31,32,33,34,35,36,37,38];
 
-function initTeethChart() {
-  const chart = document.getElementById('teethChart');
-  if (!chart) return;
+function renderTeethToContainer(containerId) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
 
   const q1 = [18, 17, 16, 15, 14, 13, 12, 11];
   const q2 = [21, 22, 23, 24, 25, 26, 27, 28];
@@ -286,7 +298,7 @@ function initTeethChart() {
 
   const buildQuad = (arr) => arr.map(n => `<div class="tooth-btn" data-n="${n}" onclick="toggleTooth(${n})">${n}</div>`).join('');
 
-  chart.innerHTML = `
+  el.innerHTML = `
     <div class="jaw upper">
       <div class="quadrant">${buildQuad(q1)}</div>
       <div class="midline"></div>
@@ -298,38 +310,61 @@ function initTeethChart() {
       <div class="quadrant">${buildQuad(q3)}</div>
     </div>
   `;
+
+  // Восстанавливаем визуальное выделение для уже выбранных зубов
+  selectedTeeth.forEach(num => {
+    const btn = el.querySelector(`.tooth-btn[data-n="${num}"]`);
+    if (btn) btn.classList.add('selected');
+  });
+}
+
+function initTeethCharts() {
+  renderTeethToContainer('teethChartDesktop');
+  renderTeethToContainer('teethChartMobile');
 }
 
 window.toggleTooth = (num) => {
-  const btn = document.querySelector(`.tooth-btn[data-n="${num}"]`);
-  if (!btn) return;
-  
   if (selectedTeeth.has(num)) {
     selectedTeeth.delete(num);
-    btn.classList.remove('selected');
   } else {
     selectedTeeth.add(num);
-    btn.classList.add('selected');
   }
-  updateTeethLabel();
+  
+  // Обновляем кнопки во ВСЕХ контейнерах (на ПК и в модалке)
+  document.querySelectorAll(`.tooth-btn[data-n="${num}"]`).forEach(btn => {
+    btn.classList.toggle('selected', selectedTeeth.has(num));
+  });
+  
+  updateTeethLabels();
 };
 
 window.clearTeeth = () => {
   selectedTeeth.clear();
   document.querySelectorAll('.tooth-btn').forEach(btn => btn.classList.remove('selected'));
-  updateTeethLabel();
+  updateTeethLabels();
 };
 
-function updateTeethLabel() {
-  const label = document.getElementById('selectedTeethLabel');
-  if (selectedTeeth.size === 0) {
-    label.textContent = '—';
-  } else {
+function updateTeethLabels() {
+  let text = '—';
+  if (selectedTeeth.size > 0) {
     const sorted = Array.from(selectedTeeth).sort((a, b) => a - b);
-    label.textContent = sorted.join(', ');
+    text = sorted.join(', ');
   }
+  
+  const el1 = document.getElementById('selectedTeethLabelDesktop');
+  const el2 = document.getElementById('selectedTeethLabelMobile');
+  if (el1) el1.textContent = text;
+  if (el2) el2.textContent = text;
 }
-// -----------------------------------
+
+window.openTeethModal = () => {
+  document.getElementById('teethModal').style.display = 'flex';
+};
+
+window.closeTeethModal = () => {
+  document.getElementById('teethModal').style.display = 'none';
+};
+// --------------------
 
 // Календарь
 flatpickr("#fDeadline", {
@@ -477,7 +512,7 @@ function subscribe() {
   onSnapshot(q, snapshot => { orders = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); document.getElementById('connBadge').textContent = '🟢 Онлайн'; document.getElementById('connBadge').className = 'badge on'; render(); }, err => { document.getElementById('connBadge').textContent = '🔴 Ошибка'; document.getElementById('connBadge').className = 'badge'; document.getElementById('content').innerHTML = `<div class="empty">Ошибка загрузки: ${esc(err.message)}</div>`; });
 }
 (async function init() {
-  initTeethChart();
+  initTeethCharts();
   await initAuth(); 
   await checkPin(); 
   document.getElementById('meInfo').textContent = '🛠 Техник • Лаборатория Евгения Мешкова'; 
@@ -485,7 +520,7 @@ function subscribe() {
   subscribe(); 
   setInterval(render, 60000);
 })();
-Object.assign(window, { addOrder, setStatus, removeOrder, printOrder, setTab, render, toggleTooth, clearTeeth });
+Object.assign(window, { addOrder, setStatus, removeOrder, printOrder, setTab, render, toggleTooth, clearTeeth, openTeethModal, closeTeethModal });
 </script>
 </body>
 </html>

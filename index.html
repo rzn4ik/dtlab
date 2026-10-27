@@ -267,7 +267,7 @@ function updateTeethLabel() {
   }
 }
 
-// --- НОВЫЙ ИМПОРТ ИЗ JSON (SQLite) ---
+// --- УМНЫЙ ИМПОРТ ИЗ JSON ---
 window.importJSON = function(input) {
   const file = input.files[0];
   if (!file) return;
@@ -277,64 +277,68 @@ window.importJSON = function(input) {
   const reader = new FileReader();
   reader.onload = async function(e) {
     try {
-      const data = JSON.parse(e.target.result);
+      const rawData = JSON.parse(e.target.result);
       
-      // В экспорте из DB Browser таблицы хранятся как массивы
-      const calculations = data.calculations || [];
-      const doctors = data.doctors || [];
-      const details = data.details || [];
+      let calcArr = [], docArr = [], detArr = [];
 
-      if (calculations.length === 0) {
+      // Пытаемся понять структуру файла (объект или массив)
+      if (Array.isArray(rawData)) {
+          // Если это массив (DB Browser часто делает так при экспорте нескольких таблиц)
+          rawData.forEach(tableObj => {
+              if (tableObj.calculations) calcArr = tableObj.calculations;
+              if (tableObj.doctors) docArr = tableObj.doctors;
+              if (tableObj.details) detArr = tableObj.details;
+          });
+      } else if (rawData && typeof rawData === 'object') {
+          // Если это обычный объект
+          calcArr = rawData.calculations || [];
+          docArr = rawData.doctors || [];
+          detArr = rawData.details || [];
+      }
+
+      if (calcArr.length === 0) {
         showToast('❌ В файле не найдено нарядов (calculations)', 'err');
         return;
       }
 
       let successCount = 0;
-      showToast(`⏳ Найдено ${calculations.length} записей. Загружаем...`, 'info');
+      showToast(`⏳ Найдено ${calcArr.length} записей. Загружаем...`, 'info');
 
-      // Создаем быстрые словари для поиска (ID -> Данные)
       const doctorsMap = {};
-      doctors.forEach(d => doctorsMap[d.id] = d);
+      docArr.forEach(d => doctorsMap[d.id] = d);
 
       const detailsMap = {};
-      details.forEach(d => detailsMap[d.id] = d);
+      detArr.forEach(d => detailsMap[d.id] = d);
 
-      for (const calc of calculations) {
+      for (const calc of calcArr) {
         const doc = doctorsMap[calc.doctorId] || {};
         const det = detailsMap[calc.detailId] || {};
 
-        // Форматируем дату (в SQLite она в миллисекундах)
         let deadlineStr = '';
         if (calc.calcDate) {
           const d = new Date(calc.calcDate);
-          deadlineStr = d.toISOString().split('T')[0]; // YYYY-MM-DD
+          deadlineStr = d.toISOString().split('T')[0];
         }
 
-        // Очищаем зубы от скобок [1,2,3]
         let teethStr = '';
-        if (det.teeth) {
-           teethStr = String(det.teeth).replace(/\[|\]|\"|\'/g, '');
-        }
+        if (det.teeth) teethStr = String(det.teeth).replace(/\[|\]|\"|\'/g, '');
 
-        // Название клиники или врача
         let clinicStr = '';
-        if (doc.name || doc.surname) {
-           clinicStr = `${doc.name || ''} ${doc.surname || ''}`.trim();
-        }
+        if (doc.name || doc.surname) clinicStr = `${doc.name || ''} ${doc.surname || ''}`.trim();
 
         const orderData = {
-          patientName: 'Пациент (импорт)', // В старой базе нет имени пациента
+          patientName: 'Пациент (импорт)',
           orderNumber: calc._id || '—',
           clinic: clinicStr,
           orderType: det.elementsProsthesis || '',
-          material: '', // В старой базе материала нет
+          material: '',
           vitaColor: det.color || '',
           teeth: teethStr,
           price: parseFloat(calc.money) || 0,
           prepaid: 0,
           deadline: deadlineStr,
           notes: '',
-          status: 'delivered', // Импортированные заказы сразу в архив
+          status: 'delivered',
           createdAt: serverTimestamp(),
           payments: []
         };
@@ -342,9 +346,7 @@ window.importJSON = function(input) {
         try {
           await addDoc(collection(db, COLLECTION), orderData);
           successCount++;
-        } catch(err) {
-          console.error('Ошибка загрузки:', err);
-        }
+        } catch(err) { console.error(err); }
       }
 
       showToast(`✅ Успешно импортировано: ${successCount} нарядов!`);
@@ -358,7 +360,6 @@ window.importJSON = function(input) {
   };
   reader.readAsText(file);
 };
-// -------------------------------------
 
 // Календарь
 flatpickr("#fDeadline", {

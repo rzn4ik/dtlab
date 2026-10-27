@@ -45,16 +45,94 @@ button.small { padding: 6px 10px; font-size: 11px; }
 .search-wrap input { border: none; background: transparent; padding: 4px 0; font-size: 14px; }
 .search-wrap input:focus { border: none; }
 
-/* Стили для интерактивной схемы зубов */
-.teeth-chart { display: flex; flex-direction: column; gap: 8px; background: var(--inner); padding: 12px; border-radius: 10px; border: 1px solid var(--border); overflow-x: auto; }
-.teeth-row { display: flex; justify-content: center; gap: 4px; min-width: 300px; }
-.tooth-btn { width: 32px; height: 40px; border-radius: 4px; background: var(--bg-card); border: 1px solid var(--border); color: var(--dim); font-size: 12px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .15s; user-select: none; }
-.tooth-btn:hover { border-color: var(--accent); }
-.tooth-btn.selected { background: var(--accent2); color: #fff; border-color: var(--accent2); box-shadow: 0 0 8px rgba(16, 185, 129, 0.4); }
-.teeth-divider { height: 2px; background: var(--border); margin: 4px 0; border-radius: 2px; }
-.teeth-controls { display: flex; justify-content: space-between; margin-top: 8px; }
-.teeth-label { font-size: 12px; color: var(--dim); display: flex; align-items: center; gap: 8px; }
-.teeth-label b { color: var(--accent2); font-family: monospace; font-size: 14px; }
+/* === КРАСИВАЯ СХЕМА ЗУБОВ (FDI) === */
+.teeth-chart {
+  display: flex; flex-direction: column; align-items: center;
+  background: radial-gradient(circle at center, #151522 0%, #0a0a12 100%);
+  padding: 30px 10px; border-radius: 16px;
+  border: 1px solid var(--border);
+  box-shadow: inset 0 0 50px rgba(0,0,0,0.9);
+  overflow-x: auto; position: relative;
+}
+.jaw { display: flex; justify-content: center; position: relative; }
+.jaw.upper { align-items: flex-end; margin-bottom: 15px; }
+.jaw.lower { align-items: flex-start; margin-top: 15px; }
+.quadrant { display: flex; gap: 4px; }
+.midline { width: 2px; height: 40px; background: var(--border); margin: 0 10px; align-self: center; opacity: 0.5; box-shadow: 0 0 8px rgba(255,255,255,0.1); }
+
+.tooth-btn {
+  width: 34px; height: 48px;
+  background: linear-gradient(180deg, #2a2a3a 0%, #1a1a28 100%);
+  border: 1px solid #3a3a4a;
+  border-radius: 16px 16px 6px 6px;
+  color: #8888a0; font-size: 12px; font-weight: 800;
+  display: flex; align-items: flex-end; justify-content: center;
+  padding-bottom: 8px;
+  cursor: pointer; user-select: none; z-index: 1;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+.jaw.lower .tooth-btn {
+  border-radius: 6px 6px 16px 16px;
+  background: linear-gradient(0deg, #2a2a3a 0%, #1a1a28 100%);
+  align-items: flex-start; padding-top: 8px; padding-bottom: 0;
+}
+.tooth-btn:hover { z-index: 10; border-color: var(--accent); color: #fff; box-shadow: 0 0 12px rgba(168,85,247,0.4); }
+.tooth-btn.selected {
+  background: linear-gradient(180deg, #10b981 0%, #059669 100%);
+  border-color: #34d399; color: #fff; z-index: 5;
+  box-shadow: 0 0 15px rgba(16,185,129,0.6);
+}
+.jaw.lower .tooth-btn.selected {
+  background: linear-gradient(0deg, #10b981 0%, #059669 100%);
+}
+
+/* Изгибы челюстей */
+.jaw.upper .tooth-btn { transform-origin: bottom center; }
+.jaw.lower .tooth-btn { transform-origin: top center; }
+
+/* Q1 (Верх слева - 18..11) */
+[data-n="18"] { transform: translateY(-22px) rotate(-38deg); }
+[data-n="17"] { transform: translateY(-14px) rotate(-28deg); }
+[data-n="16"] { transform: translateY(-7px) rotate(-18deg); }
+[data-n="15"] { transform: translateY(-2px) rotate(-8deg); }
+[data-n="14"] { transform: translateY(0px) rotate(0deg); }
+[data-n="13"] { transform: translateY(0px) rotate(0deg); }
+[data-n="12"] { transform: translateY(0px) rotate(0deg); }
+[data-n="11"] { transform: translateY(0px) rotate(0deg); }
+/* Q2 (Верх справа - 21..28) */
+[data-n="21"] { transform: translateY(0px) rotate(0deg); }
+[data-n="22"] { transform: translateY(0px) rotate(0deg); }
+[data-n="23"] { transform: translateY(0px) rotate(0deg); }
+[data-n="24"] { transform: translateY(0px) rotate(0deg); }
+[data-n="25"] { transform: translateY(-2px) rotate(8deg); }
+[data-n="26"] { transform: translateY(-7px) rotate(18deg); }
+[data-n="27"] { transform: translateY(-14px) rotate(28deg); }
+[data-n="28"] { transform: translateY(-22px) rotate(38deg); }
+/* Q4 (Низ слева - 48..41) */
+[data-n="48"] { transform: translateY(22px) rotate(38deg); }
+[data-n="47"] { transform: translateY(14px) rotate(28deg); }
+[data-n="46"] { transform: translateY(7px) rotate(18deg); }
+[data-n="45"] { transform: translateY(2px) rotate(8deg); }
+[data-n="44"] { transform: translateY(0px) rotate(0deg); }
+[data-n="43"] { transform: translateY(0px) rotate(0deg); }
+[data-n="42"] { transform: translateY(0px) rotate(0deg); }
+[data-n="41"] { transform: translateY(0px) rotate(0deg); }
+/* Q3 (Низ справа - 31..38) */
+[data-n="31"] { transform: translateY(0px) rotate(0deg); }
+[data-n="32"] { transform: translateY(0px) rotate(0deg); }
+[data-n="33"] { transform: translateY(0px) rotate(0deg); }
+[data-n="34"] { transform: translateY(0px) rotate(0deg); }
+[data-n="35"] { transform: translateY(2px) rotate(-8deg); }
+[data-n="36"] { transform: translateY(7px) rotate(-18deg); }
+[data-n="37"] { transform: translateY(14px) rotate(-28deg); }
+[data-n="38"] { transform: translateY(22px) rotate(-38deg); }
+
+.teeth-controls { display: flex; justify-content: space-between; margin-top: 12px; }
+.teeth-label { font-size: 13px; color: var(--dim); display: flex; align-items: center; gap: 8px; }
+.teeth-label b { color: var(--accent2); font-family: monospace; font-size: 15px; }
+/* ================================= */
 
 .card { background: var(--card); border: 1px solid var(--border); border-left: 4px solid var(--mute); border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; }
 .card.status-received { border-left-color: var(--info); }
@@ -97,11 +175,15 @@ button.small { padding: 6px 10px; font-size: 11px; }
 .date-summary::-webkit-details-marker { display: none; }
 details[open] > .date-summary { margin-bottom: 8px; }
 .date-content { padding-left: 12px; border-left: 2px solid var(--border); }
+
 @media (max-width: 600px) { 
   body { padding: 10px; } 
   .form-grid { grid-template-columns: 1fr 1fr; } 
   .card-header b { font-size: 14px; } 
-  .tooth-btn { width: 28px; height: 36px; font-size: 11px; }
+  .tooth-btn { width: 28px; height: 40px; font-size: 11px; padding-bottom: 6px; }
+  .jaw.lower .tooth-btn { padding-top: 6px; padding-bottom: 0; }
+  .quadrant { gap: 2px; }
+  .midline { margin: 0 4px; }
 }
 </style>
 </head>
@@ -135,17 +217,19 @@ details[open] > .date-summary { margin-bottom: 8px; }
     <input id="fNotes" placeholder="Примечания" style="grid-column: 1 / -1;" />
   </div>
 
-  <!-- ИНТЕРАКТИВНАЯ СХЕМА ЗУБОВ -->
-  <div style="margin-top: 12px;">
+  <!-- ИНТЕРАКТИВНАЯ FDI СХЕМА -->
+  <div style="margin-top: 16px;">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-      <span style="font-size:12px; font-weight:bold; color:var(--dim);">🦷 Выбери зубы:</span>
+      <span style="font-size:12px; font-weight:bold; color:var(--dim);">🦷 Отметь зубы на схеме:</span>
       <div class="teeth-label">Выбрано: <b id="selectedTeethLabel">—</b></div>
     </div>
+    
     <div class="teeth-chart" id="teethChart">
       <!-- Схема генерируется через JS -->
     </div>
+    
     <div class="teeth-controls">
-      <button class="ghost small" onclick="clearTeeth()">Сбросить</button>
+      <button class="ghost small" onclick="clearTeeth()">Сбросить всё</button>
     </div>
   </div>
 
@@ -188,32 +272,38 @@ const COLLECTION = 'orders';
 const PIN_KEY = 'dtlab_pin_hash';
 let orders = [], currentTab = 'active', searchQuery = '';
 
-// --- ЛОГИКА ЗУБОВ ---
+// --- ЛОГИКА КРАСИВОЙ СХЕМЫ ЗУБОВ ---
 let selectedTeeth = new Set();
-const teethUpperRight = [18, 17, 16, 15, 14, 13, 12, 11];
-const teethUpperLeft = [21, 22, 23, 24, 25, 26, 27, 28];
-const teethLowerRight = [48, 47, 46, 45, 44, 43, 42, 41];
-const teethLowerLeft = [31, 32, 33, 34, 35, 36, 37, 38];
 
 function initTeethChart() {
   const chart = document.getElementById('teethChart');
   if (!chart) return;
-  
-  const createRow = (teeth) => {
-    return `<div class="teeth-row">${teeth.map(t => `<div class="tooth-btn" id="tooth-${t}" onclick="toggleTooth(${t})">${t}</div>`).join('')}</div>`;
-  };
+
+  const q1 = [18, 17, 16, 15, 14, 13, 12, 11];
+  const q2 = [21, 22, 23, 24, 25, 26, 27, 28];
+  const q4 = [48, 47, 46, 45, 44, 43, 42, 41];
+  const q3 = [31, 32, 33, 34, 35, 36, 37, 38];
+
+  const buildQuad = (arr) => arr.map(n => `<div class="tooth-btn" data-n="${n}" onclick="toggleTooth(${n})">${n}</div>`).join('');
 
   chart.innerHTML = `
-    ${createRow(teethUpperRight)}
-    ${createRow(teethUpperLeft)}
-    <div class="teeth-divider"></div>
-    ${createRow(teethLowerRight)}
-    ${createRow(teethLowerLeft)}
+    <div class="jaw upper">
+      <div class="quadrant">${buildQuad(q1)}</div>
+      <div class="midline"></div>
+      <div class="quadrant">${buildQuad(q2)}</div>
+    </div>
+    <div class="jaw lower">
+      <div class="quadrant">${buildQuad(q4)}</div>
+      <div class="midline"></div>
+      <div class="quadrant">${buildQuad(q3)}</div>
+    </div>
   `;
 }
 
 window.toggleTooth = (num) => {
-  const btn = document.getElementById(`tooth-${num}`);
+  const btn = document.querySelector(`.tooth-btn[data-n="${num}"]`);
+  if (!btn) return;
+  
   if (selectedTeeth.has(num)) {
     selectedTeeth.delete(num);
     btn.classList.remove('selected');
@@ -239,7 +329,7 @@ function updateTeethLabel() {
     label.textContent = sorted.join(', ');
   }
 }
-// --------------------
+// -----------------------------------
 
 // Календарь
 flatpickr("#fDeadline", {

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>DTLab — Панель техника</title>
+<style>
+:root {
+  --bg: #0f0f17; --card: #1a1a28; --inner: #0f0f17; --border: #2a2a3a;
+  --text: #e8e8f0; --dim: #8888a0; --mute: #55556a;
+  --accent: #a855f7; --accent2: #10b981; --danger: #ef4444; --warn: #f59e0b;
+  --info: #0ea5e9;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); color: var(--text); padding: 16px; min-height: 100vh; }
+h1 { font-size: 18px; color: var(--accent); margin-bottom: 4px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.badge { font-size: 10px; padding: 3px 8px; border-radius: 8px; background: var(--border); color: var(--dim); }
+.badge.on { background: var(--accent2); color: #fff; }
+.me { font-size: 11px; color: var(--dim); margin-bottom: 16px; }
+.section { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+h2 { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--dim); margin-bottom: 10px; }
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
+input, select, textarea { padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--inner); color: var(--text); font-size: 13px; width: 100%; font-family: inherit; outline: none; }
+input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+textarea { resize: vertical; min-height: 60px; }
+button { padding: 10px 16px; border: none; border-radius: 8px; background: var(--accent2); color: #fff; font-weight: 700; font-size: 13px; cursor: pointer; transition: opacity .2s; white-space: nowrap; }
+button:hover { opacity: .85; }
+button:disabled { opacity: .5; cursor: not-allowed; }
+button.ghost { background: transparent; border: 1px solid var(--border); color: var(--text); }
+button.danger { background: var(--danger); }
+button.warn { background: var(--warn); color: #000; }
+button.small { padding: 6px 10px; font-size: 11px; }
+.tabs { display: flex; gap: 4px; margin-bottom: 12px; flex-wrap: wrap; }
+.tabs button { flex: 1 1 100px; padding: 9px; background: var(--card); border: 1px solid var(--border); color: var(--dim); border-radius: 8px; font-weight: 700; font-size: 12px; }
+.tabs button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.search-wrap { display: flex; align-items: center; gap: 8px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; margin-bottom: 12px; }
+.search-wrap:focus-within { border-color: var(--accent); }
+.search-wrap input { border: none; background: transparent; padding: 4px 0; font-size: 14px; }
+.search-wrap input:focus { border: none; }
+.card { background: var(--card); border: 1px solid var(--border); border-left: 4px solid var(--mute); border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; }
+.card.status-received { border-left-color: var(--info); }
+.card.status-modeling { border-left-color: var(--accent); }
+.card.status-production { border-left-color: var(--warn); }
+.card.status-finishing { border-left-color: #f97316; }
+.card.status-tryin { border-left-color: #eab308; }
+.card.status-ready { border-left-color: var(--accent2); }
+.card.status-delivered { border-left-color: var(--mute); opacity: .65; }
+.card.status-cancelled { border-left-color: var(--danger); opacity: .6; }
+.card.overdue { box-shadow: 0 0 0 2px var(--danger); }
+.card-header { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+.card-header b { font-size: 16px; }
+.card-header .order-num { font-family: monospace; color: var(--accent2); cursor: pointer; }
+.card-row { font-size: 12px; margin-bottom: 3px; line-height: 1.4; }
+.card-row.small { font-size: 11px; color: var(--dim); }
+.card-row b { color: var(--text); }
+.deadline { font-family: monospace; font-size: 13px; font-weight: 700; padding: 4px 10px; border-radius: 6px; background: var(--inner); border: 1px solid var(--border); }
+.deadline.ok { color: var(--accent2); }
+.deadline.soon { color: var(--warn); }
+.deadline.urgent { color: #f97316; }
+.deadline.overdue { color: var(--danger); border-color: var(--danger); }
+.progress { height: 6px; background: var(--inner); border-radius: 3px; overflow: hidden; margin: 6px 0; }
+.progress > div { height: 100%; background: linear-gradient(90deg, var(--accent2), #00ff88); transition: width .3s; }
+.actions { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 8px; }
+.empty { text-align: center; color: var(--mute); padding: 30px; font-size: 13px; }
+.toast { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); background: var(--accent2); color: #fff; padding: 10px 18px; border-radius: 10px; font-weight: 700; font-size: 13px; z-index: 9999; box-shadow: 0 6px 24px rgba(0,0,0,.5); max-width: 90%; text-align: center; animation: toastIn .2s ease; }
+.toast.err { background: var(--danger); }
+.toast.warn { background: var(--warn); color: #000; }
+@keyframes toastIn { from { transform: translateX(-50%) translateY(-10px); opacity: 0; } to { transform: translateX(-50%) translateY(0); opacity: 1; } }
+.overlay { position: fixed; inset: 0; background: rgba(0,0,0,.85); display: flex; align-items: center; justify-content: center; z-index: 10000; padding: 20px; }
+.modal { background: var(--card); border: 1px solid var(--accent); border-radius: 14px; padding: 22px; max-width: 440px; width: 100%; }
+.modal h3 { font-size: 16px; color: var(--accent); margin-bottom: 12px; text-align: center; }
+.modal p { font-size: 12px; color: var(--dim); margin-bottom: 12px; text-align: center; }
+.pin-row { display: flex; gap: 6px; margin-top: 8px; }
+.pin-row input { flex: 1; text-align: center; font-family: monospace; font-size: 20px; letter-spacing: 6px; -webkit-text-security: disc; }
+.pin-error { color: var(--danger); font-size: 12px; text-align: center; min-height: 16px; margin-top: 6px; }
+.date-group { margin-bottom: 10px; }
+.date-summary { padding: 12px 16px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; cursor: pointer; font-size: 13px; font-weight: 700; color: var(--accent); display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; user-select: none; }
+.date-summary::-webkit-details-marker { display: none; }
+details[open] > .date-summary { margin-bottom: 8px; }
+.date-content { padding-left: 12px; border-left: 2px solid var(--border); }
+@media (max-width: 600px) { body { padding: 10px; } .form-grid { grid-template-columns: 1fr 1fr; } .card-header b { font-size: 14px; } }
+</style>
+</head>
+<body>
+<h1>🦷 DTLab <span id="connBadge" class="badge">⏳</span></h1>
+<div class="me" id="meInfo">Загрузка…</div>
+
+<div class="section" id="addSection" style="display:none;">
+  <h2>➕ Новый наряд</h2>
+  <div class="form-grid">
+    <input id="fOrderNum" placeholder="№ наряда" />
+    <input id="fPatient" placeholder="ФИО пациента" />
+    <input id="fClinic" placeholder="Клиника / врач" />
+    <select id="fType">
+      <option value="">Тип работы</option>
+      <option>Коронка</option><option>Винир</option><option>Мост</option>
+      <option>Вкладка</option><option>Бюгель</option><option>Съёмный протез</option>
+      <option>Абатмент</option><option>Каппа</option><option>Ретейнер</option>
+      <option>Другое</option>
+    </select>
+    <select id="fMaterial">
+      <option value="">Материал</option>
+      <option>Цирконий</option><option>E.max</option><option>Металлокерамика</option>
+      <option>ПММА</option><option>Титан</option><option>CoCr</option><option>Воск</option>
+      <option>Другое</option>
+    </select>
+    <input id="fColor" placeholder="Цвет VITA (A1, A2…)" />
+    <input id="fTeeth" placeholder="Зубы (11, 12, 21…)" />
+    <input id="fPrice" type="number" placeholder="Стоимость ₽" />
+    <input id="fPrepaid" type="number" placeholder="Предоплата ₽" />
+    <input id="fDeadline" type="date" title="Срок сдачи" />
+    <input id="fNotes" placeholder="Примечания" style="grid-column: 1 / -1;" />
+  </div>
+  <div class="actions"><button onclick="addOrder()">💾 Сохранить наряд</button></div>
+</div>
+
+<div class="search-wrap">
+  <span>🔍</span>
+  <input id="searchInput" placeholder="Поиск по пациенту, клинике, номеру…" oninput="render()" />
+  <button class="ghost small" onclick="document.getElementById('searchInput').value='';render();" style="display:none;" id="searchClearBtn">×</button>
+</div>
+
+<div class="tabs" id="tabs">
+  <button data-tab="active" class="active" onclick="setTab('active')">🔥 В работе</button>
+  <button data-tab="ready" onclick="setTab('ready')">✅ Готово</button>
+  <button data-tab="archive" onclick="setTab('archive')">📦 Архив</button>
+</div>
+
+<div id="content" class="empty">Загрузка…</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD1a18cQ8PKTWb5E5-FgDMB1TpfcKTQNXM",
+  authDomain: "zubki-cfc5b.firebaseapp.com",
+  projectId: "zubki-cfc5b",
+  storageBucket: "zubki-cfc5b.firebasestorage.app",
+  messagingSenderId: "5447130077",
+  appId: "1:5447130077:web:70ed19c33eefc22a70f434",
+  measurementId: "G-NR161V6ZNN"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+const COLLECTION = 'orders';
+const PIN_KEY = 'dtlab_pin_hash';
+let orders = [], currentTab = 'active', searchQuery = '';
+
+async function initAuth() {
+  return new Promise((resolve) => {
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) { try { await signInAnonymously(auth); } catch(e) { showToast('Ошибка входа: '+e.message, 'err'); } }
+      else { resolve(user); }
+    });
+  });
+}
+
+async function hashPin(pin) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode('dtlab_salt_'+pin));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+async function checkPin() {
+  if (!localStorage.getItem(PIN_KEY)) return showPinSetup();
+  return showPinPrompt();
+}
+function showPinSetup() {
+  return new Promise((resolve) => {
+    const ov = document.createElement('div'); ov.className = 'overlay'; ov.id = 'pinOverlay';
+    ov.innerHTML = `<div class="modal"><h3>🔐 Первый вход</h3><p>Придумай PIN (4–6 цифр)</p><div class="pin-row"><input type="text" inputmode="numeric" maxlength="6" id="pin1" placeholder="PIN" autofocus></div><div class="pin-row"><input type="text" inputmode="numeric" maxlength="6" id="pin2" placeholder="Повтори PIN"></div><div class="pin-error" id="pinErr"></div><div class="actions" style="justify-content:center;margin-top:14px;"><button onclick="savePinSetup()">✅ Установить PIN</button></div></div>`;
+    document.body.appendChild(ov);
+    window.savePinSetup = async () => {
+      const p1 = document.getElementById('pin1').value, p2 = document.getElementById('pin2').value, err = document.getElementById('pinErr');
+      if (!/^\d{4,6}$/.test(p1)) { err.textContent = 'PIN — 4–6 цифр'; return; }
+      if (p1 !== p2) { err.textContent = 'PIN не совпадает'; return; }
+      localStorage.setItem(PIN_KEY, await hashPin(p1)); ov.remove(); resolve(true);
+    };
+  });
+}
+function showPinPrompt() {
+  return new Promise((resolve) => {
+    const ov = document.createElement('div'); ov.className = 'overlay'; ov.id = 'pinOverlay';
+    ov.innerHTML = `<div class="modal"><h3>🔐 Вход в DTLab</h3><p>Введи PIN</p><div class="pin-row"><input type="text" inputmode="numeric" maxlength="6" id="pinInput" placeholder="••••" autofocus></div><div class="pin-error" id="pinErr"></div><div class="actions" style="justify-content:center;margin-top:14px;"><button onclick="verifyPin()">Войти</button></div></div>`;
+    document.body.appendChild(ov);
+    document.getElementById('pinInput').addEventListener('keydown', e => { if (e.key === 'Enter') window.verifyPin(); });
+    window.verifyPin = async () => {
+      const pin = document.getElementById('pinInput').value, err = document.getElementById('pinErr'), saved = localStorage.getItem(PIN_KEY);
+      if (await hashPin(pin) !== saved) { err.textContent = 'Неверный PIN'; document.getElementById('pinInput').value = ''; return; }
+      ov.remove(); resolve(true);
+    };
+  });
+}
+function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
+function fmtMoney(n) { return Math.round(n || 0).toLocaleString('ru-RU') + ' ₽'; }
+function showToast(msg, type = '') { const el = document.createElement('div'); el.className = 'toast ' + type; el.textContent = msg; document.body.appendChild(el); setTimeout(() => el.remove(), 2800); }
+const STATUS_LABELS = { received: '📥 Получен', modeling: '📐 Моделировка', production: '🔨 Литьё/фрезеровка', finishing: '🎨 Керамика', tryin: '👁 Примерка', ready: '✅ Готово', delivered: '📦 Выдано', cancelled: '❌ Отменён' };
+const STATUS_ORDER = ['received','modeling','production','finishing','tryin','ready','delivered'];
+
+function deadlineInfo(deadlineStr) {
+  if (!deadlineStr) return { text: '—', cls: '' };
+  const now = new Date(), dl = new Date(deadlineStr + 'T23:59:59'), diffMs = dl - now, diffDays = diffMs / 86400000;
+  if (diffMs < 0) return { text: '⚠️ Просрочен', cls: 'overdue' };
+  if (diffDays < 1) return { text: '⏰ < 1 дня', cls: 'urgent' };
+  if (diffDays < 3) return { text: `⏳ ${Math.ceil(diffDays)} дн.`, cls: 'soon' };
+  return { text: `📅 ${deadlineStr}`, cls: 'ok' };
+}
+
+async function addOrder() {
+  const orderNumber = document.getElementById('fOrderNum').value.trim(), patientName = document.getElementById('fPatient').value.trim();
+  if (!patientName) { showToast('Укажи ФИО пациента', 'err'); return; }
+  const data = {
+    orderNumber: orderNumber || '—', patientName, clinic: document.getElementById('fClinic').value.trim(),
+    orderType: document.getElementById('fType').value, material: document.getElementById('fMaterial').value,
+    vitaColor: document.getElementById('fColor').value.trim(), teeth: document.getElementById('fTeeth').value.trim(),
+    price: parseFloat(document.getElementById('fPrice').value) || 0, prepaid: parseFloat(document.getElementById('fPrepaid').value) || 0,
+    deadline: document.getElementById('fDeadline').value || '', notes: document.getElementById('fNotes').value.trim(),
+    status: 'received', createdAt: serverTimestamp(), payments: []
+  };
+  try {
+    await addDoc(collection(db, COLLECTION), data);
+    ['fOrderNum','fPatient','fClinic','fType','fMaterial','fColor','fTeeth','fPrice','fPrepaid','fDeadline','fNotes'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+    showToast('✅ Наряд создан');
+  } catch(e) { showToast('Ошибка: ' + e.message, 'err'); }
+}
+
+async function setStatus(id, status) {
+  await updateDoc(doc(db, COLLECTION, id), { status });
+  showToast('Статус: ' + (STATUS_LABELS[status] || status));
+}
+async function removeOrder(id) { if (!confirm('Удалить наряд навсегда?')) return; await deleteDoc(doc(db, COLLECTION, id)); showToast('Наряд удалён'); }
+
+function printOrder(id) {
+  const o = orders.find(x => x.id === id); if (!o) return;
+  const win = window.open('', '_blank');
+  win.document.write(`<html><head><meta charset="utf-8"><title>Наряд ${esc(o.orderNumber)}</title><style>body{font-family:Arial,sans-serif;padding:30px;max-width:700px;margin:auto}h1{font-size:20px;border-bottom:2px solid #000;padding-bottom:8px}table{width:100%;border-collapse:collapse;margin-top:16px}td{padding:8px;border-bottom:1px solid #ccc;font-size:14px}td:first-child{font-weight:bold;width:40%}</style></head><body><h1>🦷 DTLab — Наряд ${esc(o.orderNumber)}</h1><table><tr><td>Пациент</td><td>${esc(o.patientName)}</td></tr><tr><td>Клиника / врач</td><td>${esc(o.clinic || '—')}</td></tr><tr><td>Тип работы</td><td>${esc(o.orderType || '—')}</td></tr><tr><td>Материал</td><td>${esc(o.material || '—')}</td></tr><tr><td>Цвет VITA</td><td>${esc(o.vitaColor || '—')}</td></tr><tr><td>Зубы</td><td>${esc(o.teeth || '—')}</td></tr><tr><td>Срок сдачи</td><td>${esc(o.deadline || '—')}</td></tr><tr><td>Стоимость</td><td>${fmtMoney(o.price)}</td></tr><tr><td>Предоплата</td><td>${fmtMoney(o.prepaid)}</td></tr><tr><td>Примечания</td><td>${esc(o.notes || '—')}</td></tr></table><p style="margin-top:24px;font-size:12px;color:#666">Создан: ${o.createdAt ? new Date(o.createdAt.seconds * 1000).toLocaleString('ru-RU') : '—'}</p></body></html>`);
+  win.document.close(); win.print();
+}
+
+function renderCard(o) {
+  const dl = deadlineInfo(o.deadline);
+  const paid = (o.payments || []).reduce((s, p) => s + (p.sum || 0), 0) + (o.prepaid || 0);
+  const isOverdue = o.deadline && new Date(o.deadline + 'T23:59:59') < new Date() && o.status !== 'delivered' && o.status !== 'cancelled';
+  const stageIdx = STATUS_ORDER.indexOf(o.status), stagePct = stageIdx >= 0 ? ((stageIdx + 1) / STATUS_ORDER.length) * 100 : 0;
+  let nextStatusHtml = '';
+  if (o.status !== 'delivered' && o.status !== 'cancelled') {
+    const next = STATUS_ORDER[stageIdx + 1];
+    if (next) nextStatusHtml = `<button class="small" onclick="setStatus('${o.id}','${next}')">→ ${STATUS_LABELS[next]}</button>`;
+  }
+  return `<div class="card status-${o.status}${isOverdue ? ' overdue' : ''}"><div class="card-header"><b>${esc(o.patientName)}</b><span class="deadline ${dl.cls}">${dl.text}</span></div><div class="card-row small">№ <span class="order-num">${esc(o.orderNumber)}</span> • ${STATUS_LABELS[o.status] || o.status}${isOverdue ? ' • ⚠️ ПРОСРОЧЕН' : ''}</div>${o.clinic ? `<div class="card-row">🏥 ${esc(o.clinic)}</div>` : ''}${o.orderType ? `<div class="card-row">🦷 ${esc(o.orderType)}${o.material ? ' • ' + esc(o.material) : ''}${o.vitaColor ? ' • ' + esc(o.vitaColor) : ''}</div>` : ''}${o.teeth ? `<div class="card-row small">Зубы: ${esc(o.teeth)}</div>` : ''}${o.notes ? `<div class="card-row small">📝 ${esc(o.notes)}</div>` : ''}<div class="progress"><div style="width:${stagePct}%"></div></div><div class="card-row small">Этап: ${STATUS_LABELS[o.status] || o.status} • Оплачено: <b>${fmtMoney(paid)}</b> / ${fmtMoney(o.price)}</div><div class="actions">${nextStatusHtml}${o.status === 'ready' ? `<button class="small warn" onclick="setStatus('${o.id}','delivered')">📦 Выдать</button>` : ''}${o.status === 'delivered' ? `<button class="small ghost" onclick="setStatus('${o.id}','ready')">↩ Вернуть</button>` : ''}<button class="small ghost" onclick="printOrder('${o.id}')">🖨 Печать</button><button class="small danger" onclick="removeOrder('${o.id}')">×</button></div></div>`;
+}
+
+function render() {
+  const content = document.getElementById('content'), q = (document.getElementById('searchInput').value || '').trim().toLowerCase();
+  document.getElementById('searchClearBtn').style.display = q ? 'block' : 'none';
+  let list = orders.filter(o => {
+    if (currentTab === 'active') return !['delivered','cancelled'].includes(o.status);
+    if (currentTab === 'ready') return o.status === 'ready';
+    if (currentTab === 'archive') return ['delivered','cancelled'].includes(o.status);
+    return true;
+  });
+  if (q) list = list.filter(o => (o.patientName || '').toLowerCase().includes(q) || (o.clinic || '').toLowerCase().includes(q) || (o.orderNumber || '').toLowerCase().includes(q) || (o.orderType || '').toLowerCase().includes(q) || (o.teeth || '').toLowerCase().includes(q));
+  if (!list.length) { content.innerHTML = `<div class="empty">${q ? 'Ничего не найдено' : currentTab === 'active' ? 'Нет активных нарядов' : currentTab === 'ready' ? 'Нет готовых нарядов' : 'Архив пуст'}</div>`; return; }
+  if (currentTab === 'archive') {
+    const byDate = {};
+    list.forEach(o => { const d = o.createdAt ? new Date(o.createdAt.seconds * 1000) : new Date(), key = d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' }); if (!byDate[key]) byDate[key] = { items: [], latest: 0 }; byDate[key].items.push(o); if (d.getTime() > byDate[key].latest) byDate[key].latest = d.getTime(); });
+    const sorted = Object.keys(byDate).sort((a, b) => byDate[b].latest - byDate[a].latest);
+    content.innerHTML = sorted.map((dateKey, idx) => `<details class="date-group" ${idx === 0 ? 'open' : ''}><summary class="date-summary"><span>📅 ${dateKey}</span><span>${byDate[dateKey].items.length} наряд(ов) • ${fmtMoney(byDate[dateKey].items.reduce((s, o) => s + (o.price || 0), 0))}</span></summary><div class="date-content">${byDate[dateKey].items.sort((a,b) => (b.createdAt?.seconds||0) - (a.createdAt?.seconds||0)).map(renderCard).join('')}</div></details>`).join('');
+  } else {
+    content.innerHTML = list.sort((a, b) => (a.deadline || '9999').localeCompare(b.deadline || '9999')).map(renderCard).join('');
+  }
+}
+function setTab(tab) { currentTab = tab; document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === tab)); render(); }
+function subscribe() {
+  const q = query(collection(db, COLLECTION), orderBy('createdAt', 'desc'));
+  onSnapshot(q, snapshot => { orders = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); document.getElementById('connBadge').textContent = '🟢 Онлайн'; document.getElementById('connBadge').className = 'badge on'; render(); }, err => { document.getElementById('connBadge').textContent = '🔴 Ошибка'; document.getElementById('connBadge').className = 'badge'; document.getElementById('content').innerHTML = `<div class="empty">Ошибка загрузки: ${esc(err.message)}</div>`; });
+}
+(async function init() {
+  await initAuth(); await checkPin(); document.getElementById('meInfo').textContent = '🛠 Техник • DTLab'; document.getElementById('addSection').style.display = 'block'; subscribe(); setInterval(render, 60000);
+})();
+Object.assign(window, { addOrder, setStatus, removeOrder, printOrder, setTab, render });
+</script>
+</body>
+</html>

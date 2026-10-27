@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>DTLab — Панель техника</title>
+
+<!-- Подключаем Flatpickr (красивый календарь для ПК) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ru.js"></script>
+
 <style>
 :root {
   --bg: #0f0f17; --card: #1a1a28; --inner: #0f0f17; --border: #2a2a3a;
@@ -108,7 +115,8 @@ details[open] > .date-summary { margin-bottom: 8px; }
     <input id="fTeeth" placeholder="Зубы (11, 12, 21…)" />
     <input id="fPrice" type="number" placeholder="Стоимость ₽" />
     <input id="fPrepaid" type="number" placeholder="Предоплата ₽" />
-    <input id="fDeadline" type="date" title="Срок сдачи" />
+    <!-- Изменено на type="text" для работы Flatpickr -->
+    <input id="fDeadline" type="text" placeholder="Срок сдачи (дд.мм.гггг)" readonly style="cursor: pointer;" />
     <input id="fNotes" placeholder="Примечания" style="grid-column: 1 / -1;" />
   </div>
   <div class="actions"><button onclick="addOrder()">💾 Сохранить наряд</button></div>
@@ -150,6 +158,20 @@ const auth = getAuth(app);
 const COLLECTION = 'orders';
 const PIN_KEY = 'dtlab_pin_hash';
 let orders = [], currentTab = 'active', searchQuery = '';
+
+// Инициализация красивого календаря (Flatpickr)
+// locale: "ru" - русский язык
+// dateFormat: "Y-m-d" - формат для базы данных (Год-Месяц-День)
+// altInput + altFormat: "d.m.Y" - красивый формат для отображения (День.Месяц.Год)
+// disableMobile: false - на телефоне оставляем нативный календарь (он вам нравится)
+flatpickr("#fDeadline", {
+  locale: "ru",
+  dateFormat: "Y-m-d",
+  altInput: true,
+  altFormat: "d.m.Y",
+  allowInput: false,
+  disableMobile: false
+});
 
 async function initAuth() {
   return new Promise((resolve) => {
@@ -222,7 +244,12 @@ async function addOrder() {
   };
   try {
     await addDoc(collection(db, COLLECTION), data);
-    ['fOrderNum','fPatient','fClinic','fType','fMaterial','fColor','fTeeth','fPrice','fPrepaid','fDeadline','fNotes'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+    ['fOrderNum','fPatient','fClinic','fType','fMaterial','fColor','fTeeth','fPrice','fPrepaid','fNotes'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+    
+    // Очищаем Flatpickr после сохранения
+    const fp = document.getElementById('fDeadline')._flatpickr;
+    if (fp) fp.clear();
+
     showToast('✅ Наряд создан');
   } catch(e) { showToast('Ошибка: ' + e.message, 'err'); }
 }

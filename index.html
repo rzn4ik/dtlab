@@ -10,6 +10,8 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ru.js"></script>
+<!-- Библиотека для чтения CSV (Excel) -->
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
 <style>
 :root {
@@ -45,55 +47,25 @@ button.small { padding: 6px 10px; font-size: 11px; }
 .search-wrap input { border: none; background: transparent; padding: 4px 0; font-size: 14px; }
 .search-wrap input:focus { border: none; }
 
-/* === БАЗОВАЯ СХЕМА ЗУБОВ (ПК - АРКА) === */
+/* === СХЕМА ЗУБОВ (ПК) === */
 .teeth-wrapper { margin-top: 16px; }
 .teeth-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
 .teeth-title { font-size: 12px; font-weight: bold; color: var(--dim); }
 .teeth-label { font-size: 13px; color: var(--dim); display: flex; align-items: center; gap: 8px; }
 .teeth-label b { color: var(--accent2); font-family: monospace; font-size: 15px; }
-
-.teeth-chart {
-  display: flex; flex-direction: column; align-items: center;
-  background: radial-gradient(circle at center, #151522 0%, #0a0a12 100%);
-  padding: 30px 10px; border-radius: 16px;
-  border: 1px solid var(--border);
-  box-shadow: inset 0 0 50px rgba(0,0,0,0.9);
-  position: relative;
-}
+.teeth-chart { display: flex; flex-direction: column; align-items: center; background: radial-gradient(circle at center, #151522 0%, #0a0a12 100%); padding: 30px 10px; border-radius: 16px; border: 1px solid var(--border); box-shadow: inset 0 0 50px rgba(0,0,0,0.9); position: relative; }
 .jaw { display: flex; justify-content: center; position: relative; }
 .jaw.upper { align-items: flex-end; margin-bottom: 15px; }
 .jaw.lower { align-items: flex-start; margin-top: 15px; }
 .quadrant { display: flex; gap: 4px; }
 .midline { width: 2px; height: 40px; background: var(--border); margin: 0 10px; align-self: center; opacity: 0.5; box-shadow: 0 0 8px rgba(255,255,255,0.1); }
-
-.tooth-btn {
-  width: 34px; height: 48px;
-  background: linear-gradient(180deg, #2a2a3a 0%, #1a1a28 100%);
-  border: 1px solid #3a3a4a;
-  border-radius: 16px 16px 6px 6px;
-  color: #8888a0; font-size: 12px; font-weight: 800;
-  display: flex; align-items: flex-end; justify-content: center;
-  padding-bottom: 8px;
-  cursor: pointer; user-select: none; z-index: 1;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-}
-.jaw.lower .tooth-btn {
-  border-radius: 6px 6px 16px 16px;
-  background: linear-gradient(0deg, #2a2a3a 0%, #1a1a28 100%);
-  align-items: flex-start; padding-top: 8px; padding-bottom: 0;
-}
+.tooth-btn { width: 34px; height: 48px; background: linear-gradient(180deg, #2a2a3a 0%, #1a1a28 100%); border: 1px solid #3a3a4a; border-radius: 16px 16px 6px 6px; color: #8888a0; font-size: 12px; font-weight: 800; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 8px; cursor: pointer; user-select: none; z-index: 1; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+.jaw.lower .tooth-btn { border-radius: 6px 6px 16px 16px; background: linear-gradient(0deg, #2a2a3a 0%, #1a1a28 100%); align-items: flex-start; padding-top: 8px; padding-bottom: 0; }
 .tooth-btn:hover { z-index: 10; border-color: var(--accent); color: #fff; box-shadow: 0 0 12px rgba(168,85,247,0.4); }
-.tooth-btn.selected {
-  background: linear-gradient(180deg, #10b981 0%, #059669 100%);
-  border-color: #34d399; color: #fff; z-index: 5;
-  box-shadow: 0 0 15px rgba(16,185,129,0.6);
-}
+.tooth-btn.selected { background: linear-gradient(180deg, #10b981 0%, #059669 100%); border-color: #34d399; color: #fff; z-index: 5; box-shadow: 0 0 15px rgba(16,185,129,0.6); }
 .jaw.lower .tooth-btn.selected { background: linear-gradient(0deg, #10b981 0%, #059669 100%); }
 .jaw.upper .tooth-btn { transform-origin: bottom center; }
 .jaw.lower .tooth-btn { transform-origin: top center; }
-
-/* Изгибы челюстей для ПК */
 [data-n="18"] { transform: translateY(-22px) rotate(-38deg); }
 [data-n="17"] { transform: translateY(-14px) rotate(-28deg); }
 [data-n="16"] { transform: translateY(-7px) rotate(-18deg); }
@@ -163,51 +135,55 @@ details[open] > .date-summary { margin-bottom: 8px; }
   .form-grid { grid-template-columns: 1fr 1fr; } 
   .card-header b { font-size: 14px; }
   
-  /* Убираем арку, делаем плоский текстовый список */
+  /* Отключаем все повороты и делаем текстовый вид */
   .teeth-chart { 
-    padding: 12px; 
+    padding: 10px; 
     border-radius: 8px; 
-    display: block;
+    display: flex;
+    flex-direction: column;
     background: var(--inner);
     border: 1px solid var(--border);
+    gap: 10px;
   }
   
   .jaw { 
     display: flex; 
-    flex-wrap: wrap; 
-    justify-content: center;
-    gap: 4px;
-    margin-bottom: 8px;
+    width: 100%;
+    margin: 0;
+    gap: 8px;
   }
-  .jaw.lower { margin-bottom: 0; }
+  
+  /* Делим на 2 половины (левая/правая) */
+  .quadrant { 
+    display: flex; 
+    flex: 1; 
+    justify-content: space-between;
+    gap: 2px;
+  }
   
   .midline { display: none; } 
-  .quadrant { display: contents; } 
   
-  /* Стиль для номеров зубов на мобилке */
+  /* Делаем крупные, читаемые цифры */
   .tooth-btn, .jaw.lower .tooth-btn {
-    width: auto; 
-    height: auto; 
-    min-width: 28px;
-    padding: 4px 6px;
+    flex: 1;
+    padding: 10px 0;
     transform: none !important; 
     border-radius: 6px; 
-    font-size: 14px;
-    display: inline-flex;
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
     align-items: center; 
     justify-content: center;
     background: transparent;
-    border: 1px solid transparent;
+    border: none;
     color: var(--text);
     box-shadow: none;
-    font-weight: 600;
   }
   
   /* Выбранный зуб */
   .tooth-btn.selected, .jaw.lower .tooth-btn.selected {
     background: var(--accent2);
     color: #fff;
-    border-color: var(--accent2);
     box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
   }
 }
@@ -216,6 +192,12 @@ details[open] > .date-summary { margin-bottom: 8px; }
 <body>
 <h1>🦷 Лаборатория Евгения Мешкова <span id="connBadge" class="badge">⏳</span></h1>
 <div class="me" id="meInfo">Загрузка…</div>
+
+<!-- Кнопка импорта -->
+<div style="margin-bottom: 12px; display: flex; justify-content: flex-end;">
+  <button class="warn" onclick="document.getElementById('csvFileInput').click()">📥 Импорт из старой базы (CSV)</button>
+  <input type="file" id="csvFileInput" accept=".csv" style="display:none" onchange="importCSV(this)">
+</div>
 
 <div class="section" id="addSection" style="display:none;">
   <h2>➕ Новый наряд</h2>
@@ -243,15 +225,12 @@ details[open] > .date-summary { margin-bottom: 8px; }
     <input id="fNotes" placeholder="Примечания" style="grid-column: 1 / -1;" />
   </div>
 
-  <!-- ЗУБЫ -->
   <div class="teeth-wrapper">
     <div class="teeth-header">
       <span class="teeth-title">🦷 Отметь зубы на схеме:</span>
       <div class="teeth-label">Выбрано: <b id="selectedTeethLabel">—</b></div>
     </div>
-    <div class="teeth-chart" id="teethChart">
-      <!-- Генерируется через JS -->
-    </div>
+    <div class="teeth-chart" id="teethChart"></div>
     <div style="margin-top: 8px;">
       <button class="ghost small" onclick="clearTeeth()">Сбросить всё</button>
     </div>
@@ -302,38 +281,22 @@ let selectedTeeth = new Set();
 function initTeethChart() {
   const el = document.getElementById('teethChart');
   if (!el) return;
-
   const q1 = [18, 17, 16, 15, 14, 13, 12, 11];
   const q2 = [21, 22, 23, 24, 25, 26, 27, 28];
   const q4 = [48, 47, 46, 45, 44, 43, 42, 41];
   const q3 = [31, 32, 33, 34, 35, 36, 37, 38];
-
   const buildQuad = (arr) => arr.map(n => `<div class="tooth-btn" data-n="${n}" onclick="toggleTooth(${n})">${n}</div>`).join('');
-
   el.innerHTML = `
-    <div class="jaw upper">
-      <div class="quadrant">${buildQuad(q1)}</div>
-      <div class="midline"></div>
-      <div class="quadrant">${buildQuad(q2)}</div>
-    </div>
-    <div class="jaw lower">
-      <div class="quadrant">${buildQuad(q4)}</div>
-      <div class="midline"></div>
-      <div class="quadrant">${buildQuad(q3)}</div>
-    </div>
+    <div class="jaw upper"><div class="quadrant">${buildQuad(q1)}</div><div class="midline"></div><div class="quadrant">${buildQuad(q2)}</div></div>
+    <div class="jaw lower"><div class="quadrant">${buildQuad(q4)}</div><div class="midline"></div><div class="quadrant">${buildQuad(q3)}</div></div>
   `;
 }
 
 window.toggleTooth = (num) => {
-  if (selectedTeeth.has(num)) {
-    selectedTeeth.delete(num);
-  } else {
-    selectedTeeth.add(num);
-  }
-  
+  if (selectedTeeth.has(num)) selectedTeeth.delete(num);
+  else selectedTeeth.add(num);
   const btn = document.querySelector(`.tooth-btn[data-n="${num}"]`);
   if (btn) btn.classList.toggle('selected', selectedTeeth.has(num));
-  
   updateTeethLabel();
 };
 
@@ -345,14 +308,64 @@ window.clearTeeth = () => {
 
 function updateTeethLabel() {
   const label = document.getElementById('selectedTeethLabel');
-  if (selectedTeeth.size === 0) {
-    label.textContent = '—';
-  } else {
+  if (selectedTeeth.size === 0) label.textContent = '—';
+  else {
     const sorted = Array.from(selectedTeeth).sort((a, b) => a - b);
     label.textContent = sorted.join(', ');
   }
 }
-// --------------------
+
+// --- ИМПОРТ ИЗ CSV ---
+window.importCSV = function(input) {
+  const file = input.files[0];
+  if (!file) return;
+
+  showToast('⏳ Читаем файл...', 'info');
+
+  Papa.parse(file, {
+    header: true,
+    skipEmptyLines: true,
+    complete: async function(results) {
+      const rows = results.data;
+      let successCount = 0;
+      
+      for (const row of rows) {
+        if (!row.patientName && !row.patient) continue;
+
+        const data = {
+          patientName: row.patientName || row.patient || 'Без имени',
+          orderNumber: row.orderNumber || row.num || '—',
+          clinic: row.clinic || row.doctor || '',
+          orderType: row.orderType || row.type || '',
+          material: row.material || '',
+          vitaColor: row.vitaColor || row.color || '',
+          teeth: row.teeth || '',
+          price: parseFloat(row.price || row.sum) || 0,
+          prepaid: parseFloat(row.prepaid) || 0,
+          deadline: row.deadline || '',
+          notes: row.notes || '',
+          status: 'delivered', 
+          createdAt: serverTimestamp(),
+          payments: []
+        };
+
+        try {
+          await addDoc(collection(db, COLLECTION), data);
+          successCount++;
+        } catch(e) {
+          console.error('Ошибка импорта строки:', row, e);
+        }
+      }
+      
+      showToast(`✅ Успешно импортировано: ${successCount} нарядов!`);
+      input.value = ''; 
+      setTab('archive'); 
+    },
+    error: function(err) {
+      showToast('Ошибка чтения файла: ' + err.message, 'err');
+    }
+  });
+};
 
 // Календарь
 flatpickr("#fDeadline", {
@@ -409,7 +422,7 @@ function showPinPrompt() {
 }
 function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
 function fmtMoney(n) { return Math.round(n || 0).toLocaleString('ru-RU') + ' ₽'; }
-function showToast(msg, type = '') { const el = document.createElement('div'); el.className = 'toast ' + type; el.textContent = msg; document.body.appendChild(el); setTimeout(() => el.remove(), 2800); }
+function showToast(msg, type = '') { const el = document.createElement('div'); el.className = 'toast ' + type; el.textContent = msg; document.body.appendChild(el); setTimeout(() => el.remove(), 3500); }
 const STATUS_LABELS = { received: '📥 Получен', modeling: '📐 Моделировка', production: '🔨 Литьё/фрезеровка', finishing: '🎨 Керамика', tryin: '👁 Примерка', ready: '✅ Готово', delivered: '📦 Выдано', cancelled: '❌ Отменён' };
 const STATUS_ORDER = ['received','modeling','production','finishing','tryin','ready','delivered'];
 
@@ -425,9 +438,7 @@ function deadlineInfo(deadlineStr) {
 async function addOrder() {
   const orderNumber = document.getElementById('fOrderNum').value.trim(), patientName = document.getElementById('fPatient').value.trim();
   if (!patientName) { showToast('Укажи ФИО пациента', 'err'); return; }
-  
   const teethStr = Array.from(selectedTeeth).sort((a,b)=>a-b).join(', ');
-
   const data = {
     orderNumber: orderNumber || '—', patientName, clinic: document.getElementById('fClinic').value.trim(),
     orderType: document.getElementById('fType').value, material: document.getElementById('fMaterial').value,
@@ -439,10 +450,8 @@ async function addOrder() {
   try {
     await addDoc(collection(db, COLLECTION), data);
     ['fOrderNum','fPatient','fClinic','fType','fMaterial','fColor','fPrice','fPrepaid','fNotes'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
-    
     const fp = document.getElementById('fDeadline')._flatpickr;
     if (fp) fp.clear();
-
     clearTeeth();
     showToast('✅ Наряд создан');
   } catch(e) { showToast('Ошибка: ' + e.message, 'err'); }

@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>Лаборатория Евгения Мешкова — Панель техника</title>
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -59,52 +63,72 @@
 /* ================================================ */
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); color: var(--text); padding: 16px; min-height: 100vh; transition: background 0.3s, color 0.3s; }
-h1 { font-size: 18px; color: var(--accent); margin-bottom: 4px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.badge { font-size: 10px; padding: 3px 8px; border-radius: 8px; background: var(--border); color: var(--dim); }
+body { font-family: 'Inter', -apple-system, system-ui, sans-serif; background: var(--bg); color: var(--text); padding: 16px; min-height: 100vh; transition: background 0.3s, color 0.3s; }
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--dim); }
+
+h1 { font-size: 20px; font-weight: 800; color: var(--accent); margin-bottom: 4px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.badge { font-size: 11px; padding: 4px 10px; border-radius: 8px; background: var(--border); color: var(--dim); font-weight: 600; }
 .badge.on { background: var(--accent2); color: #fff; }
-.me { font-size: 11px; color: var(--dim); margin-bottom: 16px; }
-.section { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 12px; transition: background 0.3s, border-color 0.3s; }
-h2 { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--dim); margin-bottom: 10px; }
-.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
-input, select, textarea { padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--inner); color: var(--text); font-size: 13px; width: 100%; font-family: inherit; outline: none; transition: border-color 0.2s, background 0.2s; }
-input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+.me { font-size: 12px; color: var(--dim); margin-bottom: 16px; font-weight: 500; }
+.section { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin-bottom: 16px; transition: background 0.3s, border-color 0.3s; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+
+/* === СТАТИСТИКА === */
+.stats-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 16px; }
+.stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; display: flex; flex-direction: column; gap: 4px; position: relative; overflow: hidden; }
+.stat-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--accent); }
+.stat-card.overdue::before { background: var(--danger); }
+.stat-card.ready::before { background: var(--accent2); }
+.stat-title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--dim); font-weight: 700; }
+.stat-value { font-size: 18px; font-weight: 800; color: var(--text); }
+.stat-sub { font-size: 11px; color: var(--mute); }
+
+h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--dim); margin-bottom: 12px; font-weight: 700; }
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+input, select, textarea { padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border); background: var(--inner); color: var(--text); font-size: 13px; font-weight: 500; width: 100%; font-family: inherit; outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
+input:focus, select:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(168,85,247,0.15); }
 textarea { resize: vertical; min-height: 60px; }
-button { padding: 10px 16px; border: none; border-radius: 8px; background: var(--accent2); color: #fff; font-weight: 700; font-size: 13px; cursor: pointer; transition: opacity .2s, transform .1s; white-space: nowrap; }
+
+button { padding: 10px 16px; border: none; border-radius: 10px; background: var(--accent2); color: #fff; font-weight: 700; font-size: 13px; font-family: inherit; cursor: pointer; transition: opacity .2s, transform .1s; white-space: nowrap; }
 button:hover { opacity: .85; }
-button:active { transform: scale(0.98); }
+button:active { transform: scale(0.97); }
 button:disabled { opacity: .5; cursor: not-allowed; }
 button.ghost { background: transparent; border: 1px solid var(--border); color: var(--text); }
 button.danger { background: var(--danger); }
 button.warn { background: var(--warn); color: #000; }
-button.small { padding: 6px 10px; font-size: 11px; }
-.tabs { display: flex; gap: 4px; margin-bottom: 12px; flex-wrap: wrap; }
-.tabs button { flex: 1 1 100px; padding: 9px; background: var(--card); border: 1px solid var(--border); color: var(--dim); border-radius: 8px; font-weight: 700; font-size: 12px; }
+button.small { padding: 7px 12px; font-size: 11px; border-radius: 8px; }
+
+.tabs { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+.tabs button { flex: 1 1 100px; padding: 10px; background: var(--card); border: 1px solid var(--border); color: var(--dim); border-radius: 10px; font-weight: 700; font-size: 13px; }
 .tabs button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-.search-wrap { display: flex; align-items: center; gap: 8px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; margin-bottom: 12px; transition: border-color 0.2s; }
+.search-wrap { display: flex; align-items: center; gap: 8px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px; margin-bottom: 16px; transition: border-color 0.2s; }
 .search-wrap:focus-within { border-color: var(--accent); }
-.search-wrap input { border: none; background: transparent; padding: 4px 0; font-size: 14px; }
-.search-wrap input:focus { border: none; }
+.search-wrap input { border: none; background: transparent; padding: 0; font-size: 14px; box-shadow: none; }
+.search-wrap input:focus { border: none; box-shadow: none; }
 
 /* === СХЕМА ЗУБОВ === */
 .teeth-wrapper { margin-top: 16px; }
 .teeth-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-.teeth-title { font-size: 12px; font-weight: bold; color: var(--dim); }
-.teeth-label { font-size: 13px; color: var(--dim); display: flex; align-items: center; gap: 8px; }
-.teeth-label b { color: var(--accent2); font-family: monospace; font-size: 15px; }
+.teeth-title { font-size: 13px; font-weight: 700; color: var(--dim); }
+.teeth-label { font-size: 13px; color: var(--dim); display: flex; align-items: center; gap: 8px; font-weight: 500; }
+.teeth-label b { color: var(--accent2); font-family: monospace; font-size: 16px; font-weight: 800; }
 .teeth-chart { display: flex; flex-direction: column; align-items: center; background: var(--chart-bg); padding: 30px 10px; border-radius: 16px; border: 1px solid var(--border); box-shadow: var(--chart-shadow); position: relative; transition: background 0.3s, box-shadow 0.3s; }
 .jaw { display: flex; justify-content: center; position: relative; }
 .jaw.upper { align-items: flex-end; margin-bottom: 15px; }
 .jaw.lower { align-items: flex-start; margin-top: 15px; }
 .quadrant { display: flex; gap: 4px; }
-.midline { width: 2px; height: 40px; background: var(--border); margin: 0 10px; align-self: center; opacity: 0.5; box-shadow: 0 0 8px rgba(255,255,255,0.1); }
+.midline { width: 2px; height: 40px; background: var(--border); margin: 0 10px; align-self: center; opacity: 0.5; }
 .tooth-btn { width: 34px; height: 48px; background: var(--tooth-bg); border: 1px solid var(--border); border-radius: 16px 16px 6px 6px; color: var(--dim); font-size: 12px; font-weight: 800; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 8px; cursor: pointer; user-select: none; z-index: 1; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
 .jaw.lower .tooth-btn { border-radius: 6px 6px 16px 16px; align-items: flex-start; padding-top: 8px; padding-bottom: 0; }
-.tooth-btn:hover { z-index: 10; border-color: var(--accent); color: var(--text); box-shadow: 0 0 12px var(--accent); }
+.tooth-btn:hover { z-index: 10; border-color: var(--accent); color: var(--text); box-shadow: 0 0 12px var(--accent); transform: translateY(-2px); }
 .tooth-btn.selected { background: linear-gradient(180deg, var(--accent2) 0%, var(--accent) 100%); border-color: var(--text); color: #fff; z-index: 5; box-shadow: 0 0 15px var(--accent2); }
 .jaw.lower .tooth-btn.selected { background: linear-gradient(0deg, var(--accent2) 0%, var(--accent) 100%); }
 .jaw.upper .tooth-btn { transform-origin: bottom center; }
 .jaw.lower .tooth-btn { transform-origin: top center; }
+
 [data-n="18"] { transform: translateY(-22px) rotate(-38deg); }
 [data-n="17"] { transform: translateY(-14px) rotate(-28deg); }
 [data-n="16"] { transform: translateY(-7px) rotate(-18deg); }
@@ -126,62 +150,99 @@ button.small { padding: 6px 10px; font-size: 11px; }
 [data-n="37"] { transform: translateY(14px) rotate(-28deg); }
 [data-n="38"] { transform: translateY(22px) rotate(-38deg); }
 
-.card { background: var(--card); border: 1px solid var(--border); border-left: 4px solid var(--mute); border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; transition: background 0.3s, border-color 0.3s; }
+/* === КАРТОЧКИ === */
+.card { background: var(--card); border: 1px solid var(--border); border-left: 4px solid var(--mute); border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s; position: relative; }
+.card:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(0,0,0,0.2); z-index: 2; }
 .card.status-received { border-left-color: var(--info); }
 .card.status-modeling { border-left-color: var(--accent); }
 .card.status-production { border-left-color: var(--warn); }
 .card.status-finishing { border-left-color: #f97316; }
 .card.status-tryin { border-left-color: #eab308; }
 .card.status-ready { border-left-color: var(--accent2); }
-.card.status-delivered { border-left-color: var(--mute); opacity: .65; }
+.card.status-delivered { border-left-color: var(--mute); opacity: .7; }
 .card.status-cancelled { border-left-color: var(--danger); opacity: .6; }
 .card.overdue { box-shadow: 0 0 0 2px var(--danger); }
-.card-header { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
-.card-header b { font-size: 16px; }
-.card-header .order-num { font-family: monospace; color: var(--accent2); cursor: pointer; }
-.card-row { font-size: 12px; margin-bottom: 3px; line-height: 1.4; }
+.card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+.card-header b { font-size: 16px; font-weight: 700; line-height: 1.2; }
+.card-header .order-num { font-family: monospace; color: var(--accent2); cursor: pointer; font-weight: 600; font-size: 12px; background: var(--inner); padding: 2px 6px; border-radius: 4px; display: inline-block; margin-top: 4px; }
+.card-row { font-size: 12px; margin-bottom: 4px; line-height: 1.5; display: flex; align-items: center; gap: 6px; }
 .card-row.small { font-size: 11px; color: var(--dim); }
-.card-row b { color: var(--text); }
-.deadline { font-family: monospace; font-size: 13px; font-weight: 700; padding: 4px 10px; border-radius: 6px; background: var(--inner); border: 1px solid var(--border); }
+.card-row b { color: var(--text); font-weight: 600; }
+.deadline { font-family: monospace; font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 8px; background: var(--inner); border: 1px solid var(--border); white-space: nowrap; }
 .deadline.ok { color: var(--accent2); }
 .deadline.soon { color: var(--warn); }
 .deadline.urgent { color: #f97316; }
-.deadline.overdue { color: var(--danger); border-color: var(--danger); }
-.progress { height: 6px; background: var(--inner); border-radius: 3px; overflow: hidden; margin: 6px 0; }
-.progress > div { height: 100%; background: var(--accent2); transition: width .3s; }
-.actions { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 8px; }
-.empty { text-align: center; color: var(--mute); padding: 30px; font-size: 13px; }
-.toast { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); background: var(--accent2); color: #fff; padding: 10px 18px; border-radius: 10px; font-weight: 700; font-size: 13px; z-index: 9999; box-shadow: 0 6px 24px rgba(0,0,0,.5); max-width: 90%; text-align: center; animation: toastIn .2s ease; }
+.deadline.overdue { color: var(--danger); border-color: var(--danger); background: rgba(239, 68, 68, 0.1); }
+.progress { height: 6px; background: var(--inner); border-radius: 4px; overflow: hidden; margin: 10px 0; }
+.progress > div { height: 100%; background: linear-gradient(90deg, var(--accent2), var(--accent)); transition: width .3s; border-radius: 4px; }
+.actions { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; border-top: 1px solid var(--border); padding-top: 12px; }
+.empty { text-align: center; color: var(--mute); padding: 40px 20px; font-size: 14px; font-weight: 500; }
+
+/* === КАЛЕНДАРЬ === */
+.calendar-container { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 20px; margin-bottom: 16px; }
+.cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.cal-title { font-size: 18px; font-weight: 800; color: var(--accent); text-transform: capitalize; }
+.cal-controls { display: flex; gap: 8px; align-items: center; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-bottom: 20px; }
+.cal-dow { text-align: center; font-size: 12px; font-weight: 700; color: var(--dim); padding: 8px 0; border-bottom: 1px solid var(--border); }
+.cal-day { aspect-ratio: 1.2; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding-top: 8px; border-radius: 10px; cursor: pointer; background: var(--inner); border: 1px solid transparent; transition: all 0.2s; position: relative; font-weight: 600; font-size: 14px; }
+.cal-day:hover { border-color: var(--accent); background: var(--card); }
+.cal-day.other-month { opacity: 0.3; cursor: default; background: transparent; }
+.cal-day.today { border-color: var(--accent2); color: var(--accent2); }
+.cal-day.selected { background: var(--accent); color: #fff; border-color: var(--accent); box-shadow: 0 4px 15px rgba(168,85,247,0.4); }
+.cal-day.selected .cal-dot { background: #fff; }
+.cal-dots-container { display: flex; gap: 3px; margin-top: 4px; }
+.cal-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent2); }
+.cal-dot.overdue { background: var(--danger); }
+
+.cal-notes-section { margin-bottom: 20px; }
+.cal-notes-section textarea { min-height: 80px; background: var(--inner); border-color: var(--border); }
+.cal-notes-section textarea:focus { border-color: var(--accent); }
+
+.cal-orders-list { border-top: 1px solid var(--border); padding-top: 16px; }
+.cal-orders-list h4 { font-size: 14px; color: var(--dim); margin-bottom: 12px; }
+
+/* Уведомления */
+.toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--accent2); color: #fff; padding: 12px 20px; border-radius: 12px; font-weight: 700; font-size: 13px; z-index: 9999; box-shadow: 0 8px 30px rgba(0,0,0,.5); max-width: 90%; text-align: center; animation: toastIn .3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 .toast.err { background: var(--danger); }
 .toast.warn { background: var(--warn); color: #000; }
-@keyframes toastIn { from { transform: translateX(-50%) translateY(-10px); opacity: 0; } to { transform: translateX(-50%) translateY(0); opacity: 1; } }
-.overlay { position: fixed; inset: 0; background: rgba(0,0,0,.85); display: flex; align-items: center; justify-content: center; z-index: 10000; padding: 20px; }
-.modal { background: var(--card); border: 1px solid var(--accent); border-radius: 14px; padding: 22px; max-width: 440px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-.modal h3 { font-size: 16px; color: var(--accent); margin-bottom: 12px; text-align: center; }
-.modal p { font-size: 12px; color: var(--dim); margin-bottom: 12px; text-align: center; }
-.pin-row { display: flex; gap: 6px; margin-top: 8px; }
-.pin-row input { flex: 1; text-align: center; font-family: monospace; font-size: 20px; letter-spacing: 6px; -webkit-text-security: disc; }
-.pin-error { color: var(--danger); font-size: 12px; text-align: center; min-height: 16px; margin-top: 6px; }
-.date-group { margin-bottom: 10px; }
-.date-summary { padding: 12px 16px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; cursor: pointer; font-size: 13px; font-weight: 700; color: var(--accent); display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; user-select: none; }
+@keyframes toastIn { from { transform: translateX(-50%) translateY(-20px) scale(0.9); opacity: 0; } to { transform: translateX(-50%) translateY(0) scale(1); opacity: 1; } }
+
+/* Модальные окна */
+.overlay { position: fixed; inset: 0; background: rgba(0,0,0,.7); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 10000; padding: 20px; animation: fadeIn 0.2s ease; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.modal { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; max-width: 500px; width: 100%; box-shadow: 0 20px 50px rgba(0,0,0,0.5); max-height: 90vh; overflow-y: auto; animation: slideUp 0.3s ease; }
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.modal h3 { font-size: 18px; color: var(--accent); margin-bottom: 16px; text-align: center; font-weight: 800; }
+.modal p { font-size: 13px; color: var(--dim); margin-bottom: 16px; text-align: center; }
+.pin-row { display: flex; gap: 8px; margin-top: 10px; }
+.pin-row input { flex: 1; text-align: center; font-family: monospace; font-size: 22px; letter-spacing: 8px; -webkit-text-security: disc; }
+.pin-error { color: var(--danger); font-size: 12px; text-align: center; min-height: 18px; margin-top: 8px; font-weight: 600; }
+
+.date-group { margin-bottom: 12px; }
+.date-summary { padding: 14px 18px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; cursor: pointer; font-size: 14px; font-weight: 700; color: var(--accent); display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; user-select: none; transition: background 0.2s; }
+.date-summary:hover { background: var(--inner); }
 .date-summary::-webkit-details-marker { display: none; }
-details[open] > .date-summary { margin-bottom: 8px; }
-.date-content { padding-left: 12px; border-left: 2px solid var(--border); }
+details[open] > .date-summary { margin-bottom: 10px; border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+.date-content { padding-left: 14px; border-left: 2px solid var(--border); margin-left: 10px; }
 
 /* Оверлей импорта */
 .import-progress-bar { height: 16px; background: var(--inner); border-radius: 8px; overflow: hidden; margin: 15px 0; border: 1px solid var(--border); }
-.import-progress-bar > div { height: 100%; background: var(--accent2); transition: width .3s; width: 0%; }
+.import-progress-bar > div { height: 100%; background: linear-gradient(90deg, var(--accent2), var(--accent)); transition: width .3s; width: 0%; }
 
 @media (max-width: 768px) { 
-  body { padding: 10px; } 
+  body { padding: 12px; } 
   .form-grid { grid-template-columns: 1fr 1fr; } 
-  .card-header b { font-size: 14px; }
-  .teeth-chart { display: flex; flex-direction: column; padding: 12px; border-radius: 8px; background: var(--inner); border: 1px solid var(--border); gap: 8px; }
+  .card-header b { font-size: 15px; }
+  .teeth-chart { display: flex; flex-direction: column; padding: 12px; border-radius: 12px; background: var(--inner); border: 1px solid var(--border); gap: 8px; }
   .jaw { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; width: 100%; margin: 0 !important; }
   .quadrant { display: contents; } 
   .midline { display: none; } 
-  .tooth-btn, .jaw.lower .tooth-btn { width: 100%; height: auto; aspect-ratio: 1 / 1; padding: 0; margin: 0; transform: none !important; border-radius: 4px; font-size: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center; background: transparent; border: 1px solid transparent; color: var(--text); box-shadow: none; }
+  .tooth-btn, .jaw.lower .tooth-btn { width: 100%; height: auto; aspect-ratio: 1 / 1; padding: 0; margin: 0; transform: none !important; border-radius: 6px; font-size: 14px; font-weight: 700; display: flex; align-items: center; justify-content: center; background: transparent; border: 1px solid transparent; color: var(--text); box-shadow: none; }
   .tooth-btn.selected, .jaw.lower .tooth-btn.selected { background: var(--accent2); color: #fff; border-color: var(--accent2); box-shadow: 0 0 10px var(--accent2); }
+  
+  .cal-grid { gap: 2px; }
+  .cal-day { aspect-ratio: 1; font-size: 12px; padding-top: 4px; }
 }
 </style>
 </head>
@@ -189,8 +250,8 @@ details[open] > .date-summary { margin-bottom: 8px; }
 <h1>
   🦷 Лаборатория Евгения Мешкова 
   <span id="connBadge" class="badge">⏳</span> 
-  <span class="badge" style="background:var(--accent); color:#fff;">v2.8</span>
-  <select id="themeSelect" onchange="changeTheme(this.value)" style="width: auto; margin-left: auto; background: var(--card); border-color: var(--border); color: var(--text); padding: 6px 12px; font-size: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; outline: none;">
+  <span class="badge" style="background:var(--accent); color:#fff;">v3.1</span>
+  <select id="themeSelect" onchange="changeTheme(this.value)" style="width: auto; margin-left: auto; background: var(--card); border-color: var(--border); color: var(--text); padding: 8px 14px; font-size: 12px; border-radius: 10px; cursor: pointer; font-weight: 700; outline: none; font-family: inherit; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
     <option value="dark">🌑 Тёмная (Неон)</option>
     <option value="light">☀️ Светлая (Клиника)</option>
     <option value="cyber">👾 Киберпанк</option>
@@ -199,6 +260,25 @@ details[open] > .date-summary { margin-bottom: 8px; }
   </select>
 </h1>
 <div class="me" id="meInfo">Загрузка…</div>
+
+<!-- БЛОК СТАТИСТИКИ -->
+<div class="stats-bar" id="statsBar">
+  <div class="stat-card">
+    <div class="stat-title">🔥 В работе</div>
+    <div class="stat-value" id="statActiveCount">0</div>
+    <div class="stat-sub" id="statActiveSum">0 ₽</div>
+  </div>
+  <div class="stat-card overdue">
+    <div class="stat-title">⚠️ Просрочено</div>
+    <div class="stat-value" id="statOverdueCount">0</div>
+    <div class="stat-sub" id="statOverdueSum">0 ₽</div>
+  </div>
+  <div class="stat-card ready">
+    <div class="stat-title">✅ Готово к выдаче</div>
+    <div class="stat-value" id="statReadyCount">0</div>
+    <div class="stat-sub" id="statReadySum">0 ₽</div>
+  </div>
+</div>
 
 <div style="margin-bottom: 12px; display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap;">
   <button class="danger" onclick="clearDB()">🧹 Очистить базу</button>
@@ -246,7 +326,7 @@ details[open] > .date-summary { margin-bottom: 8px; }
   <div class="actions" style="margin-top: 16px;"><button onclick="addOrder()">💾 Сохранить наряд</button></div>
 </div>
 
-<div class="search-wrap">
+<div class="search-wrap" id="searchWrap">
   <span>🔍</span>
   <input id="searchInput" placeholder="Поиск по пациенту, клинике, номеру…" oninput="window.render()" />
   <button class="ghost small" onclick="document.getElementById('searchInput').value='';window.render();" style="display:none;" id="searchClearBtn">×</button>
@@ -255,26 +335,97 @@ details[open] > .date-summary { margin-bottom: 8px; }
 <div class="tabs" id="tabs">
   <button data-tab="active" class="active" onclick="setTab('active')">🔥 В работе</button>
   <button data-tab="ready" onclick="setTab('ready')">✅ Готово</button>
+  <button data-tab="calendar" onclick="setTab('calendar')">📅 Календарь</button>
   <button data-tab="archive" onclick="setTab('archive')">📦 Архив</button>
 </div>
 
+<!-- КАЛЕНДАРЬ VIEW -->
+<div id="calendarView" style="display:none;">
+  <div class="calendar-container">
+    <div class="cal-header">
+      <div class="cal-title" id="calMonthTitle">Месяц</div>
+      <div class="cal-controls">
+        <button class="ghost small" onclick="changeMonth(-1)">←</button>
+        <button class="ghost small" onclick="goToday()">Сегодня</button>
+        <button class="ghost small" onclick="changeMonth(1)">→</button>
+      </div>
+    </div>
+    <div class="cal-grid" id="calGrid">
+      <!-- Генерируется в JS -->
+    </div>
+    
+    <div class="cal-notes-section">
+      <h4 style="font-size: 14px; margin-bottom: 8px; color: var(--dim);">📝 Заметки на <span id="calSelectedDateLabel"></span>:</h4>
+      <textarea id="calNotes" placeholder="Напишите что-нибудь важное на этот день..." oninput="saveNotes()"></textarea>
+    </div>
+
+    <div class="cal-orders-list">
+      <h4>Наряды на этот день:</h4>
+      <div id="calOrdersContainer"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ОСНОВНОЙ СПИСОК -->
 <div id="content" class="empty">Загрузка…</div>
 <button id="loadMoreBtn" class="ghost" style="display:none; width:100%; margin-top:10px;" onclick="loadMore()">Показать еще 100</button>
 
-<!-- Оверлей прогресса импорта -->
+<!-- Оверлей импорта -->
 <div id="importOverlay" class="overlay" style="display:none;">
   <div class="modal" style="text-align:center;">
     <h3>⏳ Загрузка базы</h3>
-    <div style="font-size: 24px; font-weight: bold; margin: 15px 0; color: var(--accent2);" id="importProgressText">0 / 0</div>
+    <div style="font-size: 28px; font-weight: 800; margin: 15px 0; color: var(--accent2);" id="importProgressText">0 / 0</div>
     <div class="import-progress-bar"><div id="importProgressBar"></div></div>
     <p id="importStatusText" style="font-size: 14px; margin-top: 10px;">Пожалуйста, не закрывайте вкладку...</p>
     <div style="margin-top: 15px; font-size: 11px; color: var(--mute);">Обычно это занимает 1-2 минуты</div>
   </div>
 </div>
 
+<!-- Оверлей редактирования -->
+<div id="editOverlay" class="overlay" style="display:none;">
+  <div class="modal">
+    <h3>✏️ Редактировать наряд</h3>
+    <div class="form-grid">
+      <input id="eOrderNum" placeholder="№ наряда" />
+      <input id="ePatient" placeholder="ФИО пациента" />
+      <input id="eClinic" placeholder="Клиника / врач" />
+      <select id="eStatus">
+        <option value="received">📥 Получен</option>
+        <option value="modeling">📐 Моделировка</option>
+        <option value="production">🔨 Литьё/фрезеровка</option>
+        <option value="finishing">🎨 Керамика</option>
+        <option value="tryin">👁 Примерка</option>
+        <option value="ready">✅ Готово</option>
+        <option value="delivered">📦 Выдано</option>
+        <option value="cancelled">❌ Отменён</option>
+      </select>
+      <input id="ePrice" type="number" placeholder="Стоимость ₽" />
+      <input id="eDeadline" type="text" placeholder="Срок сдачи" readonly style="cursor: pointer;" />
+      <input id="eNotes" placeholder="Примечания" style="grid-column: 1 / -1;" />
+    </div>
+    <div class="actions" style="justify-content: space-between; margin-top: 20px;">
+      <button class="ghost" onclick="document.getElementById('editOverlay').style.display='none'">Отмена</button>
+      <button onclick="saveEdit()">💾 Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<!-- Оверлей оплаты -->
+<div id="payOverlay" class="overlay" style="display:none;">
+  <div class="modal" style="max-width: 320px;">
+    <h3>💰 Добавить оплату</h3>
+    <p id="payOrderInfo" style="margin-bottom: 15px;"></p>
+    <input id="payAmount" type="number" placeholder="Сумма ₽" style="font-size: 18px; text-align: center; margin-bottom: 15px;" />
+    <div class="actions" style="justify-content: space-between;">
+      <button class="ghost" onclick="document.getElementById('payOverlay').style.display='none'">Отмена</button>
+      <button onclick="savePayment()">✅ Внести</button>
+    </div>
+  </div>
+</div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy, serverTimestamp, writeBatch, getDocs } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy, serverTimestamp, writeBatch, getDocs, arrayUnion } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -295,6 +446,7 @@ const PIN_KEY = 'dtlab_pin_hash';
 const THEME_KEY = 'dtlab_theme';
 let orders = [], currentTab = 'active', searchQuery = '';
 let visibleCount = 100;
+let currentEditId = null, currentPayId = null;
 window.showFullArchive = false;
 
 // --- СМЕНА ТЕМ ---
@@ -349,7 +501,173 @@ function updateTeethLabel() {
   }
 }
 
-// --- ФУНКЦИЯ ОЧИСТКИ БАЗЫ ---
+// --- КАЛЕНДАРЬ ---
+let calCurrentDate = new Date();
+let calSelectedDate = getLocalDateStr(new Date());
+
+function getLocalDateStr(date) {
+    const offset = date.getTimezoneOffset() * 60000;
+    return new Date(date.getTime() - offset).toISOString().split('T')[0];
+}
+
+window.changeMonth = function(offset) {
+    calCurrentDate.setMonth(calCurrentDate.getMonth() + offset);
+    renderCalendar();
+};
+
+window.goToday = function() {
+    calCurrentDate = new Date();
+    calSelectedDate = getLocalDateStr(new Date());
+    renderCalendar();
+};
+
+function renderCalendar() {
+    const year = calCurrentDate.getFullYear();
+    const month = calCurrentDate.getMonth();
+    
+    const monthNames = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
+    document.getElementById('calMonthTitle').textContent = `${monthNames[month]} ${year}`;
+
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    
+    let startDayOfWeek = firstDay.getDay() - 1;
+    if (startDayOfWeek === -1) startDayOfWeek = 6; // Воскресенье -> 6
+
+    const daysInMonth = lastDay.getDate();
+    const todayStr = getLocalDateStr(new Date());
+
+    let html = '';
+    const dows = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
+    dows.forEach(d => html += `<div class="cal-dow">${d}</div>`);
+
+    for (let i = 0; i < startDayOfWeek; i++) {
+        html += `<div class="cal-day other-month"></div>`;
+    }
+
+    for (let d = 1; d <= daysInMonth; d++) {
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+        
+        let dotsHtml = '<div class="cal-dots-container">';
+        let hasOrders = false;
+        orders.forEach(o => {
+            if (o.deadline === dateStr && o.status !== 'delivered' && o.status !== 'cancelled') {
+                hasOrders = true;
+                const isOverdue = new Date(dateStr + 'T23:59:59') < new Date();
+                dotsHtml += `<div class="cal-dot ${isOverdue ? 'overdue' : ''}"></div>`;
+            }
+        });
+        dotsHtml += '</div>';
+
+        const classes = ['cal-day'];
+        if (dateStr === todayStr) classes.push('today');
+        if (dateStr === calSelectedDate) classes.push('selected');
+
+        html += `<div class="${classes.join(' ')}" onclick="selectDate('${dateStr}')">
+            <span>${d}</span>
+            ${hasOrders ? dotsHtml : ''}
+        </div>`;
+    }
+
+    document.getElementById('calGrid').innerHTML = html;
+    renderCalSidePanel();
+}
+
+window.selectDate = function(dateStr) {
+    calSelectedDate = dateStr;
+    renderCalendar();
+};
+
+function renderCalSidePanel() {
+    const parts = calSelectedDate.split('-');
+    document.getElementById('calSelectedDateLabel').textContent = `${parts[2]}.${parts[1]}.${parts[0]}`;
+    
+    // Заметки
+    const noteKey = 'dtlab_note_' + calSelectedDate;
+    document.getElementById('calNotes').value = localStorage.getItem(noteKey) || '';
+
+    // Наряды
+    const dayOrders = orders.filter(o => o.deadline === calSelectedDate);
+    const container = document.getElementById('calOrdersContainer');
+    
+    if (dayOrders.length === 0) {
+        container.innerHTML = `<div class="empty" style="padding: 20px; border: 1px dashed var(--border); border-radius: 10px;">На этот день нарядов нет</div>`;
+    } else {
+        container.innerHTML = dayOrders.map(renderCard).join('');
+    }
+}
+
+window.saveNotes = function() {
+    const noteKey = 'dtlab_note_' + calSelectedDate;
+    localStorage.setItem(noteKey, document.getElementById('calNotes').value);
+};
+
+// --- РЕДАКТИРОВАНИЕ ---
+window.openEdit = function(id) {
+  const o = orders.find(x => x.id === id); if (!o) return;
+  currentEditId = id;
+  
+  document.getElementById('eOrderNum').value = o.orderNumber || '';
+  document.getElementById('ePatient').value = o.patientName || '';
+  document.getElementById('eClinic').value = o.clinic || '';
+  document.getElementById('eStatus').value = o.status || 'received';
+  document.getElementById('ePrice').value = o.price || 0;
+  document.getElementById('eNotes').value = o.notes || '';
+  
+  if (document.getElementById('eDeadline')._flatpickr) {
+    document.getElementById('eDeadline')._flatpickr.setDate(o.deadline || '');
+  }
+
+  document.getElementById('editOverlay').style.display = 'flex';
+};
+
+window.saveEdit = async function() {
+  if (!currentEditId) return;
+  const data = {
+    orderNumber: document.getElementById('eOrderNum').value.trim() || '—',
+    patientName: document.getElementById('ePatient').value.trim(),
+    clinic: document.getElementById('eClinic').value.trim(),
+    status: document.getElementById('eStatus').value,
+    price: parseFloat(document.getElementById('ePrice').value) || 0,
+    notes: document.getElementById('eNotes').value.trim(),
+    deadline: document.getElementById('eDeadline').value || ''
+  };
+  
+  try {
+    await updateDoc(doc(db, COLLECTION, currentEditId), data);
+    document.getElementById('editOverlay').style.display = 'none';
+    showToast('✅ Наряд обновлен');
+  } catch(e) { showToast('Ошибка: ' + e.message, 'err'); }
+};
+
+// --- ОПЛАТА ---
+window.openPay = function(id) {
+  const o = orders.find(x => x.id === id); if (!o) return;
+  currentPayId = id;
+  
+  const paid = (o.payments || []).reduce((s, p) => s + (p.sum || 0), 0) + (o.prepaid || 0);
+  document.getElementById('payOrderInfo').innerHTML = `Пациент: <b>${esc(o.patientName)}</b><br>К оплате: <b>${fmtMoney(o.price - paid)}</b>`;
+  document.getElementById('payAmount').value = o.price - paid > 0 ? o.price - paid : '';
+  
+  document.getElementById('payOverlay').style.display = 'flex';
+};
+
+window.savePayment = async function() {
+  if (!currentPayId) return;
+  const amount = parseFloat(document.getElementById('payAmount').value);
+  if (isNaN(amount) || amount <= 0) { showToast('Введите сумму', 'err'); return; }
+  
+  try {
+    const oRef = doc(db, COLLECTION, currentPayId);
+    await updateDoc(oRef, {
+      payments: arrayUnion({ sum: amount, date: new Date().toISOString() })
+    });
+    document.getElementById('payOverlay').style.display = 'none';
+    showToast('✅ Оплата внесена');
+  } catch(e) { showToast('Ошибка: ' + e.message, 'err'); }
+};
+
+// --- ОЧИСТКА ---
 window.clearDB = async function() {
   if (!confirm('⚠️ ВНИМАНИЕ! Это удалит ВСЕ наряды. Точно продолжить?')) return;
   showToast('🧹 Очищаем базу... Не закрывай вкладку!', 'info');
@@ -371,14 +689,13 @@ window.clearDB = async function() {
     });
     if (count > 0) promises.push(batch.commit());
     await Promise.all(promises);
-    
     showToast('✅ База полностью очищена!');
   } catch (e) {
     showToast('Ошибка очистки: ' + e.message, 'err');
   }
 }
 
-// --- УМНЫЙ ИМПОРТ ---
+// --- ИМПОРТ ---
 window.importJSON = function(input) {
   const file = input.files[0];
   if (!file) return;
@@ -402,7 +719,6 @@ window.importJSON = function(input) {
       if (calcArr.length === 0) { showToast('❌ В файле нет нарядов.', 'err'); return; }
 
       const existingOrderNumbers = new Set(orders.map(o => String(o.orderNumber)));
-
       const overlay = document.getElementById('importOverlay');
       const progressText = document.getElementById('importProgressText');
       const progressBar = document.getElementById('importProgressBar');
@@ -521,10 +837,9 @@ window.importJSON = function(input) {
           if (count === 0) continue;
           try {
             statusText.textContent = `Отправка в базу (${successCount + count} шт.)...`;
-            
             await Promise.race([
                 batch.commit(),
-                new Promise((_, reject) => setTimeout(() => reject(new Error('Превышено время ожидания (лимит Firebase).')), 15000))
+                new Promise((_, reject) => setTimeout(() => reject(new Error('Превышено время ожидания.')), 15000))
             ]);
 
             successCount += count;
@@ -534,7 +849,6 @@ window.importJSON = function(input) {
             progressText.textContent = `${successCount + skippedCount} / ${calcArr.length}`;
             progressBar.style.width = Math.round(((successCount + skippedCount) / calcArr.length) * 100) + '%';
             statusText.textContent = `Догружено новых: ${successCount}`;
-
             await new Promise(r => setTimeout(r, 300));
             
           } catch (batchError) {
@@ -568,6 +882,7 @@ window.importJSON = function(input) {
 };
 
 flatpickr("#fDeadline", { locale: "ru", dateFormat: "Y-m-d", altInput: true, altFormat: "d.m.Y", allowInput: false, disableMobile: false });
+flatpickr("#eDeadline", { locale: "ru", dateFormat: "Y-m-d", altInput: true, altFormat: "d.m.Y", allowInput: false, disableMobile: false });
 
 async function initAuth() {
   return new Promise((resolve) => {
@@ -614,7 +929,7 @@ function showPinPrompt() {
 }
 function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
 function fmtMoney(n) { return Math.round(n || 0).toLocaleString('ru-RU') + ' ₽'; }
-function showToast(msg, type = '') { const el = document.createElement('div'); el.className = 'toast ' + type; el.textContent = msg; document.body.appendChild(el); setTimeout(() => el.remove(), 5000); }
+function showToast(msg, type = '') { const el = document.createElement('div'); el.className = 'toast ' + type; el.textContent = msg; document.body.appendChild(el); setTimeout(() => el.remove(), 4000); }
 const STATUS_LABELS = { received: '📥 Получен', modeling: '📐 Моделировка', production: '🔨 Литьё/фрезеровка', finishing: '🎨 Керамика', tryin: '👁 Примерка', ready: '✅ Готово', delivered: '📦 Выдано', cancelled: '❌ Отменён' };
 const STATUS_ORDER = ['received','modeling','production','finishing','tryin','ready','delivered'];
 
@@ -672,7 +987,38 @@ function renderCard(o) {
     const next = STATUS_ORDER[stageIdx + 1];
     if (next) nextStatusHtml = `<button class="small" onclick="setStatus('${o.id}','${next}')">→ ${STATUS_LABELS[next]}</button>`;
   }
-  return `<div class="card status-${o.status}${isOverdue ? ' overdue' : ''}"><div class="card-header"><b>${esc(o.patientName)}</b><span class="deadline ${dl.cls}">${dl.text}</span></div><div class="card-row small">№ <span class="order-num">${esc(o.orderNumber)}</span> • ${STATUS_LABELS[o.status] || o.status}${isOverdue ? ' • ⚠️ ПРОСРОЧЕН' : ''}</div>${o.clinic ? `<div class="card-row">🏥 ${esc(o.clinic)}</div>` : ''}${o.orderType ? `<div class="card-row">🦷 ${esc(o.orderType)}${o.material ? ' • ' + esc(o.material) : ''}${o.vitaColor ? ' • ' + esc(o.vitaColor) : ''}</div>` : ''}${o.teeth ? `<div class="card-row small" style="color:var(--accent2); font-weight:bold;">Зубы: ${esc(o.teeth)}</div>` : ''}${o.notes ? `<div class="card-row small">📝 ${esc(o.notes)}</div>` : ''}<div class="progress"><div style="width:${stagePct}%"></div></div><div class="card-row small">Этап: ${STATUS_LABELS[o.status] || o.status} • Оплачено: <b>${fmtMoney(paid)}</b> / ${fmtMoney(o.price)}</div><div class="actions">${nextStatusHtml}${o.status === 'ready' ? `<button class="small warn" onclick="setStatus('${o.id}','delivered')">📦 Выдать</button>` : ''}${o.status === 'delivered' ? `<button class="small ghost" onclick="setStatus('${o.id}','ready')">↩ Вернуть</button>` : ''}<button class="small ghost" onclick="printOrder('${o.id}')">🖨 Печать</button><button class="small danger" onclick="removeOrder('${o.id}')">×</button></div></div>`;
+  
+  return `<div class="card status-${o.status}${isOverdue ? ' overdue' : ''}">
+    <div class="card-header">
+      <div>
+        <b>${esc(o.patientName)}</b><br>
+        <span class="order-num">№ ${esc(o.orderNumber)}</span>
+      </div>
+      <span class="deadline ${dl.cls}">${dl.text}</span>
+    </div>
+    <div class="card-row small">${STATUS_LABELS[o.status] || o.status}${isOverdue ? ' • ⚠️ ПРОСРОЧЕН' : ''}</div>
+    ${o.clinic ? `<div class="card-row">🏥 ${esc(o.clinic)}</div>` : ''}
+    ${o.orderType ? `<div class="card-row">🦷 ${esc(o.orderType)}${o.material ? ' • ' + esc(o.material) : ''}${o.vitaColor ? ' • ' + esc(o.vitaColor) : ''}</div>` : ''}
+    ${o.teeth ? `<div class="card-row small" style="color:var(--accent2); font-weight:700;">Зубы: ${esc(o.teeth)}</div>` : ''}
+    ${o.notes ? `<div class="card-row small">📝 ${esc(o.notes)}</div>` : ''}
+    
+    <div class="progress" title="Этап работы">
+      <div style="width:${stagePct}%"></div>
+    </div>
+    
+    <div class="card-row small" style="justify-content: space-between; margin-top: 8px;">
+      <span>Этап: ${STATUS_LABELS[o.status] || o.status}</span>
+      <span>Оплачено: <b style="color:${paid >= o.price && o.price > 0 ? 'var(--accent2)' : 'var(--text)'}">${fmtMoney(paid)}</b> / ${fmtMoney(o.price)}</span>
+    </div>
+
+    <div class="actions">
+      ${nextStatusHtml}
+      ${o.status !== 'delivered' && o.status !== 'cancelled' ? `<button class="small warn" onclick="openPay('${o.id}')">💰 + Оплата</button>` : ''}
+      <button class="small ghost" onclick="openEdit('${o.id}')">✏️ Изменить</button>
+      <button class="small ghost" onclick="printOrder('${o.id}')">🖨 Печать</button>
+      <button class="small danger" onclick="removeOrder('${o.id}')" style="margin-left:auto;">×</button>
+    </div>
+  </div>`;
 }
 
 window.loadMore = function() {
@@ -681,10 +1027,56 @@ window.loadMore = function() {
 }
 
 function render() {
-  const content = document.getElementById('content'), q = (document.getElementById('searchInput').value || '').trim().toLowerCase();
+  const content = document.getElementById('content');
+  const calendarView = document.getElementById('calendarView');
+  const searchWrap = document.getElementById('searchWrap');
+  
+  const q = (document.getElementById('searchInput').value || '').trim().toLowerCase();
   document.getElementById('searchClearBtn').style.display = q ? 'block' : 'none';
   document.getElementById('loadMoreBtn').style.display = 'none';
   
+  // СБОР СТАТИСТИКИ
+  let activeCount = 0, activeSum = 0;
+  let overdueCount = 0, overdueSum = 0;
+  let readyCount = 0, readySum = 0;
+
+  orders.forEach(o => {
+    const isOverdue = o.deadline && new Date(o.deadline + 'T23:59:59') < new Date() && o.status !== 'delivered' && o.status !== 'cancelled';
+
+    if (!['delivered','cancelled'].includes(o.status)) {
+      activeCount++;
+      activeSum += (o.price || 0);
+    }
+    if (isOverdue) {
+      overdueCount++;
+      overdueSum += (o.price || 0);
+    }
+    if (o.status === 'ready') {
+      readyCount++;
+      readySum += (o.price || 0);
+    }
+  });
+
+  document.getElementById('statActiveCount').textContent = activeCount;
+  document.getElementById('statActiveSum').textContent = fmtMoney(activeSum);
+  document.getElementById('statOverdueCount').textContent = overdueCount;
+  document.getElementById('statOverdueSum').textContent = fmtMoney(overdueSum);
+  document.getElementById('statReadyCount').textContent = readyCount;
+  document.getElementById('statReadySum').textContent = fmtMoney(readySum);
+
+  if (currentTab === 'calendar') {
+      content.style.display = 'none';
+      searchWrap.style.display = 'none';
+      document.getElementById('loadMoreBtn').style.display = 'none';
+      calendarView.style.display = 'block';
+      renderCalendar();
+      return;
+  } else {
+      content.style.display = 'block';
+      searchWrap.style.display = 'flex';
+      calendarView.style.display = 'none';
+  }
+
   let baseList = orders.filter(o => {
     if (currentTab === 'active') return !['delivered','cancelled'].includes(o.status);
     if (currentTab === 'ready') return o.status === 'ready';
@@ -770,7 +1162,7 @@ function subscribe() {
   });
 }
 (async function init() {
-  loadTheme(); // Загружаем выбранную тему
+  loadTheme();
   initTeethChart();
   await initAuth(); 
   await checkPin(); 
@@ -779,7 +1171,7 @@ function subscribe() {
   subscribe(); 
   setInterval(render, 60000);
 })();
-Object.assign(window, { addOrder, setStatus, removeOrder, printOrder, setTab, render, toggleTooth, clearTeeth, importJSON, clearDB, loadMore, changeTheme });
+Object.assign(window, { addOrder, setStatus, removeOrder, printOrder, setTab, render, toggleTooth, clearTeeth, importJSON, clearDB, loadMore, changeTheme, openEdit, saveEdit, openPay, savePayment, changeMonth, goToday, selectDate, saveNotes });
 </script>
 </body>
 </html>

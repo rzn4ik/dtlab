@@ -233,7 +233,7 @@ button.small { padding: 7px 12px; font-size: 11px; border-radius: 8px; }
 .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.7); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 10000; padding: 20px; animation: fadeIn 0.2s ease; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 .modal { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; max-width: 500px; width: 100%; box-shadow: 0 20px 50px rgba(0,0,0,0.5); max-height: 90vh; overflow-y: auto; animation: slideUp 0.3s ease; }
-@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
 .modal h3 { font-size: 18px; color: var(--accent); margin-bottom: 16px; text-align: center; font-weight: 800; }
 .modal p { font-size: 13px; color: var(--dim); margin-bottom: 16px; text-align: center; }
 .pin-row { display: flex; gap: 8px; margin-top: 10px; }
@@ -274,7 +274,7 @@ details[open] > .date-summary { margin-bottom: 10px; border-bottom-left-radius: 
   <img src="logo.png" alt="ME Logo" class="site-logo" onerror="this.style.display='none'">
   Лаборатория Евгения Мешкова 
   <span id="connBadge" class="badge">⏳</span> 
-  <span class="badge" style="background:var(--accent); color:#fff;">v3.5</span>
+  <span class="badge" style="background:var(--accent); color:#fff;">v3.6</span>
   
   <div style="margin-left: auto; display: flex; gap: 8px; align-items: center;">
     <select id="themeSelect" onchange="changeTheme(this.value)" style="width: auto; background: var(--card); border-color: var(--border); color: var(--text); padding: 8px 14px; font-size: 12px; border-radius: 10px; cursor: pointer; font-weight: 700; outline: none; font-family: inherit; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
@@ -535,6 +535,37 @@ let orders = [], currentTab = 'active', searchQuery = '';
 let visibleCount = 100;
 let currentEditId = null, currentPayId = null;
 window.showFullArchive = false;
+
+// --- ПАРСИНГ ЛЮБЫХ ДАТ ---
+function parseAnyDate(val) {
+  if (!val) return null;
+  // Если это уже объект Date
+  if (val instanceof Date) return isNaN(val.getTime()) ? null : val;
+  // Если это Timestamp из Firebase
+  if (val.seconds) return new Date(val.seconds * 1000);
+  
+  const str = String(val).trim();
+  
+  // Если число (Unix timestamp в мс или сек)
+  if (!isNaN(Number(str))) {
+    let num = Number(str);
+    if (num < 10000000000) num *= 1000; // Если в секундах, переводим в мс
+    return new Date(num);
+  }
+  
+  // Пробуем распарсить как строку (ISO, 12.05.2023 и т.д.)
+  const d = new Date(str);
+  if (!isNaN(d.getTime())) return d;
+
+  // Если формат DD.MM.YYYY
+  const parts = str.split('.');
+  if (parts.length === 3) {
+    const d2 = new Date(Number(parts[2]), Number(parts[1]) - 1, Number(parts[0]));
+    if (!isNaN(d2.getTime())) return d2;
+  }
+  
+  return null;
+}
 
 // --- ЭКСПОРТ БАЗЫ ---
 window.exportJSON = function() {
@@ -924,11 +955,8 @@ window.importJSON = function(input) {
                 continue;
             }
             const newRef = doc(collection(db, COLLECTION));
-            // Убираем id, чтобы Firestore создал новый
             const { id, ...cleanData } = calc;
-            // Восстанавливаем createdAt если это Timestamp
-            let cDate = new Date();
-            if (calc.createdAt && calc.createdAt.seconds) cDate = new Date(calc.createdAt.seconds * 1000);
+            let cDate = parseAnyDate(calc.createdAt) || new Date();
             batch.set(newRef, { ...cleanData, createdAt: cDate });
             count++;
         } 
@@ -982,26 +1010,15 @@ window.importJSON = function(input) {
                     clinicStr = doctorData.fio || doctorData.fullName || detailData.doctorName || '';
                 }
 
-                // ВЫТАСКИВАЕМ РЕАЛЬНУЮ ДАТУ СОЗДАНИЯ
-                let dateObj = new Date();
-                let dateStr = '';
-                if (calc.calcDate || detailData.date_updated || detailData.date_created) {
-                    try {
-                        const d = new Date(Number(calc.calcDate || detailData.date_updated || detailData.date_created));
-                        if (!isNaN(d.getTime())) {
-                            dateObj = d;
-                            dateStr = d.toISOString().split('T')[0];
-                        }
-                    } catch(e) {}
-                }
+                // ПАРСИНГ ДАТЫ СОЗДАНИЯ
+                let dateObj = parseAnyDate(calc.calcDate || detailData.date_updated || detailData.date_created) || new Date();
 
-                // ВЫТАСКИВАЕМ РЕАЛЬНЫЙ ДЕДЛАЙН (если есть)
+                // ПАРСИНГ ДЕДЛАЙНА
                 let deadlineStr = '';
-                if (detailData.date_end || calc.dateEnd || calc.deadline) {
-                    try {
-                        const d = new Date(Number(detailData.date_end || calc.dateEnd || calc.deadline));
-                        if (!isNaN(d.getTime())) deadlineStr = d.toISOString().split('T')[0];
-                    } catch(e) {}
+                const deadlineRaw = detailData.date_end || calc.dateEnd || calc.deadline || detailData.date_end_plan;
+                if (deadlineRaw) {
+                    const dlDate = parseAnyDate(deadlineRaw);
+                    if (dlDate) deadlineStr = dlDate.toISOString().split('T')[0];
                 }
 
                 const pName = detailData.patientSoname || detailData.patientName || detailData.patientFio || detailData.fio || 'Пациент (импорт)';
@@ -1016,10 +1033,10 @@ window.importJSON = function(input) {
                   teeth: teethStr || '',
                   price: parseFloat(calc.money || detailData.endPrice) || 0,
                   prepaid: parseFloat(detailData.payedMoney) || 0,
-                  deadline: deadlineStr || '', // ТЕПЕРЬ ТУТ РЕАЛЬНЫЙ ДЕДЛАЙН, А НЕ ДАТА СОЗДАНИЯ
+                  deadline: deadlineStr || '', 
                   notes: detailData.informationOrder || '',
                   status: 'delivered', 
-                  createdAt: dateObj, // ИСПОЛЬЗУЕМ РЕАЛЬНУЮ ДАТУ СОЗДАНИЯ
+                  createdAt: dateObj, 
                   payments: []
                 };
 

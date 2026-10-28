@@ -332,61 +332,64 @@ window.importJSON = function(input) {
 
       for (let i = 0; i < calcArr.length; i++) {
         const calc = calcArr[i];
-        const doc = doctorsMap[calc.doctorId || calc.doctor] || {};
-        const det = detailsMap[calc.detailId || calc._id] || {};
+        
+        // ИСПРАВЛЕНИЕ: Переименовали локальные переменные doc и det, чтобы не перекрывать функцию doc() из Firebase
+        const doctorData = doctorsMap[calc.doctorId || calc.doctor] || {};
+        const detailData = detailsMap[calc.detailId || calc._id] || {};
 
         let teethStr = '';
-        if (det.teeth) {
+        if (detailData.teeth) {
             try {
-                const teethData = JSON.parse(det.teeth);
+                const teethData = JSON.parse(detailData.teeth);
                 if (teethData.teeth && Array.isArray(teethData.teeth)) teethStr = teethData.teeth.map(t => t.tooth).join(', ');
-            } catch(e) { teethStr = String(det.teeth).replace(/\[|\]|\"|\'/g, ''); }
+            } catch(e) { teethStr = String(detailData.teeth).replace(/\[|\]|\"|\'/g, ''); }
         }
 
         let orderTypeStr = '';
-        if (det.elementsProsthesis) {
+        if (detailData.elementsProsthesis) {
             try {
-                const elData = JSON.parse(det.elementsProsthesis);
+                const elData = JSON.parse(detailData.elementsProsthesis);
                 if (elData.elementsProsthesis && Array.isArray(elData.elementsProsthesis) && elData.elementsProsthesis.length > 0) {
                     orderTypeStr = elData.elementsProsthesis.map(el => `Элемент ${el.elementProsthesis} (${el.count} шт.)`).join(', ');
                 }
             } catch(e) {
-                if (det.elementsProsthesis !== '{"data": "elementsProsthesisSelected", "elementsProsthesis": []}') orderTypeStr = det.elementsProsthesis;
+                if (detailData.elementsProsthesis !== '{"data": "elementsProsthesisSelected", "elementsProsthesis": []}') orderTypeStr = detailData.elementsProsthesis;
             }
         }
 
-        let colorStr = det.color || '';
+        let colorStr = detailData.color || '';
         if (colorStr === '-1' || colorStr === '0') colorStr = '';
 
         let clinicStr = '';
-        if (doc.soname || doc.name) clinicStr = `${doc.soname || ''} ${doc.name || ''}`.trim();
-        if (doc.patronymic) clinicStr += ' ' + doc.patronymic;
+        if (doctorData.soname || doctorData.name) clinicStr = `${doctorData.soname || ''} ${doctorData.name || ''}`.trim();
+        if (doctorData.patronymic) clinicStr += ' ' + doctorData.patronymic;
 
         let dateStr = '';
-        if (calc.calcDate || det.date_updated || det.date_created) {
+        if (calc.calcDate || detailData.date_updated || detailData.date_created) {
             try {
-                const d = new Date(Number(calc.calcDate || det.date_updated || det.date_created));
+                const d = new Date(Number(calc.calcDate || detailData.date_updated || detailData.date_created));
                 if (!isNaN(d.getTime())) dateStr = d.toISOString().split('T')[0];
             } catch(e) {}
         }
 
         const orderData = {
-          patientName: det.patientSoname || 'Пациент (импорт)',
+          patientName: detailData.patientSoname || 'Пациент (импорт)',
           orderNumber: calc._id || calc.id || '—',
           clinic: clinicStr,
           orderType: orderTypeStr,
           material: '',
           vitaColor: colorStr,
           teeth: teethStr,
-          price: parseFloat(calc.money || det.endPrice) || 0,
-          prepaid: parseFloat(det.payedMoney) || 0,
+          price: parseFloat(calc.money || detailData.endPrice) || 0,
+          prepaid: parseFloat(detailData.payedMoney) || 0,
           deadline: dateStr,
-          notes: det.informationOrder || '',
+          notes: detailData.informationOrder || '',
           status: 'delivered', 
           createdAt: serverTimestamp(),
           payments: []
         };
 
+        // Здесь doc теперь вызывает функцию из Firebase, а не локальную переменную
         const newRef = doc(collection(db, COLLECTION));
         batch.set(newRef, orderData);
         count++;

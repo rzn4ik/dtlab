@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>Лаборатория Евгения Мешкова — Панель техника</title>
+<title>Лаборатория Евгения Мешкова NEW — Панель техника</title>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
@@ -140,7 +140,7 @@ details[open] > .date-summary { margin-bottom: 8px; }
 </style>
 </head>
 <body>
-<h1>🦷 Лаборатория Евгения Мешкова <span id="connBadge" class="badge">⏳</span></h1>
+<h1>🦷 Лаборатория Евгения Мешкова <span id="connBadge" class="badge">⏳</span> <span class="badge" style="background:var(--accent); color:#fff;">v2.1</span></h1>
 <div class="me" id="meInfo">Загрузка…</div>
 
 <div style="margin-bottom: 12px; display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap;">
@@ -333,7 +333,7 @@ window.importJSON = function(input) {
       for (let i = 0; i < calcArr.length; i++) {
         const calc = calcArr[i];
         
-        // ИСПРАВЛЕНИЕ: Переименовали локальные переменные doc и det, чтобы не перекрывать функцию doc() из Firebase
+        // ИСПРАВЛЕНО: переменные doc и det переименованы в doctorData и detailData, чтобы не перекрывать функцию doc() из Firebase
         const doctorData = doctorsMap[calc.doctorId || calc.doctor] || {};
         const detailData = detailsMap[calc.detailId || calc._id] || {};
 
@@ -389,7 +389,6 @@ window.importJSON = function(input) {
           payments: []
         };
 
-        // Здесь doc теперь вызывает функцию из Firebase, а не локальную переменную
         const newRef = doc(collection(db, COLLECTION));
         batch.set(newRef, orderData);
         count++;

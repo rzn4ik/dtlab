@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>Лаборатория Евгения Мешкова NEW — Панель техника</title>
+<title>Лаборатория Евгения Мешкова — Панель техника</title>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
@@ -140,7 +140,7 @@ details[open] > .date-summary { margin-bottom: 8px; }
 </style>
 </head>
 <body>
-<h1>🦷 Лаборатория Евгения Мешкова <span id="connBadge" class="badge">⏳</span> <span class="badge" style="background:var(--accent); color:#fff;">v2.1</span></h1>
+<h1>🦷 Лаборатория Евгения Мешкова <span id="connBadge" class="badge">⏳</span> <span class="badge" style="background:var(--accent); color:#fff;">v2.2</span></h1>
 <div class="me" id="meInfo">Загрузка…</div>
 
 <div style="margin-bottom: 12px; display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap;">
@@ -191,8 +191,8 @@ details[open] > .date-summary { margin-bottom: 8px; }
 
 <div class="search-wrap">
   <span>🔍</span>
-  <input id="searchInput" placeholder="Поиск по пациенту, клинике, номеру…" oninput="render()" />
-  <button class="ghost small" onclick="document.getElementById('searchInput').value='';render();" style="display:none;" id="searchClearBtn">×</button>
+  <input id="searchInput" placeholder="Поиск по пациенту, клинике, номеру…" oninput="window.render()" />
+  <button class="ghost small" onclick="document.getElementById('searchInput').value='';window.render();" style="display:none;" id="searchClearBtn">×</button>
 </div>
 
 <div class="tabs" id="tabs">
@@ -333,7 +333,6 @@ window.importJSON = function(input) {
       for (let i = 0; i < calcArr.length; i++) {
         const calc = calcArr[i];
         
-        // ИСПРАВЛЕНО: переменные doc и det переименованы в doctorData и detailData, чтобы не перекрывать функцию doc() из Firebase
         const doctorData = doctorsMap[calc.doctorId || calc.doctor] || {};
         const detailData = detailsMap[calc.detailId || calc._id] || {};
 
@@ -372,8 +371,11 @@ window.importJSON = function(input) {
             } catch(e) {}
         }
 
+        // Страховка для импорта ФИО (берем из разных возможных полей)
+        const pName = detailData.patientSoname || detailData.patientName || detailData.patientFio || detailData.fio || 'Пациент (импорт)';
+
         const orderData = {
-          patientName: detailData.patientSoname || 'Пациент (импорт)',
+          patientName: pName,
           orderNumber: calc._id || calc.id || '—',
           clinic: clinicStr,
           orderType: orderTypeStr,
@@ -537,8 +539,8 @@ function render() {
     return true;
   });
 
-  // ЛОГИКА ДЛЯ АРХИВА (Поиск или заглушка)
-  if (currentTab === 'archive' && !q && !window.showFullArchive) {
+  // Если архив пуст по поиску и мы не нажали "Показать всё"
+  if (currentTab === 'archive' && q.length === 0 && !window.showFullArchive) {
     content.innerHTML = `
       <div class="empty" style="padding: 60px 20px; background: var(--card); border-radius: 12px; border: 1px dashed var(--border);">
         <div style="font-size: 40px; margin-bottom: 15px;">📦</div>
@@ -553,7 +555,7 @@ function render() {
   if (currentTab !== 'archive') window.showFullArchive = false;
 
   let list = baseList;
-  if (q) {
+  if (q.length > 0) {
     list = list.filter(o => (o.patientName || '').toLowerCase().includes(q) || (o.clinic || '').toLowerCase().includes(q) || (o.orderNumber || '').toLowerCase().includes(q) || (o.orderType || '').toLowerCase().includes(q) || (o.teeth || '').toLowerCase().includes(q));
   }
 

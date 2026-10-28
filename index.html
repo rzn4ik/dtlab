@@ -144,7 +144,7 @@ details[open] > .date-summary { margin-bottom: 8px; }
 </style>
 </head>
 <body>
-<h1>🦷 Лаборатория Евгения Мешкова <span id="connBadge" class="badge">⏳</span> <span class="badge" style="background:var(--accent); color:#fff;">v2.5</span></h1>
+<h1>🦷 Лаборатория Евгения Мешкова <span id="connBadge" class="badge">⏳</span> <span class="badge" style="background:var(--accent); color:#fff;">v2.6</span></h1>
 <div class="me" id="meInfo">Загрузка…</div>
 
 <div style="margin-bottom: 12px; display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap;">
@@ -312,7 +312,7 @@ window.clearDB = async function() {
   }
 }
 
-// --- СУПЕР-ИМПОРТ С ПРОГРЕСС-БАРОМ (ИСПРАВЛЕН ЗАВИСАНИЯ) ---
+// --- СУПЕР-ИМПОРТ С ЗАЩИТОЙ ОТ ЗАВИСАНИЙ (v2.6) ---
 window.importJSON = function(input) {
   const file = input.files[0];
   if (!file) return;
@@ -347,7 +347,6 @@ window.importJSON = function(input) {
       statusText.textContent = 'Подготовка данных...';
       statusText.style.color = 'var(--dim)';
 
-      // ВАЖНО: Даем браузеру 200мс, чтобы отрисовать оверлей, иначе он зависнет на нуле
       await new Promise(r => setTimeout(r, 200));
 
       const doctorsMap = {}; docArr.forEach(d => doctorsMap[d._id || d.id] = d);
@@ -431,18 +430,24 @@ window.importJSON = function(input) {
             console.error('Ошибка при обработке наряда', i, err);
         }
 
-        // Обновляем интерфейс каждые 50 записей, чтобы не было зависаний
+        // Обновляем интерфейс каждые 50 записей
         if (i % 50 === 0) {
             progressText.textContent = `${i} / ${calcArr.length}`;
             progressBar.style.width = Math.round((i / calcArr.length) * 100) + '%';
-            // Отпускаем поток браузера
             await new Promise(r => setTimeout(r, 0));
         }
 
-        if (count === 500 || i === calcArr.length - 1) {
+        // Уменьшили пачку до 400 и добавили таймаут
+        if (count === 400 || i === calcArr.length - 1) {
           try {
             statusText.textContent = `Отправка в базу (${successCount + count} шт.)...`;
-            await batch.commit();
+            
+            // Защита от вечного зависания (ждем максимум 15 секунд)
+            await Promise.race([
+                batch.commit(),
+                new Promise((_, reject) => setTimeout(() => reject(new Error('Превышено время ожидания. Возможно, лимит Firebase.')), 15000))
+            ]);
+
             successCount += count;
             count = 0;
             batch = writeBatch(db);
@@ -450,15 +455,18 @@ window.importJSON = function(input) {
             progressText.textContent = `${successCount} / ${calcArr.length}`;
             progressBar.style.width = Math.round((successCount / calcArr.length) * 100) + '%';
             statusText.textContent = `Загружено: ${successCount}`;
+
+            // Пауза 300мс, чтобы Firebase не блокировал запросы
+            await new Promise(r => setTimeout(r, 300));
             
           } catch (batchError) {
             console.error("Ошибка пакета:", batchError);
             hasError = true;
-            statusText.textContent = `Ошибка базы: ${batchError.message}`;
+            statusText.textContent = `Пропущен пакет: ${batchError.message}`;
             statusText.style.color = 'var(--danger)';
             batch = writeBatch(db);
             count = 0;
-            await new Promise(r => setTimeout(r, 2000)); // Пауза при ошибке
+            await new Promise(r => setTimeout(r, 2000));
           }
         }
       }

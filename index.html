@@ -11,26 +11,68 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ru.js"></script>
 
 <style>
-:root {
+/* ================= ТЕМЫ (СКИНЫ) ================= */
+:root, [data-theme="dark"] {
   --bg: #0f0f17; --card: #1a1a28; --inner: #0f0f17; --border: #2a2a3a;
   --text: #e8e8f0; --dim: #8888a0; --mute: #55556a;
-  --accent: #a855f7; --accent2: #10b981; --danger: #ef4444; --warn: #f59e0b;
-  --info: #0ea5e9;
+  --accent: #a855f7; --accent2: #10b981; --danger: #ef4444; --warn: #f59e0b; --info: #0ea5e9;
+  --tooth-bg: linear-gradient(180deg, #2a2a3a 0%, #1a1a28 100%);
+  --chart-bg: radial-gradient(circle at center, #151522 0%, #0a0a12 100%);
+  --chart-shadow: inset 0 0 50px rgba(0,0,0,0.9);
 }
+
+[data-theme="light"] {
+  --bg: #f0f4f8; --card: #ffffff; --inner: #e2e8f0; --border: #cbd5e1;
+  --text: #1e293b; --dim: #64748b; --mute: #94a3b8;
+  --accent: #4f46e5; --accent2: #059669; --danger: #dc2626; --warn: #d97706; --info: #0284c7;
+  --tooth-bg: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%);
+  --chart-bg: radial-gradient(circle at center, #ffffff 0%, #f1f5f9 100%);
+  --chart-shadow: inset 0 0 20px rgba(0,0,0,0.05);
+}
+
+[data-theme="cyber"] {
+  --bg: #050505; --card: #111111; --inner: #000000; --border: #333333;
+  --text: #ffffff; --dim: #888888; --mute: #555555;
+  --accent: #00f0ff; --accent2: #ff003c; --danger: #ff003c; --warn: #fce205; --info: #00f0ff;
+  --tooth-bg: linear-gradient(180deg, #1a1a1a 0%, #000000 100%);
+  --chart-bg: #000000;
+  --chart-shadow: inset 0 0 50px rgba(0, 240, 255, 0.1);
+}
+
+[data-theme="warm"] {
+  --bg: #1c1615; --card: #2a211f; --inner: #1c1615; --border: #4a3b37;
+  --text: #fdf6f0; --dim: #a89a96; --mute: #7a6b67;
+  --accent: #f97316; --accent2: #eab308; --danger: #ef4444; --warn: #f59e0b; --info: #3b82f6;
+  --tooth-bg: linear-gradient(180deg, #3a2d2a 0%, #2a211f 100%);
+  --chart-bg: radial-gradient(circle at center, #2a211f 0%, #1c1615 100%);
+  --chart-shadow: inset 0 0 50px rgba(0,0,0,0.8);
+}
+
+[data-theme="forest"] {
+  --bg: #0b1712; --card: #11251c; --inner: #0b1712; --border: #1e3a2f;
+  --text: #ecfdf5; --dim: #86efac; --mute: #4ade80;
+  --accent: #10b981; --accent2: #38bdf8; --danger: #ef4444; --warn: #f59e0b; --info: #0ea5e9;
+  --tooth-bg: linear-gradient(180deg, #173b2a 0%, #11251c 100%);
+  --chart-bg: radial-gradient(circle at center, #11251c 0%, #0b1712 100%);
+  --chart-shadow: inset 0 0 50px rgba(0,0,0,0.9);
+}
+/* ================================================ */
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); color: var(--text); padding: 16px; min-height: 100vh; }
+body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); color: var(--text); padding: 16px; min-height: 100vh; transition: background 0.3s, color 0.3s; }
 h1 { font-size: 18px; color: var(--accent); margin-bottom: 4px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .badge { font-size: 10px; padding: 3px 8px; border-radius: 8px; background: var(--border); color: var(--dim); }
 .badge.on { background: var(--accent2); color: #fff; }
 .me { font-size: 11px; color: var(--dim); margin-bottom: 16px; }
-.section { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+.section { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 12px; transition: background 0.3s, border-color 0.3s; }
 h2 { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--dim); margin-bottom: 10px; }
 .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; }
-input, select, textarea { padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--inner); color: var(--text); font-size: 13px; width: 100%; font-family: inherit; outline: none; }
+input, select, textarea { padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--inner); color: var(--text); font-size: 13px; width: 100%; font-family: inherit; outline: none; transition: border-color 0.2s, background 0.2s; }
 input:focus, select:focus, textarea:focus { border-color: var(--accent); }
 textarea { resize: vertical; min-height: 60px; }
-button { padding: 10px 16px; border: none; border-radius: 8px; background: var(--accent2); color: #fff; font-weight: 700; font-size: 13px; cursor: pointer; transition: opacity .2s; white-space: nowrap; }
+button { padding: 10px 16px; border: none; border-radius: 8px; background: var(--accent2); color: #fff; font-weight: 700; font-size: 13px; cursor: pointer; transition: opacity .2s, transform .1s; white-space: nowrap; }
 button:hover { opacity: .85; }
+button:active { transform: scale(0.98); }
 button:disabled { opacity: .5; cursor: not-allowed; }
 button.ghost { background: transparent; border: 1px solid var(--border); color: var(--text); }
 button.danger { background: var(--danger); }
@@ -39,28 +81,28 @@ button.small { padding: 6px 10px; font-size: 11px; }
 .tabs { display: flex; gap: 4px; margin-bottom: 12px; flex-wrap: wrap; }
 .tabs button { flex: 1 1 100px; padding: 9px; background: var(--card); border: 1px solid var(--border); color: var(--dim); border-radius: 8px; font-weight: 700; font-size: 12px; }
 .tabs button.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-.search-wrap { display: flex; align-items: center; gap: 8px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; margin-bottom: 12px; }
+.search-wrap { display: flex; align-items: center; gap: 8px; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; margin-bottom: 12px; transition: border-color 0.2s; }
 .search-wrap:focus-within { border-color: var(--accent); }
 .search-wrap input { border: none; background: transparent; padding: 4px 0; font-size: 14px; }
 .search-wrap input:focus { border: none; }
 
-/* === СХЕМА ЗУБОВ (ПК) === */
+/* === СХЕМА ЗУБОВ === */
 .teeth-wrapper { margin-top: 16px; }
 .teeth-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
 .teeth-title { font-size: 12px; font-weight: bold; color: var(--dim); }
 .teeth-label { font-size: 13px; color: var(--dim); display: flex; align-items: center; gap: 8px; }
 .teeth-label b { color: var(--accent2); font-family: monospace; font-size: 15px; }
-.teeth-chart { display: flex; flex-direction: column; align-items: center; background: radial-gradient(circle at center, #151522 0%, #0a0a12 100%); padding: 30px 10px; border-radius: 16px; border: 1px solid var(--border); box-shadow: inset 0 0 50px rgba(0,0,0,0.9); position: relative; }
+.teeth-chart { display: flex; flex-direction: column; align-items: center; background: var(--chart-bg); padding: 30px 10px; border-radius: 16px; border: 1px solid var(--border); box-shadow: var(--chart-shadow); position: relative; transition: background 0.3s, box-shadow 0.3s; }
 .jaw { display: flex; justify-content: center; position: relative; }
 .jaw.upper { align-items: flex-end; margin-bottom: 15px; }
 .jaw.lower { align-items: flex-start; margin-top: 15px; }
 .quadrant { display: flex; gap: 4px; }
 .midline { width: 2px; height: 40px; background: var(--border); margin: 0 10px; align-self: center; opacity: 0.5; box-shadow: 0 0 8px rgba(255,255,255,0.1); }
-.tooth-btn { width: 34px; height: 48px; background: linear-gradient(180deg, #2a2a3a 0%, #1a1a28 100%); border: 1px solid #3a3a4a; border-radius: 16px 16px 6px 6px; color: #8888a0; font-size: 12px; font-weight: 800; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 8px; cursor: pointer; user-select: none; z-index: 1; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-.jaw.lower .tooth-btn { border-radius: 6px 6px 16px 16px; background: linear-gradient(0deg, #2a2a3a 0%, #1a1a28 100%); align-items: flex-start; padding-top: 8px; padding-bottom: 0; }
-.tooth-btn:hover { z-index: 10; border-color: var(--accent); color: #fff; box-shadow: 0 0 12px rgba(168,85,247,0.4); }
-.tooth-btn.selected { background: linear-gradient(180deg, #10b981 0%, #059669 100%); border-color: #34d399; color: #fff; z-index: 5; box-shadow: 0 0 15px rgba(16,185,129,0.6); }
-.jaw.lower .tooth-btn.selected { background: linear-gradient(0deg, #10b981 0%, #059669 100%); }
+.tooth-btn { width: 34px; height: 48px; background: var(--tooth-bg); border: 1px solid var(--border); border-radius: 16px 16px 6px 6px; color: var(--dim); font-size: 12px; font-weight: 800; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 8px; cursor: pointer; user-select: none; z-index: 1; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+.jaw.lower .tooth-btn { border-radius: 6px 6px 16px 16px; align-items: flex-start; padding-top: 8px; padding-bottom: 0; }
+.tooth-btn:hover { z-index: 10; border-color: var(--accent); color: var(--text); box-shadow: 0 0 12px var(--accent); }
+.tooth-btn.selected { background: linear-gradient(180deg, var(--accent2) 0%, var(--accent) 100%); border-color: var(--text); color: #fff; z-index: 5; box-shadow: 0 0 15px var(--accent2); }
+.jaw.lower .tooth-btn.selected { background: linear-gradient(0deg, var(--accent2) 0%, var(--accent) 100%); }
 .jaw.upper .tooth-btn { transform-origin: bottom center; }
 .jaw.lower .tooth-btn { transform-origin: top center; }
 [data-n="18"] { transform: translateY(-22px) rotate(-38deg); }
@@ -84,7 +126,7 @@ button.small { padding: 6px 10px; font-size: 11px; }
 [data-n="37"] { transform: translateY(14px) rotate(-28deg); }
 [data-n="38"] { transform: translateY(22px) rotate(-38deg); }
 
-.card { background: var(--card); border: 1px solid var(--border); border-left: 4px solid var(--mute); border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; }
+.card { background: var(--card); border: 1px solid var(--border); border-left: 4px solid var(--mute); border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; transition: background 0.3s, border-color 0.3s; }
 .card.status-received { border-left-color: var(--info); }
 .card.status-modeling { border-left-color: var(--accent); }
 .card.status-production { border-left-color: var(--warn); }
@@ -106,7 +148,7 @@ button.small { padding: 6px 10px; font-size: 11px; }
 .deadline.urgent { color: #f97316; }
 .deadline.overdue { color: var(--danger); border-color: var(--danger); }
 .progress { height: 6px; background: var(--inner); border-radius: 3px; overflow: hidden; margin: 6px 0; }
-.progress > div { height: 100%; background: linear-gradient(90deg, var(--accent2), #00ff88); transition: width .3s; }
+.progress > div { height: 100%; background: var(--accent2); transition: width .3s; }
 .actions { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 8px; }
 .empty { text-align: center; color: var(--mute); padding: 30px; font-size: 13px; }
 .toast { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); background: var(--accent2); color: #fff; padding: 10px 18px; border-radius: 10px; font-weight: 700; font-size: 13px; z-index: 9999; box-shadow: 0 6px 24px rgba(0,0,0,.5); max-width: 90%; text-align: center; animation: toastIn .2s ease; }
@@ -114,7 +156,7 @@ button.small { padding: 6px 10px; font-size: 11px; }
 .toast.warn { background: var(--warn); color: #000; }
 @keyframes toastIn { from { transform: translateX(-50%) translateY(-10px); opacity: 0; } to { transform: translateX(-50%) translateY(0); opacity: 1; } }
 .overlay { position: fixed; inset: 0; background: rgba(0,0,0,.85); display: flex; align-items: center; justify-content: center; z-index: 10000; padding: 20px; }
-.modal { background: var(--card); border: 1px solid var(--accent); border-radius: 14px; padding: 22px; max-width: 440px; width: 100%; }
+.modal { background: var(--card); border: 1px solid var(--accent); border-radius: 14px; padding: 22px; max-width: 440px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
 .modal h3 { font-size: 16px; color: var(--accent); margin-bottom: 12px; text-align: center; }
 .modal p { font-size: 12px; color: var(--dim); margin-bottom: 12px; text-align: center; }
 .pin-row { display: flex; gap: 6px; margin-top: 8px; }
@@ -128,7 +170,7 @@ details[open] > .date-summary { margin-bottom: 8px; }
 
 /* Оверлей импорта */
 .import-progress-bar { height: 16px; background: var(--inner); border-radius: 8px; overflow: hidden; margin: 15px 0; border: 1px solid var(--border); }
-.import-progress-bar > div { height: 100%; background: linear-gradient(90deg, var(--accent2), #00ff88); transition: width .3s; width: 0%; }
+.import-progress-bar > div { height: 100%; background: var(--accent2); transition: width .3s; width: 0%; }
 
 @media (max-width: 768px) { 
   body { padding: 10px; } 
@@ -139,12 +181,23 @@ details[open] > .date-summary { margin-bottom: 8px; }
   .quadrant { display: contents; } 
   .midline { display: none; } 
   .tooth-btn, .jaw.lower .tooth-btn { width: 100%; height: auto; aspect-ratio: 1 / 1; padding: 0; margin: 0; transform: none !important; border-radius: 4px; font-size: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center; background: transparent; border: 1px solid transparent; color: var(--text); box-shadow: none; }
-  .tooth-btn.selected, .jaw.lower .tooth-btn.selected { background: var(--accent2); color: #fff; border-color: var(--accent2); box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); }
+  .tooth-btn.selected, .jaw.lower .tooth-btn.selected { background: var(--accent2); color: #fff; border-color: var(--accent2); box-shadow: 0 0 10px var(--accent2); }
 }
 </style>
 </head>
-<body>
-<h1>🦷 Лаборатория Евгения Мешкова <span id="connBadge" class="badge">⏳</span> <span class="badge" style="background:var(--accent); color:#fff;">v2.7</span></h1>
+<body data-theme="dark">
+<h1>
+  🦷 Лаборатория Евгения Мешкова 
+  <span id="connBadge" class="badge">⏳</span> 
+  <span class="badge" style="background:var(--accent); color:#fff;">v2.8</span>
+  <select id="themeSelect" onchange="changeTheme(this.value)" style="width: auto; margin-left: auto; background: var(--card); border-color: var(--border); color: var(--text); padding: 6px 12px; font-size: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; outline: none;">
+    <option value="dark">🌑 Тёмная (Неон)</option>
+    <option value="light">☀️ Светлая (Клиника)</option>
+    <option value="cyber">👾 Киберпанк</option>
+    <option value="warm">🔥 Тёплая (Уют)</option>
+    <option value="forest">🌲 Лесная (Изумруд)</option>
+  </select>
+</h1>
 <div class="me" id="meInfo">Загрузка…</div>
 
 <div style="margin-bottom: 12px; display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap;">
@@ -239,9 +292,22 @@ const auth = getAuth(app);
 
 const COLLECTION = 'orders';
 const PIN_KEY = 'dtlab_pin_hash';
+const THEME_KEY = 'dtlab_theme';
 let orders = [], currentTab = 'active', searchQuery = '';
 let visibleCount = 100;
 window.showFullArchive = false;
+
+// --- СМЕНА ТЕМ ---
+window.changeTheme = function(theme) {
+  document.body.setAttribute('data-theme', theme);
+  localStorage.setItem(THEME_KEY, theme);
+};
+
+function loadTheme() {
+  const savedTheme = localStorage.getItem(THEME_KEY) || 'dark';
+  document.body.setAttribute('data-theme', savedTheme);
+  document.getElementById('themeSelect').value = savedTheme;
+}
 
 // --- ЛОГИКА ЗУБОВ ---
 let selectedTeeth = new Set();
@@ -312,7 +378,7 @@ window.clearDB = async function() {
   }
 }
 
-// --- УМНЫЙ ИМПОРТ (ЗАГРУЖАЕТ ТОЛЬКО НОВЫЕ) ---
+// --- УМНЫЙ ИМПОРТ ---
 window.importJSON = function(input) {
   const file = input.files[0];
   if (!file) return;
@@ -335,7 +401,6 @@ window.importJSON = function(input) {
 
       if (calcArr.length === 0) { showToast('❌ В файле нет нарядов.', 'err'); return; }
 
-      // Собираем уже существующие номера нарядов
       const existingOrderNumbers = new Set(orders.map(o => String(o.orderNumber)));
 
       const overlay = document.getElementById('importOverlay');
@@ -364,7 +429,6 @@ window.importJSON = function(input) {
         const calc = calcArr[i];
         const orderNumStr = String(calc._id || calc.id || '—');
         
-        // ПРОПУСКАЕМ, ЕСЛИ УЖЕ ЗАГРУЖЕН
         if (existingOrderNumbers.has(orderNumStr)) {
             skippedCount++;
             if (i % 100 === 0) {
@@ -706,6 +770,7 @@ function subscribe() {
   });
 }
 (async function init() {
+  loadTheme(); // Загружаем выбранную тему
   initTeethChart();
   await initAuth(); 
   await checkPin(); 
@@ -714,7 +779,7 @@ function subscribe() {
   subscribe(); 
   setInterval(render, 60000);
 })();
-Object.assign(window, { addOrder, setStatus, removeOrder, printOrder, setTab, render, toggleTooth, clearTeeth, importJSON, clearDB, loadMore });
+Object.assign(window, { addOrder, setStatus, removeOrder, printOrder, setTab, render, toggleTooth, clearTeeth, importJSON, clearDB, loadMore, changeTheme });
 </script>
 </body>
 </html>

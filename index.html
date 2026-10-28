@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>Лаборатория Евгения Мешкова — Панель техника</title>
 
-<!-- Календарь Flatpickr -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -127,7 +126,6 @@ button.small { padding: 6px 10px; font-size: 11px; }
 details[open] > .date-summary { margin-bottom: 8px; }
 .date-content { padding-left: 12px; border-left: 2px solid var(--border); }
 
-/* Мобильная версия */
 @media (max-width: 768px) { 
   body { padding: 10px; } 
   .form-grid { grid-template-columns: 1fr 1fr; } 
@@ -145,8 +143,8 @@ details[open] > .date-summary { margin-bottom: 8px; }
 <h1>🦷 Лаборатория Евгения Мешкова <span id="connBadge" class="badge">⏳</span></h1>
 <div class="me" id="meInfo">Загрузка…</div>
 
-<!-- Кнопки импорта -->
 <div style="margin-bottom: 12px; display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap;">
+  <button class="danger" onclick="clearDB()">🧹 Очистить базу</button>
   <button class="warn" onclick="document.getElementById('jsonFileInput').click()">📥 Импорт из базы (JSON)</button>
   <input type="file" id="jsonFileInput" accept=".json" style="display:none" onchange="importJSON(this)">
 </div>
@@ -204,10 +202,11 @@ details[open] > .date-summary { margin-bottom: 8px; }
 </div>
 
 <div id="content" class="empty">Загрузка…</div>
+<button id="loadMoreBtn" class="ghost" style="display:none; width:100%; margin-top:10px;" onclick="loadMore()">Показать еще 100</button>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy, serverTimestamp, writeBatch, getDocs } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -226,6 +225,8 @@ const auth = getAuth(app);
 const COLLECTION = 'orders';
 const PIN_KEY = 'dtlab_pin_hash';
 let orders = [], currentTab = 'active', searchQuery = '';
+let visibleCount = 100;
+window.showFullArchive = false;
 
 // --- ЛОГИКА ЗУБОВ ---
 let selectedTeeth = new Set();
@@ -267,12 +268,41 @@ function updateTeethLabel() {
   }
 }
 
-// --- СУПЕР-УМНЫЙ ИМПОРТ ИЗ JSON (ОБНОВЛЕННЫЙ) ---
+// --- ФУНКЦИЯ ОЧИСТКИ БАЗЫ ---
+window.clearDB = async function() {
+  if (!confirm('⚠️ ВНИМАНИЕ! Это удалит ВСЕ наряды. Точно продолжить?')) return;
+  showToast('🧹 Очищаем базу... Не закрывай вкладку!', 'info');
+  
+  try {
+    const querySnapshot = await getDocs(collection(db, COLLECTION));
+    let batch = writeBatch(db);
+    let count = 0;
+    
+    const promises = [];
+    querySnapshot.forEach((docSnap) => {
+      batch.delete(docSnap.ref);
+      count++;
+      if (count === 500) {
+        promises.push(batch.commit());
+        batch = writeBatch(db);
+        count = 0;
+      }
+    });
+    if (count > 0) promises.push(batch.commit());
+    await Promise.all(promises);
+    
+    showToast('✅ База полностью очищена!');
+  } catch (e) {
+    showToast('Ошибка очистки: ' + e.message, 'err');
+  }
+}
+
+// --- СУПЕР-ИМПОРТ С ПАКЕТНОЙ ЗАПИСЬЮ ---
 window.importJSON = function(input) {
   const file = input.files[0];
   if (!file) return;
 
-  showToast('⏳ Читаем базу данных... Это займет время.', 'info');
+  showToast('⏳ Читаем JSON...', 'info');
 
   const reader = new FileReader();
   reader.onload = async function(e) {
@@ -280,118 +310,107 @@ window.importJSON = function(input) {
       const rawData = JSON.parse(e.target.result);
       
       let calcArr = [], docArr = [], detArr = [];
-
       if (rawData.calculations) calcArr = rawData.calculations;
       if (rawData.doctors) docArr = rawData.doctors;
       if (rawData.details) detArr = rawData.details;
 
-      // ХИТРОСТЬ: Если calculations пуст, но есть details - генерируем наряды из details
       if (calcArr.length === 0 && detArr.length > 0) {
-        calcArr = detArr.map(det => {
-          return {
-            _id: det._id,
-            doctorId: det.doctor,
-            detailId: det._id,
-            money: det.endPrice,
-            calcDate: det.date_created
-          };
-        });
+        calcArr = detArr.map(det => ({
+          _id: det._id, doctorId: det.doctor, detailId: det._id, money: det.endPrice, calcDate: det.date_created
+        }));
       }
 
-      if (calcArr.length === 0) {
-        showToast('❌ В файле не найдено ни calculations, ни details.', 'err');
-        return;
-      }
+      if (calcArr.length === 0) { showToast('❌ В файле нет нарядов.', 'err'); return; }
+      showToast(`⏳ Начинаем пакетную загрузку ${calcArr.length} нарядов...`, 'info');
 
+      const doctorsMap = {}; docArr.forEach(d => doctorsMap[d._id || d.id] = d);
+      const detailsMap = {}; detArr.forEach(d => detailsMap[d._id || d.id] = d);
+
+      let batch = writeBatch(db);
+      let count = 0;
       let successCount = 0;
-      showToast(`⏳ Найдено ${calcArr.length} нарядов. Начинаем загрузку...`, 'info');
-
-      const doctorsMap = {};
-      docArr.forEach(d => doctorsMap[d._id || d.id] = d);
-
-      const detailsMap = {};
-      detArr.forEach(d => detailsMap[d._id || d.id] = d);
 
       for (let i = 0; i < calcArr.length; i++) {
         const calc = calcArr[i];
         const doc = doctorsMap[calc.doctorId || calc.doctor] || {};
         const det = detailsMap[calc.detailId || calc._id] || {};
 
-        let deadlineStr = '';
-        if (calc.calcDate || det.date_updated || det.date_created) {
-          try {
-            const timeMs = Number(calc.calcDate || det.date_updated || det.date_created);
-            const d = new Date(timeMs);
-            if (!isNaN(d.getTime())) deadlineStr = d.toISOString().split('T')[0];
-          } catch(err) {}
-        }
-
-        // Достаем зубы из JSON-строки
         let teethStr = '';
         if (det.teeth) {
             try {
                 const teethData = JSON.parse(det.teeth);
-                if (teethData.teeth && Array.isArray(teethData.teeth)) {
-                    teethStr = teethData.teeth.map(t => t.tooth).join(', ');
+                if (teethData.teeth && Array.isArray(teethData.teeth)) teethStr = teethData.teeth.map(t => t.tooth).join(', ');
+            } catch(e) { teethStr = String(det.teeth).replace(/\[|\]|\"|\'/g, ''); }
+        }
+
+        let orderTypeStr = '';
+        if (det.elementsProsthesis) {
+            try {
+                const elData = JSON.parse(det.elementsProsthesis);
+                if (elData.elementsProsthesis && Array.isArray(elData.elementsProsthesis) && elData.elementsProsthesis.length > 0) {
+                    orderTypeStr = elData.elementsProsthesis.map(el => `Элемент ${el.elementProsthesis} (${el.count} шт.)`).join(', ');
                 }
             } catch(e) {
-                teethStr = String(det.teeth).replace(/\[|\]|\"|\'/g, ''); 
+                if (det.elementsProsthesis !== '{"data": "elementsProsthesisSelected", "elementsProsthesis": []}') orderTypeStr = det.elementsProsthesis;
             }
         }
+
+        let colorStr = det.color || '';
+        if (colorStr === '-1' || colorStr === '0') colorStr = '';
 
         let clinicStr = '';
         if (doc.soname || doc.name) clinicStr = `${doc.soname || ''} ${doc.name || ''}`.trim();
         if (doc.patronymic) clinicStr += ' ' + doc.patronymic;
 
+        let dateStr = '';
+        if (calc.calcDate || det.date_updated || det.date_created) {
+            try {
+                const d = new Date(Number(calc.calcDate || det.date_updated || det.date_created));
+                if (!isNaN(d.getTime())) dateStr = d.toISOString().split('T')[0];
+            } catch(e) {}
+        }
+
         const orderData = {
           patientName: det.patientSoname || 'Пациент (импорт)',
           orderNumber: calc._id || calc.id || '—',
           clinic: clinicStr,
-          orderType: det.elementsProsthesis || '',
+          orderType: orderTypeStr,
           material: '',
-          vitaColor: det.color || '',
+          vitaColor: colorStr,
           teeth: teethStr,
           price: parseFloat(calc.money || det.endPrice) || 0,
           prepaid: parseFloat(det.payedMoney) || 0,
-          deadline: deadlineStr,
+          deadline: dateStr,
           notes: det.informationOrder || '',
           status: 'delivered', 
           createdAt: serverTimestamp(),
           payments: []
         };
 
-        try {
-          await addDoc(collection(db, COLLECTION), orderData);
-          successCount++;
-          if (successCount % 100 === 0) {
-              showToast(`⏳ Загружено: ${successCount} из ${calcArr.length}...`, 'info');
-          }
-        } catch(err) { 
-            console.error("Ошибка при добавлении:", err); 
+        const newRef = doc(collection(db, COLLECTION));
+        batch.set(newRef, orderData);
+        count++;
+
+        if (count === 500) {
+          await batch.commit();
+          successCount += count;
+          showToast(`⏳ Загружено: ${successCount} из ${calcArr.length}...`, 'info');
+          batch = writeBatch(db);
+          count = 0;
         }
       }
 
-      showToast(`✅ Успешно импортировано: ${successCount} нарядов!`);
+      if (count > 0) { await batch.commit(); successCount += count; }
+      showToast(`✅ Загружено: ${successCount} нарядов!`, 'info');
       input.value = '';
       setTab('archive');
 
-    } catch(err) {
-      console.error(err);
-      showToast('❌ Ошибка чтения JSON: ' + err.message, 'err');
-    }
+    } catch(err) { console.error(err); showToast('❌ Ошибка: ' + err.message, 'err'); }
   };
   reader.readAsText(file);
 };
 
-// Календарь
-flatpickr("#fDeadline", {
-  locale: "ru",
-  dateFormat: "Y-m-d",
-  altInput: true,
-  altFormat: "d.m.Y",
-  allowInput: false,
-  disableMobile: false
-});
+flatpickr("#fDeadline", { locale: "ru", dateFormat: "Y-m-d", altInput: true, altFormat: "d.m.Y", allowInput: false, disableMobile: false });
 
 async function initAuth() {
   return new Promise((resolve) => {
@@ -438,12 +457,12 @@ function showPinPrompt() {
 }
 function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
 function fmtMoney(n) { return Math.round(n || 0).toLocaleString('ru-RU') + ' ₽'; }
-function showToast(msg, type = '') { const el = document.createElement('div'); el.className = 'toast ' + type; el.textContent = msg; document.body.appendChild(el); setTimeout(() => el.remove(), 3500); }
+function showToast(msg, type = '') { const el = document.createElement('div'); el.className = 'toast ' + type; el.textContent = msg; document.body.appendChild(el); setTimeout(() => el.remove(), 5000); }
 const STATUS_LABELS = { received: '📥 Получен', modeling: '📐 Моделировка', production: '🔨 Литьё/фрезеровка', finishing: '🎨 Керамика', tryin: '👁 Примерка', ready: '✅ Готово', delivered: '📦 Выдано', cancelled: '❌ Отменён' };
 const STATUS_ORDER = ['received','modeling','production','finishing','tryin','ready','delivered'];
 
-function deadlineInfo(deadlineStr) {
-  if (!deadlineStr) return { text: '—', cls: '' };
+function deadlineInfo(deadlineStr, status) {
+  if (!deadlineStr || status === 'delivered') return { text: '—', cls: '' };
   const now = new Date(), dl = new Date(deadlineStr + 'T23:59:59'), diffMs = dl - now, diffDays = diffMs / 86400000;
   if (diffMs < 0) return { text: '⚠️ Просрочен', cls: 'overdue' };
   if (diffDays < 1) return { text: '⏰ < 1 дня', cls: 'urgent' };
@@ -487,7 +506,7 @@ function printOrder(id) {
 }
 
 function renderCard(o) {
-  const dl = deadlineInfo(o.deadline);
+  const dl = deadlineInfo(o.deadline, o.status);
   const paid = (o.payments || []).reduce((s, p) => s + (p.sum || 0), 0) + (o.prepaid || 0);
   const isOverdue = o.deadline && new Date(o.deadline + 'T23:59:59') < new Date() && o.status !== 'delivered' && o.status !== 'cancelled';
   const stageIdx = STATUS_ORDER.indexOf(o.status), stagePct = stageIdx >= 0 ? ((stageIdx + 1) / STATUS_ORDER.length) * 100 : 0;
@@ -499,30 +518,100 @@ function renderCard(o) {
   return `<div class="card status-${o.status}${isOverdue ? ' overdue' : ''}"><div class="card-header"><b>${esc(o.patientName)}</b><span class="deadline ${dl.cls}">${dl.text}</span></div><div class="card-row small">№ <span class="order-num">${esc(o.orderNumber)}</span> • ${STATUS_LABELS[o.status] || o.status}${isOverdue ? ' • ⚠️ ПРОСРОЧЕН' : ''}</div>${o.clinic ? `<div class="card-row">🏥 ${esc(o.clinic)}</div>` : ''}${o.orderType ? `<div class="card-row">🦷 ${esc(o.orderType)}${o.material ? ' • ' + esc(o.material) : ''}${o.vitaColor ? ' • ' + esc(o.vitaColor) : ''}</div>` : ''}${o.teeth ? `<div class="card-row small" style="color:var(--accent2); font-weight:bold;">Зубы: ${esc(o.teeth)}</div>` : ''}${o.notes ? `<div class="card-row small">📝 ${esc(o.notes)}</div>` : ''}<div class="progress"><div style="width:${stagePct}%"></div></div><div class="card-row small">Этап: ${STATUS_LABELS[o.status] || o.status} • Оплачено: <b>${fmtMoney(paid)}</b> / ${fmtMoney(o.price)}</div><div class="actions">${nextStatusHtml}${o.status === 'ready' ? `<button class="small warn" onclick="setStatus('${o.id}','delivered')">📦 Выдать</button>` : ''}${o.status === 'delivered' ? `<button class="small ghost" onclick="setStatus('${o.id}','ready')">↩ Вернуть</button>` : ''}<button class="small ghost" onclick="printOrder('${o.id}')">🖨 Печать</button><button class="small danger" onclick="removeOrder('${o.id}')">×</button></div></div>`;
 }
 
+window.loadMore = function() {
+  visibleCount += 100;
+  render();
+}
+
 function render() {
   const content = document.getElementById('content'), q = (document.getElementById('searchInput').value || '').trim().toLowerCase();
   document.getElementById('searchClearBtn').style.display = q ? 'block' : 'none';
-  let list = orders.filter(o => {
+  document.getElementById('loadMoreBtn').style.display = 'none';
+  
+  let baseList = orders.filter(o => {
     if (currentTab === 'active') return !['delivered','cancelled'].includes(o.status);
     if (currentTab === 'ready') return o.status === 'ready';
     if (currentTab === 'archive') return ['delivered','cancelled'].includes(o.status);
     return true;
   });
-  if (q) list = list.filter(o => (o.patientName || '').toLowerCase().includes(q) || (o.clinic || '').toLowerCase().includes(q) || (o.orderNumber || '').toLowerCase().includes(q) || (o.orderType || '').toLowerCase().includes(q) || (o.teeth || '').toLowerCase().includes(q));
-  if (!list.length) { content.innerHTML = `<div class="empty">${q ? 'Ничего не найдено' : currentTab === 'active' ? 'Нет активных нарядов' : currentTab === 'ready' ? 'Нет готовых нарядов' : 'Архив пуст'}</div>`; return; }
+
+  // ЛОГИКА ДЛЯ АРХИВА (Поиск или заглушка)
+  if (currentTab === 'archive' && !q && !window.showFullArchive) {
+    content.innerHTML = `
+      <div class="empty" style="padding: 60px 20px; background: var(--card); border-radius: 12px; border: 1px dashed var(--border);">
+        <div style="font-size: 40px; margin-bottom: 15px;">📦</div>
+        <div style="font-size: 16px; color: var(--text); margin-bottom: 10px; font-weight: bold;">Архив (${baseList.length} нарядов)</div>
+        <div style="color: var(--dim); margin-bottom: 20px; line-height: 1.5;">Чтобы не перегружать браузер, архив скрыт.<br>Введите ФИО, номер наряда или клинику в строку поиска выше.</div>
+        <button class="ghost" onclick="window.showFullArchive = true; render();">Посмотреть последние 100</button>
+      </div>
+    `;
+    return;
+  }
+
+  if (currentTab !== 'archive') window.showFullArchive = false;
+
+  let list = baseList;
+  if (q) {
+    list = list.filter(o => (o.patientName || '').toLowerCase().includes(q) || (o.clinic || '').toLowerCase().includes(q) || (o.orderNumber || '').toLowerCase().includes(q) || (o.orderType || '').toLowerCase().includes(q) || (o.teeth || '').toLowerCase().includes(q));
+  }
+
+  if (!list.length) { 
+    content.innerHTML = `<div class="empty">${q ? 'Ничего не найдено' : currentTab === 'active' ? 'Нет активных нарядов' : currentTab === 'ready' ? 'Нет готовых нарядов' : 'Архив пуст'}</div>`; 
+    return; 
+  }
+
+  list.sort((a, b) => {
+    if (currentTab === 'archive') {
+        return (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0);
+    }
+    return (a.deadline || '9999').localeCompare(b.deadline || '9999');
+  });
+
+  const total = list.length;
+  const slicedList = list.slice(0, visibleCount);
+
   if (currentTab === 'archive') {
     const byDate = {};
-    list.forEach(o => { const d = o.createdAt ? new Date(o.createdAt.seconds * 1000) : new Date(), key = d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' }); if (!byDate[key]) byDate[key] = { items: [], latest: 0 }; byDate[key].items.push(o); if (d.getTime() > byDate[key].latest) byDate[key].latest = d.getTime(); });
-    const sorted = Object.keys(byDate).sort((a, b) => byDate[b].latest - byDate[a].latest);
-    content.innerHTML = sorted.map((dateKey, idx) => `<details class="date-group" ${idx === 0 ? 'open' : ''}><summary class="date-summary"><span>📅 ${dateKey}</span><span>${byDate[dateKey].items.length} наряд(ов) • ${fmtMoney(byDate[dateKey].items.reduce((s, o) => s + (o.price || 0), 0))}</span></summary><div class="date-content">${byDate[dateKey].items.sort((a,b) => (b.createdAt?.seconds||0) - (a.createdAt?.seconds||0)).map(renderCard).join('')}</div></details>`).join('');
+    slicedList.forEach(o => { 
+        const d = o.createdAt ? new Date(o.createdAt.seconds * 1000) : new Date(); 
+        const key = d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric' }); 
+        if (!byDate[key]) byDate[key] = { items: [], latest: 0 }; 
+        byDate[key].items.push(o); 
+        if (d.getTime() > byDate[key].latest) byDate[key].latest = d.getTime(); 
+    });
+    const sortedDates = Object.keys(byDate).sort((a, b) => byDate[b].latest - byDate[a].latest);
+    content.innerHTML = sortedDates.map((dateKey, idx) => `<details class="date-group" ${idx === 0 ? 'open' : ''}><summary class="date-summary"><span>📅 ${dateKey}</span><span>${byDate[dateKey].items.length} наряд(ов) • ${fmtMoney(byDate[dateKey].items.reduce((s, o) => s + (o.price || 0), 0))}</span></summary><div class="date-content">${byDate[dateKey].items.map(renderCard).join('')}</div></details>`).join('');
   } else {
-    content.innerHTML = list.sort((a, b) => (a.deadline || '9999').localeCompare(b.deadline || '9999')).map(renderCard).join('');
+    content.innerHTML = slicedList.map(renderCard).join('');
+  }
+
+  if (total > visibleCount) {
+    const btn = document.getElementById('loadMoreBtn');
+    btn.style.display = 'block';
+    btn.textContent = `Показать еще 100 (из ${total - visibleCount} оставшихся)`;
   }
 }
-function setTab(tab) { currentTab = tab; document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === tab)); render(); }
+
+function setTab(tab) { 
+  currentTab = tab; 
+  visibleCount = 100; 
+  window.showFullArchive = false; // Сброс при переключении
+  document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === tab)); 
+  render(); 
+}
+
 function subscribe() {
   const q = query(collection(db, COLLECTION), orderBy('createdAt', 'desc'));
-  onSnapshot(q, snapshot => { orders = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); document.getElementById('connBadge').textContent = '🟢 Онлайн'; document.getElementById('connBadge').className = 'badge on'; render(); }, err => { document.getElementById('connBadge').textContent = '🔴 Ошибка'; document.getElementById('connBadge').className = 'badge'; document.getElementById('content').innerHTML = `<div class="empty">Ошибка загрузки: ${esc(err.message)}</div>`; });
+  onSnapshot(q, snapshot => { 
+      orders = snapshot.docs.map(d => ({ id: d.id, ...d.data() })); 
+      document.getElementById('connBadge').textContent = '🟢 Онлайн'; 
+      document.getElementById('connBadge').className = 'badge on'; 
+      render(); 
+  }, err => { 
+      document.getElementById('connBadge').textContent = '🔴 Ошибка'; 
+      document.getElementById('connBadge').className = 'badge'; 
+      document.getElementById('content').innerHTML = `<div class="empty">Ошибка загрузки: ${esc(err.message)}</div>`; 
+  });
 }
 (async function init() {
   initTeethChart();
@@ -533,7 +622,7 @@ function subscribe() {
   subscribe(); 
   setInterval(render, 60000);
 })();
-Object.assign(window, { addOrder, setStatus, removeOrder, printOrder, setTab, render, toggleTooth, clearTeeth, importJSON });
+Object.assign(window, { addOrder, setStatus, removeOrder, printOrder, setTab, render, toggleTooth, clearTeeth, importJSON, clearDB, loadMore });
 </script>
 </body>
 </html>

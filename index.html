@@ -144,7 +144,7 @@ details[open] > .date-summary { margin-bottom: 8px; }
 </style>
 </head>
 <body>
-<h1>🦷 Лаборатория Евгения Мешкова <span id="connBadge" class="badge">⏳</span> <span class="badge" style="background:var(--accent); color:#fff;">v2.6</span></h1>
+<h1>🦷 Лаборатория Евгения Мешкова <span id="connBadge" class="badge">⏳</span> <span class="badge" style="background:var(--accent); color:#fff;">v2.7</span></h1>
 <div class="me" id="meInfo">Загрузка…</div>
 
 <div style="margin-bottom: 12px; display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap;">
@@ -312,7 +312,7 @@ window.clearDB = async function() {
   }
 }
 
-// --- СУПЕР-ИМПОРТ С ЗАЩИТОЙ ОТ ЗАВИСАНИЙ (v2.6) ---
+// --- УМНЫЙ ИМПОРТ (ЗАГРУЖАЕТ ТОЛЬКО НОВЫЕ) ---
 window.importJSON = function(input) {
   const file = input.files[0];
   if (!file) return;
@@ -335,7 +335,9 @@ window.importJSON = function(input) {
 
       if (calcArr.length === 0) { showToast('❌ В файле нет нарядов.', 'err'); return; }
 
-      // Показываем оверлей
+      // Собираем уже существующие номера нарядов
+      const existingOrderNumbers = new Set(orders.map(o => String(o.orderNumber)));
+
       const overlay = document.getElementById('importOverlay');
       const progressText = document.getElementById('importProgressText');
       const progressBar = document.getElementById('importProgressBar');
@@ -344,7 +346,7 @@ window.importJSON = function(input) {
       overlay.style.display = 'flex';
       progressText.textContent = `0 / ${calcArr.length}`;
       progressBar.style.width = '0%';
-      statusText.textContent = 'Подготовка данных...';
+      statusText.textContent = 'Проверка дубликатов...';
       statusText.style.color = 'var(--dim)';
 
       await new Promise(r => setTimeout(r, 200));
@@ -355,11 +357,25 @@ window.importJSON = function(input) {
       let batch = writeBatch(db);
       let count = 0;
       let successCount = 0;
+      let skippedCount = 0;
       let hasError = false;
 
       for (let i = 0; i < calcArr.length; i++) {
         const calc = calcArr[i];
+        const orderNumStr = String(calc._id || calc.id || '—');
         
+        // ПРОПУСКАЕМ, ЕСЛИ УЖЕ ЗАГРУЖЕН
+        if (existingOrderNumbers.has(orderNumStr)) {
+            skippedCount++;
+            if (i % 100 === 0) {
+                progressText.textContent = `${i} / ${calcArr.length}`;
+                progressBar.style.width = Math.round((i / calcArr.length) * 100) + '%';
+                statusText.textContent = `Пропущено существующих: ${skippedCount}...`;
+                await new Promise(r => setTimeout(r, 0));
+            }
+            continue; 
+        }
+
         try {
             const doctorData = doctorsMap[calc.doctorId || calc.doctor] || {};
             const detailData = detailsMap[calc.detailId || calc._id] || {};
@@ -408,7 +424,7 @@ window.importJSON = function(input) {
 
             const orderData = {
               patientName: pName || 'Пациент (импорт)',
-              orderNumber: calc._id || calc.id || '—',
+              orderNumber: orderNumStr,
               clinic: clinicStr || '',
               orderType: orderTypeStr || '',
               material: '',
@@ -430,33 +446,31 @@ window.importJSON = function(input) {
             console.error('Ошибка при обработке наряда', i, err);
         }
 
-        // Обновляем интерфейс каждые 50 записей
         if (i % 50 === 0) {
             progressText.textContent = `${i} / ${calcArr.length}`;
             progressBar.style.width = Math.round((i / calcArr.length) * 100) + '%';
+            statusText.textContent = `Загружено новых: ${successCount + count}. Пропущено старых: ${skippedCount}`;
             await new Promise(r => setTimeout(r, 0));
         }
 
-        // Уменьшили пачку до 400 и добавили таймаут
         if (count === 400 || i === calcArr.length - 1) {
+          if (count === 0) continue;
           try {
             statusText.textContent = `Отправка в базу (${successCount + count} шт.)...`;
             
-            // Защита от вечного зависания (ждем максимум 15 секунд)
             await Promise.race([
                 batch.commit(),
-                new Promise((_, reject) => setTimeout(() => reject(new Error('Превышено время ожидания. Возможно, лимит Firebase.')), 15000))
+                new Promise((_, reject) => setTimeout(() => reject(new Error('Превышено время ожидания (лимит Firebase).')), 15000))
             ]);
 
             successCount += count;
             count = 0;
             batch = writeBatch(db);
 
-            progressText.textContent = `${successCount} / ${calcArr.length}`;
-            progressBar.style.width = Math.round((successCount / calcArr.length) * 100) + '%';
-            statusText.textContent = `Загружено: ${successCount}`;
+            progressText.textContent = `${successCount + skippedCount} / ${calcArr.length}`;
+            progressBar.style.width = Math.round(((successCount + skippedCount) / calcArr.length) * 100) + '%';
+            statusText.textContent = `Догружено новых: ${successCount}`;
 
-            // Пауза 300мс, чтобы Firebase не блокировал запросы
             await new Promise(r => setTimeout(r, 300));
             
           } catch (batchError) {
@@ -471,7 +485,7 @@ window.importJSON = function(input) {
         }
       }
 
-      statusText.textContent = hasError ? 'Загрузка завершена с ошибками (часть данных пропущена)' : '✅ Импорт успешно завершен!';
+      statusText.textContent = hasError ? `Завершено с ошибками. Догружено: ${successCount}` : `✅ Импорт успешно завершен! Догружено: ${successCount}`;
       statusText.style.color = hasError ? 'var(--warn)' : 'var(--accent2)';
       
       setTimeout(() => {

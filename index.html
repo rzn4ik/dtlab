@@ -71,7 +71,6 @@ body { font-family: 'Inter', -apple-system, system-ui, sans-serif; background: v
 ::-webkit-scrollbar-thumb:hover { background: var(--dim); }
 
 h1 { font-size: 20px; font-weight: 800; color: var(--accent); margin-bottom: 4px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-/* Стили для логотипа в шапке */
 .site-logo { height: 42px; width: auto; border-radius: 8px; object-fit: contain; background: #fff; padding: 2px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); border: 1px solid var(--border); }
 
 .badge { font-size: 11px; padding: 4px 10px; border-radius: 8px; background: var(--border); color: var(--dim); font-weight: 600; }
@@ -94,6 +93,9 @@ h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var
 input, select, textarea { padding: 10px 14px; border-radius: 10px; border: 1px solid var(--border); background: var(--inner); color: var(--text); font-size: 13px; font-weight: 500; width: 100%; font-family: inherit; outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
 input:focus, select:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(168,85,247,0.15); }
 textarea { resize: vertical; min-height: 60px; }
+
+/* Стиль для поля цвета */
+input.color-picker-input { cursor: pointer; background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%238888a0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>'); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
 
 button { padding: 10px 16px; border: none; border-radius: 10px; background: var(--accent2); color: #fff; font-weight: 700; font-size: 13px; font-family: inherit; cursor: pointer; transition: opacity .2s, transform .1s; white-space: nowrap; }
 button:hover { opacity: .85; }
@@ -205,6 +207,22 @@ button.small { padding: 7px 12px; font-size: 11px; border-radius: 8px; }
 .cal-orders-list { border-top: 1px solid var(--border); padding-top: 16px; }
 .cal-orders-list h4 { font-size: 14px; color: var(--dim); margin-bottom: 12px; }
 
+/* Палитра VITA */
+.vita-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 10px; }
+.vita-btn { padding: 15px 5px; border-radius: 8px; border: 1px solid var(--border); color: #000; font-weight: 800; font-size: 14px; text-align: center; cursor: pointer; text-shadow: 0 1px 2px rgba(255,255,255,0.7); transition: transform 0.1s; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); }
+.vita-btn:hover { transform: scale(1.05); border-color: var(--accent); }
+
+/* Сервисная панель */
+.admin-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; }
+.admin-btn { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 20px 10px; border-radius: 12px; border: 1px solid var(--border); background: var(--inner); color: var(--text); cursor: pointer; transition: all 0.2s; text-align: center; }
+.admin-btn:hover { border-color: var(--accent); transform: translateY(-2px); }
+.admin-btn .icon { font-size: 24px; }
+.admin-btn .title { font-weight: 700; font-size: 14px; }
+.admin-btn .desc { font-size: 11px; color: var(--dim); }
+.admin-btn.export:hover { border-color: var(--accent2); box-shadow: 0 0 15px rgba(16, 185, 129, 0.2); }
+.admin-btn.import:hover { border-color: var(--info); box-shadow: 0 0 15px rgba(14, 165, 233, 0.2); }
+.admin-btn.clear:hover { border-color: var(--danger); box-shadow: 0 0 15px rgba(239, 68, 68, 0.2); }
+
 /* Уведомления */
 .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--accent2); color: #fff; padding: 12px 20px; border-radius: 12px; font-weight: 700; font-size: 13px; z-index: 9999; box-shadow: 0 8px 30px rgba(0,0,0,.5); max-width: 90%; text-align: center; animation: toastIn .3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 .toast.err { background: var(--danger); }
@@ -246,6 +264,8 @@ details[open] > .date-summary { margin-bottom: 10px; border-bottom-left-radius: 
   
   .cal-grid { gap: 2px; }
   .cal-day { aspect-ratio: 1; font-size: 12px; padding-top: 4px; }
+  .vita-grid { grid-template-columns: repeat(3, 1fr); }
+  .admin-grid { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -254,16 +274,23 @@ details[open] > .date-summary { margin-bottom: 10px; border-bottom-left-radius: 
   <img src="logo.png" alt="ME Logo" class="site-logo" onerror="this.style.display='none'">
   Лаборатория Евгения Мешкова 
   <span id="connBadge" class="badge">⏳</span> 
-  <span class="badge" style="background:var(--accent); color:#fff;">v3.2</span>
-  <select id="themeSelect" onchange="changeTheme(this.value)" style="width: auto; margin-left: auto; background: var(--card); border-color: var(--border); color: var(--text); padding: 8px 14px; font-size: 12px; border-radius: 10px; cursor: pointer; font-weight: 700; outline: none; font-family: inherit; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-    <option value="dark">🌑 Тёмная (Неон)</option>
-    <option value="light">☀️ Светлая (Клиника)</option>
-    <option value="cyber">👾 Киберпанк</option>
-    <option value="warm">🔥 Тёплая (Уют)</option>
-    <option value="forest">🌲 Лесная (Изумруд)</option>
-  </select>
+  <span class="badge" style="background:var(--accent); color:#fff;">v3.4</span>
+  
+  <div style="margin-left: auto; display: flex; gap: 8px; align-items: center;">
+    <select id="themeSelect" onchange="changeTheme(this.value)" style="width: auto; background: var(--card); border-color: var(--border); color: var(--text); padding: 8px 14px; font-size: 12px; border-radius: 10px; cursor: pointer; font-weight: 700; outline: none; font-family: inherit; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+      <option value="dark">🌑 Тёмная (Неон)</option>
+      <option value="light">☀️ Светлая (Клиника)</option>
+      <option value="cyber">👾 Киберпанк</option>
+      <option value="warm">🔥 Тёплая (Уют)</option>
+      <option value="forest">🌲 Лесная (Изумруд)</option>
+    </select>
+    <button class="ghost" onclick="document.getElementById('adminOverlay').style.display='flex'" style="padding: 8px 14px; border-radius: 10px; font-size: 16px;" title="Сервисная панель">⚙️</button>
+  </div>
 </h1>
 <div class="me" id="meInfo">Загрузка…</div>
+
+<!-- СКРЫТЫЙ INPUT ДЛЯ ИМПОРТА -->
+<input type="file" id="jsonFileInput" accept=".json" style="display:none" onchange="importJSON(this)">
 
 <!-- БЛОК СТАТИСТИКИ -->
 <div class="stats-bar" id="statsBar">
@@ -284,18 +311,14 @@ details[open] > .date-summary { margin-bottom: 10px; border-bottom-left-radius: 
   </div>
 </div>
 
-<div style="margin-bottom: 12px; display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap;">
-  <button class="danger" onclick="clearDB()">🧹 Очистить базу</button>
-  <button class="warn" onclick="document.getElementById('jsonFileInput').click()">📥 Импорт из базы (JSON)</button>
-  <input type="file" id="jsonFileInput" accept=".json" style="display:none" onchange="importJSON(this)">
-</div>
-
 <div class="section" id="addSection" style="display:none;">
   <h2>➕ Новый наряд</h2>
   <div class="form-grid">
     <input id="fOrderNum" placeholder="№ наряда" />
     <input id="fPatient" placeholder="ФИО пациента" />
-    <input id="fClinic" placeholder="Клиника / врач" />
+    <input id="fClinic" placeholder="Клиника / врач" list="clinicSuggestions" autocomplete="off" />
+    <datalist id="clinicSuggestions"></datalist>
+    
     <select id="fType">
       <option value="">Тип работы</option>
       <option>Коронка</option><option>Винир</option><option>Мост</option>
@@ -309,7 +332,8 @@ details[open] > .date-summary { margin-bottom: 10px; border-bottom-left-radius: 
       <option>ПММА</option><option>Титан</option><option>CoCr</option><option>Воск</option>
       <option>Другое</option>
     </select>
-    <input id="fColor" placeholder="Цвет VITA (A1, A2…)" />
+    
+    <input id="fColor" class="color-picker-input" placeholder="Цвет VITA (нажми)" onclick="openColorPicker('fColor')" readonly />
     <input id="fPrice" type="number" placeholder="Стоимость ₽" />
     <input id="fPrepaid" type="number" placeholder="Предоплата ₽" />
     <input id="fDeadline" type="text" placeholder="Срок сдачи" readonly style="cursor: pointer;" />
@@ -374,6 +398,46 @@ details[open] > .date-summary { margin-bottom: 10px; border-bottom-left-radius: 
 <div id="content" class="empty">Загрузка…</div>
 <button id="loadMoreBtn" class="ghost" style="display:none; width:100%; margin-top:10px;" onclick="loadMore()">Показать еще 100</button>
 
+<!-- Сервисная панель -->
+<div id="adminOverlay" class="overlay" style="display:none;">
+  <div class="modal" style="max-width: 450px;">
+    <h3>⚙️ Сервисная панель</h3>
+    <p>Управление базой данных лаборатории</p>
+    <div class="admin-grid">
+      <button class="admin-btn export" onclick="exportJSON()">
+        <span class="icon">📤</span>
+        <span class="title">Экспорт</span>
+        <span class="desc">Скачать в JSON</span>
+      </button>
+      <button class="admin-btn import" onclick="document.getElementById('jsonFileInput').click()">
+        <span class="icon">📥</span>
+        <span class="title">Импорт</span>
+        <span class="desc">Загрузить из JSON</span>
+      </button>
+      <button class="admin-btn clear" onclick="clearDB()">
+        <span class="icon">🧹</span>
+        <span class="title">Очистить</span>
+        <span class="desc">Удалить всё</span>
+      </button>
+    </div>
+    <button class="ghost" style="width:100%; margin-top: 20px;" onclick="document.getElementById('adminOverlay').style.display='none'">Закрыть</button>
+  </div>
+</div>
+
+<!-- Палитра VITA -->
+<div id="colorOverlay" class="overlay" style="display:none;">
+  <div class="modal" style="max-width: 400px;">
+    <h3>🎨 Выберите цвет VITA</h3>
+    <div class="vita-grid" id="vitaGrid">
+      <!-- Генерируется в JS -->
+    </div>
+    <div class="actions" style="justify-content: space-between; margin-top: 20px;">
+      <button class="ghost" onclick="document.getElementById('colorOverlay').style.display='none'">Отмена</button>
+      <button class="warn" onclick="selectVitaColor('')">Сбросить</button>
+    </div>
+  </div>
+</div>
+
 <!-- Оверлей импорта -->
 <div id="importOverlay" class="overlay" style="display:none;">
   <div class="modal" style="text-align:center;">
@@ -392,7 +456,26 @@ details[open] > .date-summary { margin-bottom: 10px; border-bottom-left-radius: 
     <div class="form-grid">
       <input id="eOrderNum" placeholder="№ наряда" />
       <input id="ePatient" placeholder="ФИО пациента" />
-      <input id="eClinic" placeholder="Клиника / врач" />
+      <input id="eClinic" placeholder="Клиника / врач" list="editClinicSuggestions" autocomplete="off" />
+      <datalist id="editClinicSuggestions"></datalist>
+      
+      <select id="eType">
+        <option value="">Тип работы</option>
+        <option>Коронка</option><option>Винир</option><option>Мост</option>
+        <option>Вкладка</option><option>Бюгель</option><option>Съёмный протез</option>
+        <option>Абатмент</option><option>Каппа</option><option>Ретейнер</option>
+        <option>Другое</option>
+      </select>
+      <select id="eMaterial">
+        <option value="">Материал</option>
+        <option>Цирконий</option><option>E.max</option><option>Металлокерамика</option>
+        <option>ПММА</option><option>Титан</option><option>CoCr</option><option>Воск</option>
+        <option>Другое</option>
+      </select>
+      
+      <input id="eColor" class="color-picker-input" placeholder="Цвет VITA" onclick="openColorPicker('eColor')" readonly />
+      <input id="eTeeth" placeholder="Зубы (16, 17…)" />
+      
       <select id="eStatus">
         <option value="received">📥 Получен</option>
         <option value="modeling">📐 Моделировка</option>
@@ -453,6 +536,70 @@ let visibleCount = 100;
 let currentEditId = null, currentPayId = null;
 window.showFullArchive = false;
 
+// --- ЭКСПОРТ БАЗЫ ---
+window.exportJSON = function() {
+  if (!orders || orders.length === 0) {
+    showToast('База пуста, нечего экспортировать', 'err');
+    return;
+  }
+  
+  // Собираем чистые данные
+  const exportData = {
+    exportedAt: new Date().toISOString(),
+    orders: orders
+  };
+  
+  const dataStr = JSON.stringify(exportData, null, 2);
+  const blob = new Blob([dataStr], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  
+  const a = document.createElement('a');
+  a.href = url;
+  const dateStr = new Date().toISOString().split('T')[0];
+  a.download = `dtlab_backup_${dateStr}.json`;
+  
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  
+  showToast('✅ База успешно экспортирована!');
+  document.getElementById('adminOverlay').style.display = 'none';
+};
+
+// --- ЦВЕТА VITA ---
+const VITA_COLORS = {
+  'A': { 'A1': '#E9DAC8', 'A2': '#D8C2A2', 'A3': '#D1B38B', 'A3.5': '#C4A171', 'A4': '#B08B59' },
+  'B': { 'B1': '#E9DAC8', 'B2': '#DABFA0', 'B3': '#CEA87E', 'B4': '#BC9568' },
+  'C': { 'C1': '#D9CFC0', 'C2': '#C8B9A6', 'C3': '#B9A88F', 'C4': '#A89982' },
+  'D': { 'D2': '#D2C5B2', 'D3': '#C3B39E', 'D4': '#B2A08C' }
+};
+
+let colorTargetInputId = null;
+
+function initVitaGrid() {
+  const grid = document.getElementById('vitaGrid');
+  let html = '';
+  for (const group in VITA_COLORS) {
+    for (const color in VITA_COLORS[group]) {
+      html += `<div class="vita-btn" style="background-color: ${VITA_COLORS[group][color]}" onclick="selectVitaColor('${color}')">${color}</div>`;
+    }
+  }
+  grid.innerHTML = html;
+}
+
+window.openColorPicker = function(targetId) {
+  colorTargetInputId = targetId;
+  document.getElementById('colorOverlay').style.display = 'flex';
+};
+
+window.selectVitaColor = function(color) {
+  if (colorTargetInputId) {
+    document.getElementById(targetId = colorTargetInputId).value = color;
+  }
+  document.getElementById('colorOverlay').style.display = 'none';
+};
+
 // --- СМЕНА ТЕМ ---
 window.changeTheme = function(theme) {
   document.body.setAttribute('data-theme', theme);
@@ -503,6 +650,16 @@ function updateTeethLabel() {
     const sorted = Array.from(selectedTeeth).sort((a, b) => a - b);
     label.textContent = sorted.join(', ');
   }
+}
+
+// --- АВТОКОМПЛИТ КЛИНИК ---
+function updateSuggestions() {
+  const clinics = new Set();
+  orders.forEach(o => { if (o.clinic && o.clinic.trim()) clinics.add(o.clinic.trim()); });
+  
+  const optionsHtml = Array.from(clinics).sort().map(c => `<option value="${esc(c)}">`).join('');
+  document.getElementById('clinicSuggestions').innerHTML = optionsHtml;
+  document.getElementById('editClinicSuggestions').innerHTML = optionsHtml;
 }
 
 // --- КАЛЕНДАРЬ ---
@@ -586,11 +743,9 @@ function renderCalSidePanel() {
     const parts = calSelectedDate.split('-');
     document.getElementById('calSelectedDateLabel').textContent = `${parts[2]}.${parts[1]}.${parts[0]}`;
     
-    // Заметки
     const noteKey = 'dtlab_note_' + calSelectedDate;
     document.getElementById('calNotes').value = localStorage.getItem(noteKey) || '';
 
-    // Наряды
     const dayOrders = orders.filter(o => o.deadline === calSelectedDate);
     const container = document.getElementById('calOrdersContainer');
     
@@ -614,6 +769,10 @@ window.openEdit = function(id) {
   document.getElementById('eOrderNum').value = o.orderNumber || '';
   document.getElementById('ePatient').value = o.patientName || '';
   document.getElementById('eClinic').value = o.clinic || '';
+  document.getElementById('eType').value = o.orderType || '';
+  document.getElementById('eMaterial').value = o.material || '';
+  document.getElementById('eColor').value = o.vitaColor || '';
+  document.getElementById('eTeeth').value = o.teeth || '';
   document.getElementById('eStatus').value = o.status || 'received';
   document.getElementById('ePrice').value = o.price || 0;
   document.getElementById('eNotes').value = o.notes || '';
@@ -631,6 +790,10 @@ window.saveEdit = async function() {
     orderNumber: document.getElementById('eOrderNum').value.trim() || '—',
     patientName: document.getElementById('ePatient').value.trim(),
     clinic: document.getElementById('eClinic').value.trim(),
+    orderType: document.getElementById('eType').value,
+    material: document.getElementById('eMaterial').value,
+    vitaColor: document.getElementById('eColor').value.trim(),
+    teeth: document.getElementById('eTeeth').value.trim(),
     status: document.getElementById('eStatus').value,
     price: parseFloat(document.getElementById('ePrice').value) || 0,
     notes: document.getElementById('eNotes').value.trim(),
@@ -694,6 +857,7 @@ window.clearDB = async function() {
     if (count > 0) promises.push(batch.commit());
     await Promise.all(promises);
     showToast('✅ База полностью очищена!');
+    document.getElementById('adminOverlay').style.display = 'none';
   } catch (e) {
     showToast('Ошибка очистки: ' + e.message, 'err');
   }
@@ -704,15 +868,21 @@ window.importJSON = function(input) {
   const file = input.files[0];
   if (!file) return;
 
+  document.getElementById('adminOverlay').style.display = 'none';
   const reader = new FileReader();
   reader.onload = async function(e) {
     try {
       const rawData = JSON.parse(e.target.result);
       
       let calcArr = [], docArr = [], detArr = [];
-      if (rawData.calculations) calcArr = rawData.calculations;
-      if (rawData.doctors) docArr = rawData.doctors;
-      if (rawData.details) detArr = rawData.details;
+      // Поддерживаем как старый формат (calculations/details), так и новый (orders)
+      if (rawData.orders) {
+          calcArr = rawData.orders;
+      } else {
+          if (rawData.calculations) calcArr = rawData.calculations;
+          if (rawData.doctors) docArr = rawData.doctors;
+          if (rawData.details) detArr = rawData.details;
+      }
 
       if (calcArr.length === 0 && detArr.length > 0) {
         calcArr = detArr.map(det => ({
@@ -747,87 +917,103 @@ window.importJSON = function(input) {
 
       for (let i = 0; i < calcArr.length; i++) {
         const calc = calcArr[i];
-        const orderNumStr = String(calc._id || calc.id || '—');
         
-        if (existingOrderNumbers.has(orderNumStr)) {
-            skippedCount++;
-            if (i % 100 === 0) {
-                progressText.textContent = `${i} / ${calcArr.length}`;
-                progressBar.style.width = Math.round((i / calcArr.length) * 100) + '%';
-                statusText.textContent = `Пропущено существующих: ${skippedCount}...`;
-                await new Promise(r => setTimeout(r, 0));
+        // Если это уже готовый объект из экспорта
+        if (calc.patientName !== undefined) {
+            const orderNumStr = String(calc.orderNumber || '—');
+            if (existingOrderNumbers.has(orderNumStr)) {
+                skippedCount++;
+                continue;
             }
-            continue; 
-        }
-
-        try {
-            const doctorData = doctorsMap[calc.doctorId || calc.doctor] || {};
-            const detailData = detailsMap[calc.detailId || calc._id] || {};
-
-            let teethStr = '';
-            if (detailData.teeth) {
-                try {
-                    const teethData = JSON.parse(detailData.teeth);
-                    if (teethData.teeth && Array.isArray(teethData.teeth)) teethStr = teethData.teeth.map(t => t.tooth).join(', ');
-                } catch(e) { teethStr = String(detailData.teeth).replace(/\[|\]|\"|\'/g, ''); }
-            }
-
-            let orderTypeStr = '';
-            if (detailData.elementsProsthesis) {
-                try {
-                    const elData = JSON.parse(detailData.elementsProsthesis);
-                    if (elData.elementsProsthesis && Array.isArray(elData.elementsProsthesis) && elData.elementsProsthesis.length > 0) {
-                        orderTypeStr = elData.elementsProsthesis.map(el => `Элемент ${el.elementProsthesis} (${el.count} шт.)`).join(', ');
-                    }
-                } catch(e) {
-                    if (detailData.elementsProsthesis !== '{"data": "elementsProsthesisSelected", "elementsProsthesis": []}') orderTypeStr = detailData.elementsProsthesis;
-                }
-            }
-
-            let colorStr = detailData.color || '';
-            if (colorStr === '-1' || colorStr === '0') colorStr = '';
-
-            let docFirstName = doctorData.name || doctorData.firstName || '';
-            let docLastName = doctorData.soname || doctorData.lastName || doctorData.family || '';
-            let docPatron = doctorData.patronymic || doctorData.middleName || '';
-            let clinicStr = `${docLastName} ${docFirstName} ${docPatron}`.trim();
-
-            if (!clinicStr) {
-                clinicStr = doctorData.fio || doctorData.fullName || detailData.doctorName || '';
-            }
-
-            let dateStr = '';
-            if (calc.calcDate || detailData.date_updated || detailData.date_created) {
-                try {
-                    const d = new Date(Number(calc.calcDate || detailData.date_updated || detailData.date_created));
-                    if (!isNaN(d.getTime())) dateStr = d.toISOString().split('T')[0];
-                } catch(e) {}
-            }
-
-            const pName = detailData.patientSoname || detailData.patientName || detailData.patientFio || detailData.fio || 'Пациент (импорт)';
-
-            const orderData = {
-              patientName: pName || 'Пациент (импорт)',
-              orderNumber: orderNumStr,
-              clinic: clinicStr || '',
-              orderType: orderTypeStr || '',
-              material: '',
-              vitaColor: colorStr || '',
-              teeth: teethStr || '',
-              price: parseFloat(calc.money || detailData.endPrice) || 0,
-              prepaid: parseFloat(detailData.payedMoney) || 0,
-              deadline: dateStr || '',
-              notes: detailData.informationOrder || '',
-              status: 'delivered', 
-              createdAt: serverTimestamp(),
-              payments: []
-            };
-
             const newRef = doc(collection(db, COLLECTION));
-            batch.set(newRef, orderData);
+            // Убираем id, чтобы Firestore создал новый, и createdAt, чтобы обновить
+            const { id, createdAt, ...cleanData } = calc;
+            batch.set(newRef, { ...cleanData, createdAt: serverTimestamp() });
             count++;
-        } catch (err) {
-            console.error('Ошибка при обработке наряда', i, err);
+        } 
+        // Старый формат
+        else {
+            const orderNumStr = String(calc._id || calc.id || '—');
+            if (existingOrderNumbers.has(orderNumStr)) {
+                skippedCount++;
+                if (i % 100 === 0) {
+                    progressText.textContent = `${i} / ${calcArr.length}`;
+                    progressBar.style.width = Math.round((i / calcArr.length) * 100) + '%';
+                    statusText.textContent = `Пропущено существующих: ${skippedCount}...`;
+                    await new Promise(r => setTimeout(r, 0));
+                }
+                continue; 
+            }
+
+            try {
+                const doctorData = doctorsMap[calc.doctorId || calc.doctor] || {};
+                const detailData = detailsMap[calc.detailId || calc._id] || {};
+
+                let teethStr = '';
+                if (detailData.teeth) {
+                    try {
+                        const teethData = JSON.parse(detailData.teeth);
+                        if (teethData.teeth && Array.isArray(teethData.teeth)) teethStr = teethData.teeth.map(t => t.tooth).join(', ');
+                    } catch(e) { teethStr = String(detailData.teeth).replace(/\[|\]|\"|\'/g, ''); }
+                }
+
+                let orderTypeStr = '';
+                if (detailData.elementsProsthesis) {
+                    try {
+                        const elData = JSON.parse(detailData.elementsProsthesis);
+                        if (elData.elementsProsthesis && Array.isArray(elData.elementsProsthesis) && elData.elementsProsthesis.length > 0) {
+                            orderTypeStr = elData.elementsProsthesis.map(el => `Элемент ${el.elementProsthesis} (${el.count} шт.)`).join(', ');
+                        }
+                    } catch(e) {
+                        if (detailData.elementsProsthesis !== '{"data": "elementsProsthesisSelected", "elementsProsthesis": []}') orderTypeStr = detailData.elementsProsthesis;
+                    }
+                }
+
+                let colorStr = detailData.color || '';
+                if (colorStr === '-1' || colorStr === '0') colorStr = '';
+
+                let docFirstName = doctorData.name || doctorData.firstName || '';
+                let docLastName = doctorData.soname || doctorData.lastName || doctorData.family || '';
+                let docPatron = doctorData.patronymic || doctorData.middleName || '';
+                let clinicStr = `${docLastName} ${docFirstName} ${docPatron}`.trim();
+
+                if (!clinicStr) {
+                    clinicStr = doctorData.fio || doctorData.fullName || detailData.doctorName || '';
+                }
+
+                let dateStr = '';
+                if (calc.calcDate || detailData.date_updated || detailData.date_created) {
+                    try {
+                        const d = new Date(Number(calc.calcDate || detailData.date_updated || detailData.date_created));
+                        if (!isNaN(d.getTime())) dateStr = d.toISOString().split('T')[0];
+                    } catch(e) {}
+                }
+
+                const pName = detailData.patientSoname || detailData.patientName || detailData.patientFio || detailData.fio || 'Пациент (импорт)';
+
+                const orderData = {
+                  patientName: pName || 'Пациент (импорт)',
+                  orderNumber: orderNumStr,
+                  clinic: clinicStr || '',
+                  orderType: orderTypeStr || '',
+                  material: '',
+                  vitaColor: colorStr || '',
+                  teeth: teethStr || '',
+                  price: parseFloat(calc.money || detailData.endPrice) || 0,
+                  prepaid: parseFloat(detailData.payedMoney) || 0,
+                  deadline: dateStr || '',
+                  notes: detailData.informationOrder || '',
+                  status: 'delivered', 
+                  createdAt: serverTimestamp(),
+                  payments: []
+                };
+
+                const newRef = doc(collection(db, COLLECTION));
+                batch.set(newRef, orderData);
+                count++;
+            } catch (err) {
+                console.error('Ошибка при обработке наряда', i, err);
+            }
         }
 
         if (i % 50 === 0) {
@@ -978,7 +1164,6 @@ function printOrder(id) {
   const o = orders.find(x => x.id === id); if (!o) return;
   const win = window.open('', '_blank');
   
-  // Формируем абсолютный путь к логотипу, чтобы он корректно отобразился в новом окне
   const logoUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/')) + '/logo.png';
 
   win.document.write(`
@@ -1109,6 +1294,8 @@ function render() {
   document.getElementById('statReadyCount').textContent = readyCount;
   document.getElementById('statReadySum').textContent = fmtMoney(readySum);
 
+  updateSuggestions();
+
   if (currentTab === 'calendar') {
       content.style.display = 'none';
       searchWrap.style.display = 'none';
@@ -1208,6 +1395,7 @@ function subscribe() {
 }
 (async function init() {
   loadTheme();
+  initVitaGrid();
   initTeethChart();
   await initAuth(); 
   await checkPin(); 
@@ -1216,7 +1404,7 @@ function subscribe() {
   subscribe(); 
   setInterval(render, 60000);
 })();
-Object.assign(window, { addOrder, setStatus, removeOrder, printOrder, setTab, render, toggleTooth, clearTeeth, importJSON, clearDB, loadMore, changeTheme, openEdit, saveEdit, openPay, savePayment, changeMonth, goToday, selectDate, saveNotes });
+Object.assign(window, { addOrder, setStatus, removeOrder, printOrder, setTab, render, toggleTooth, clearTeeth, importJSON, clearDB, loadMore, changeTheme, openEdit, saveEdit, openPay, savePayment, changeMonth, goToday, selectDate, saveNotes, openColorPicker, selectVitaColor, exportJSON });
 </script>
 </body>
 </html>

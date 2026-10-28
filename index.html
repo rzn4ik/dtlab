@@ -274,7 +274,7 @@ details[open] > .date-summary { margin-bottom: 10px; border-bottom-left-radius: 
   <img src="logo.png" alt="ME Logo" class="site-logo" onerror="this.style.display='none'">
   Лаборатория Евгения Мешкова 
   <span id="connBadge" class="badge">⏳</span> 
-  <span class="badge" style="background:var(--accent); color:#fff;">v3.4</span>
+  <span class="badge" style="background:var(--accent); color:#fff;">v3.5</span>
   
   <div style="margin-left: auto; display: flex; gap: 8px; align-items: center;">
     <select id="themeSelect" onchange="changeTheme(this.value)" style="width: auto; background: var(--card); border-color: var(--border); color: var(--text); padding: 8px 14px; font-size: 12px; border-radius: 10px; cursor: pointer; font-weight: 700; outline: none; font-family: inherit; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
@@ -543,7 +543,6 @@ window.exportJSON = function() {
     return;
   }
   
-  // Собираем чистые данные
   const exportData = {
     exportedAt: new Date().toISOString(),
     orders: orders
@@ -875,7 +874,6 @@ window.importJSON = function(input) {
       const rawData = JSON.parse(e.target.result);
       
       let calcArr = [], docArr = [], detArr = [];
-      // Поддерживаем как старый формат (calculations/details), так и новый (orders)
       if (rawData.orders) {
           calcArr = rawData.orders;
       } else {
@@ -926,9 +924,12 @@ window.importJSON = function(input) {
                 continue;
             }
             const newRef = doc(collection(db, COLLECTION));
-            // Убираем id, чтобы Firestore создал новый, и createdAt, чтобы обновить
-            const { id, createdAt, ...cleanData } = calc;
-            batch.set(newRef, { ...cleanData, createdAt: serverTimestamp() });
+            // Убираем id, чтобы Firestore создал новый
+            const { id, ...cleanData } = calc;
+            // Восстанавливаем createdAt если это Timestamp
+            let cDate = new Date();
+            if (calc.createdAt && calc.createdAt.seconds) cDate = new Date(calc.createdAt.seconds * 1000);
+            batch.set(newRef, { ...cleanData, createdAt: cDate });
             count++;
         } 
         // Старый формат
@@ -981,11 +982,25 @@ window.importJSON = function(input) {
                     clinicStr = doctorData.fio || doctorData.fullName || detailData.doctorName || '';
                 }
 
+                // ВЫТАСКИВАЕМ РЕАЛЬНУЮ ДАТУ СОЗДАНИЯ
+                let dateObj = new Date();
                 let dateStr = '';
                 if (calc.calcDate || detailData.date_updated || detailData.date_created) {
                     try {
                         const d = new Date(Number(calc.calcDate || detailData.date_updated || detailData.date_created));
-                        if (!isNaN(d.getTime())) dateStr = d.toISOString().split('T')[0];
+                        if (!isNaN(d.getTime())) {
+                            dateObj = d;
+                            dateStr = d.toISOString().split('T')[0];
+                        }
+                    } catch(e) {}
+                }
+
+                // ВЫТАСКИВАЕМ РЕАЛЬНЫЙ ДЕДЛАЙН (если есть)
+                let deadlineStr = '';
+                if (detailData.date_end || calc.dateEnd || calc.deadline) {
+                    try {
+                        const d = new Date(Number(detailData.date_end || calc.dateEnd || calc.deadline));
+                        if (!isNaN(d.getTime())) deadlineStr = d.toISOString().split('T')[0];
                     } catch(e) {}
                 }
 
@@ -1001,10 +1016,10 @@ window.importJSON = function(input) {
                   teeth: teethStr || '',
                   price: parseFloat(calc.money || detailData.endPrice) || 0,
                   prepaid: parseFloat(detailData.payedMoney) || 0,
-                  deadline: dateStr || '',
+                  deadline: deadlineStr || '', // ТЕПЕРЬ ТУТ РЕАЛЬНЫЙ ДЕДЛАЙН, А НЕ ДАТА СОЗДАНИЯ
                   notes: detailData.informationOrder || '',
                   status: 'delivered', 
-                  createdAt: serverTimestamp(),
+                  createdAt: dateObj, // ИСПОЛЬЗУЕМ РЕАЛЬНУЮ ДАТУ СОЗДАНИЯ
                   payments: []
                 };
 

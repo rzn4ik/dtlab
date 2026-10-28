@@ -140,7 +140,7 @@ details[open] > .date-summary { margin-bottom: 8px; }
 </style>
 </head>
 <body>
-<h1>🦷 Лаборатория Евгения Мешкова <span id="connBadge" class="badge">⏳</span> <span class="badge" style="background:var(--accent); color:#fff;">v2.2</span></h1>
+<h1>🦷 Лаборатория Евгения Мешкова <span id="connBadge" class="badge">⏳</span> <span class="badge" style="background:var(--accent); color:#fff;">v2.3</span></h1>
 <div class="me" id="meInfo">Загрузка…</div>
 
 <div style="margin-bottom: 12px; display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap;">
@@ -359,9 +359,16 @@ window.importJSON = function(input) {
         let colorStr = detailData.color || '';
         if (colorStr === '-1' || colorStr === '0') colorStr = '';
 
-        let clinicStr = '';
-        if (doctorData.soname || doctorData.name) clinicStr = `${doctorData.soname || ''} ${doctorData.name || ''}`.trim();
-        if (doctorData.patronymic) clinicStr += ' ' + doctorData.patronymic;
+        // УЛУЧШЕННЫЙ ПОИСК ВРАЧА (проверяем все возможные варианты полей)
+        let docFirstName = doctorData.name || doctorData.firstName || '';
+        let docLastName = doctorData.soname || doctorData.lastName || doctorData.family || '';
+        let docPatron = doctorData.patronymic || doctorData.middleName || '';
+        let clinicStr = `${docLastName} ${docFirstName} ${docPatron}`.trim();
+
+        // Если имя врача не собралось из справочника, ищем его в самом наряде
+        if (!clinicStr) {
+            clinicStr = doctorData.fio || doctorData.fullName || detailData.doctorName || '';
+        }
 
         let dateStr = '';
         if (calc.calcDate || detailData.date_updated || detailData.date_created) {
@@ -371,7 +378,6 @@ window.importJSON = function(input) {
             } catch(e) {}
         }
 
-        // Страховка для импорта ФИО (берем из разных возможных полей)
         const pName = detailData.patientSoname || detailData.patientName || detailData.patientFio || detailData.fio || 'Пациент (импорт)';
 
         const orderData = {
@@ -539,7 +545,6 @@ function render() {
     return true;
   });
 
-  // Если архив пуст по поиску и мы не нажали "Показать всё"
   if (currentTab === 'archive' && q.length === 0 && !window.showFullArchive) {
     content.innerHTML = `
       <div class="empty" style="padding: 60px 20px; background: var(--card); border-radius: 12px; border: 1px dashed var(--border);">
@@ -556,7 +561,8 @@ function render() {
 
   let list = baseList;
   if (q.length > 0) {
-    list = list.filter(o => (o.patientName || '').toLowerCase().includes(q) || (o.clinic || '').toLowerCase().includes(q) || (o.orderNumber || '').toLowerCase().includes(q) || (o.orderType || '').toLowerCase().includes(q) || (o.teeth || '').toLowerCase().includes(q));
+    // "УМНЫЙ" ПОИСК: ищет совпадение в абсолютно любом поле наряда
+    list = list.filter(o => JSON.stringify(o).toLowerCase().includes(q));
   }
 
   if (!list.length) { 

@@ -144,7 +144,7 @@ details[open] > .date-summary { margin-bottom: 8px; }
 </style>
 </head>
 <body>
-<h1>🦷 Лаборатория Евгения Мешкова <span id="connBadge" class="badge">⏳</span> <span class="badge" style="background:var(--accent); color:#fff;">v2.4</span></h1>
+<h1>🦷 Лаборатория Евгения Мешкова <span id="connBadge" class="badge">⏳</span> <span class="badge" style="background:var(--accent); color:#fff;">v2.5</span></h1>
 <div class="me" id="meInfo">Загрузка…</div>
 
 <div style="margin-bottom: 12px; display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap;">
@@ -312,7 +312,7 @@ window.clearDB = async function() {
   }
 }
 
-// --- СУПЕР-ИМПОРТ С ПРОГРЕСС-БАРОМ ---
+// --- СУПЕР-ИМПОРТ С ПРОГРЕСС-БАРОМ (ИСПРАВЛЕН ЗАВИСАНИЯ) ---
 window.importJSON = function(input) {
   const file = input.files[0];
   if (!file) return;
@@ -336,11 +336,19 @@ window.importJSON = function(input) {
       if (calcArr.length === 0) { showToast('❌ В файле нет нарядов.', 'err'); return; }
 
       // Показываем оверлей
-      document.getElementById('importOverlay').style.display = 'flex';
-      document.getElementById('importProgressText').textContent = `0 / ${calcArr.length}`;
-      document.getElementById('importProgressBar').style.width = '0%';
-      document.getElementById('importStatusText').textContent = 'Подготовка данных...';
-      document.getElementById('importStatusText').style.color = 'var(--dim)';
+      const overlay = document.getElementById('importOverlay');
+      const progressText = document.getElementById('importProgressText');
+      const progressBar = document.getElementById('importProgressBar');
+      const statusText = document.getElementById('importStatusText');
+
+      overlay.style.display = 'flex';
+      progressText.textContent = `0 / ${calcArr.length}`;
+      progressBar.style.width = '0%';
+      statusText.textContent = 'Подготовка данных...';
+      statusText.style.color = 'var(--dim)';
+
+      // ВАЖНО: Даем браузеру 200мс, чтобы отрисовать оверлей, иначе он зависнет на нуле
+      await new Promise(r => setTimeout(r, 200));
 
       const doctorsMap = {}; docArr.forEach(d => doctorsMap[d._id || d.id] = d);
       const detailsMap = {}; detArr.forEach(d => detailsMap[d._id || d.id] = d);
@@ -399,7 +407,6 @@ window.importJSON = function(input) {
 
             const pName = detailData.patientSoname || detailData.patientName || detailData.patientFio || detailData.fio || 'Пациент (импорт)';
 
-            // Полностью защищаем данные от undefined, чтобы Firebase не падал
             const orderData = {
               patientName: pName || 'Пациент (импорт)',
               orderNumber: calc._id || calc.id || '—',
@@ -424,43 +431,52 @@ window.importJSON = function(input) {
             console.error('Ошибка при обработке наряда', i, err);
         }
 
+        // Обновляем интерфейс каждые 50 записей, чтобы не было зависаний
+        if (i % 50 === 0) {
+            progressText.textContent = `${i} / ${calcArr.length}`;
+            progressBar.style.width = Math.round((i / calcArr.length) * 100) + '%';
+            // Отпускаем поток браузера
+            await new Promise(r => setTimeout(r, 0));
+        }
+
         if (count === 500 || i === calcArr.length - 1) {
           try {
+            statusText.textContent = `Отправка в базу (${successCount + count} шт.)...`;
             await batch.commit();
             successCount += count;
             count = 0;
             batch = writeBatch(db);
 
-            // Обновляем прогресс
-            const pct = Math.round((successCount / calcArr.length) * 100);
-            document.getElementById('importProgressText').textContent = `${successCount} / ${calcArr.length}`;
-            document.getElementById('importProgressBar').style.width = pct + '%';
-            document.getElementById('importStatusText').textContent = `Отправлено пакетов: ${Math.ceil(successCount/500)}...`;
+            progressText.textContent = `${successCount} / ${calcArr.length}`;
+            progressBar.style.width = Math.round((successCount / calcArr.length) * 100) + '%';
+            statusText.textContent = `Загружено: ${successCount}`;
             
           } catch (batchError) {
             console.error("Ошибка пакета:", batchError);
             hasError = true;
-            document.getElementById('importStatusText').textContent = `Ошибка базы: ${batchError.message}`;
-            document.getElementById('importStatusText').style.color = 'var(--danger)';
+            statusText.textContent = `Ошибка базы: ${batchError.message}`;
+            statusText.style.color = 'var(--danger)';
             batch = writeBatch(db);
             count = 0;
-            // Пауза, чтобы не спамить сервер при сбое сети
-            await new Promise(r => setTimeout(r, 1500));
+            await new Promise(r => setTimeout(r, 2000)); // Пауза при ошибке
           }
         }
       }
 
-      // Финал
-      document.getElementById('importStatusText').textContent = hasError ? 'Загрузка завершена с ошибками (часть данных пропущена)' : '✅ Импорт успешно завершен!';
-      document.getElementById('importStatusText').style.color = hasError ? 'var(--warn)' : 'var(--accent2)';
+      statusText.textContent = hasError ? 'Загрузка завершена с ошибками (часть данных пропущена)' : '✅ Импорт успешно завершен!';
+      statusText.style.color = hasError ? 'var(--warn)' : 'var(--accent2)';
       
       setTimeout(() => {
-        document.getElementById('importOverlay').style.display = 'none';
+        overlay.style.display = 'none';
         input.value = '';
         setTab('archive');
       }, 2000);
 
-    } catch(err) { console.error(err); showToast('❌ Ошибка: ' + err.message, 'err'); }
+    } catch(err) { 
+        console.error(err); 
+        showToast('❌ Ошибка файла: ' + err.message, 'err'); 
+        document.getElementById('importOverlay').style.display = 'none';
+    }
   };
   reader.readAsText(file);
 };

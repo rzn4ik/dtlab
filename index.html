@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>Лаборатория Евгения Мешкова — Панель техника</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -91,7 +91,7 @@ main { flex: 1; padding: 16px; max-width: 1000px; margin: 0 auto; width: 100%; }
 /* Формы и элементы */
 .form-group { margin-bottom: 16px; position: relative; }
 .form-label { font-size: 12px; color: var(--dim); margin-bottom: 6px; display: block; font-weight: 500; }
-.form-control { width: 100%; padding: 12px 0; border: none; border-bottom: 1px solid var(--border); background: transparent; color: var(--text); font-size: 16px; font-family: inherit; outline: none; transition: border-color 0.2s; }
+.form-control { width: 100%; padding: 12px 0; border: none; border-bottom: 1px solid var(--border); background: transparent; color: var(--text); font-size: 15px; font-family: inherit; outline: none; transition: border-color 0.2s; }
 .form-control:focus { border-bottom-color: var(--accent); }
 select.form-control { cursor: pointer; appearance: none; }
 select.form-control option { background: var(--card); color: var(--text); }
@@ -112,10 +112,7 @@ textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid va
 .btn-danger { background: var(--danger); color: #fff; }
 .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text); }
 .btn-block { width: 100%; }
-
-/* Фаб кнопка сохранения */
-.fab { position: fixed; bottom: 24px; right: 24px; width: 60px; height: 60px; border-radius: 50%; background: #f87171; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 4px 15px rgba(248, 113, 113, 0.4); cursor: pointer; z-index: 90; border: none; transition: transform 0.2s; }
-.fab:hover { transform: scale(1.05); }
+.btn-small { padding: 6px 10px; font-size: 11px; border-radius: 6px; }
 
 /* Карточки нарядов */
 .card { background: var(--card); border: 1px solid var(--border); border-left: 4px solid var(--mute); border-radius: 12px; padding: 16px; margin-bottom: 12px; position: relative; transition: transform 0.2s; }
@@ -125,20 +122,17 @@ textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid va
 .card-subtitle { font-size: 12px; color: var(--dim); margin-top: 2px; }
 .card-row { font-size: 13px; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; color: var(--text); }
 .card-row span { color: var(--dim); }
-.badge-status { font-size: 11px; padding: 4px 8px; border-radius: 6px; font-weight: 700; background: var(--inner); }
 .deadline { font-family: monospace; font-size: 12px; font-weight: 700; padding: 4px 8px; border-radius: 6px; background: var(--inner); border: 1px solid var(--border); }
 .deadline.overdue { color: var(--danger); border-color: var(--danger); background: rgba(239,68,68,0.1); }
 .deadline.ok { color: var(--accent2); }
 .card-actions { display: flex; gap: 8px; margin-top: 12px; border-top: 1px solid var(--border); padding-top: 12px; flex-wrap: wrap; }
-.btn-small { padding: 6px 10px; font-size: 11px; border-radius: 6px; }
 
 /* Схема зубов */
 .teeth-wrapper { margin-top: 16px; }
-.teeth-chart { display: flex; flex-direction: column; align-items: center; background: var(--chart-bg); padding: 20px 10px; border-radius: 12px; border: 1px solid var(--border); }
-.jaw { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; width: 100%; margin-bottom: 10px; }
-.tooth-btn { width: 100%; aspect-ratio: 1; background: var(--tooth-bg); border: 1px solid var(--border); border-radius: 6px; color: var(--dim); font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
+.teeth-chart { display: flex; flex-direction: column; align-items: center; background: var(--chart-bg); padding: 16px 8px; border-radius: 12px; border: 1px solid var(--border); max-width: 480px; margin: 0 auto; }
+.jaw { display: flex; justify-content: center; gap: 4px; margin-bottom: 8px; }
+.tooth-btn { width: 38px; height: 44px; background: var(--tooth-bg); border: 1px solid var(--border); border-radius: 8px; color: var(--dim); font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; flex-shrink: 0; }
 .tooth-btn.selected { color: #fff; border-color: transparent; }
-.tooth-btn.active-tooth { box-shadow: 0 0 0 2px var(--accent); }
 
 /* Палитра VITA */
 .vita-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
@@ -146,8 +140,9 @@ textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid va
 .vita-btn:hover { transform: scale(1.05); border-color: var(--accent); }
 
 /* Модальные окна */
-.overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 10000; padding: 16px; }
-.modal { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; max-width: 500px; width: 100%; box-shadow: 0 20px 50px rgba(0,0,0,0.5); max-height: 90vh; overflow-y: auto; }
+.overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); display: flex; justify-content: center; z-index: 10000; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 16px; }
+.modal { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; max-width: 500px; width: 100%; box-shadow: 0 20px 50px rgba(0,0,0,0.5); margin: auto; }
+.full-screen-modal { background: var(--bg); border: 1px solid var(--border); border-radius: 16px; width: 100%; max-width: 800px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); margin: 20px auto; padding: 20px; position: relative; }
 
 /* Статистика */
 .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 20px; }
@@ -170,15 +165,21 @@ textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid va
 .cal-dot.overdue { background: var(--danger); }
 
 /* Блок работ в форме */
-.work-item { background: var(--inner); border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 8px; position: relative; border-left: 4px solid #ccc; }
+.work-item { background: var(--inner); border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 8px; position: relative; border-left: 4px solid #ccc; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; cursor: pointer; transition: border-color 0.2s; }
 .work-item.active { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
-.work-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; cursor: pointer; }
-.work-title { font-weight: 700; font-size: 14px; }
-.work-badge { font-size: 11px; padding: 2px 6px; border-radius: 4px; background: rgba(0,0,0,0.2); color: #fff; }
+.work-header { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 150px; }
+.work-type-select { background: transparent; border: none; color: var(--text); font-weight: 700; font-size: 14px; outline: none; cursor: pointer; }
+.work-color-input { background: transparent; border: none; border-bottom: 1px dashed var(--border); color: var(--dim); font-size: 13px; width: 60px; outline: none; cursor: pointer; text-align: center; }
+.work-teeth-label { font-size: 12px; color: var(--dim); margin-left: auto; font-weight: 600; }
 
 @media (max-width: 600px) {
   .header-title { display: none; }
   .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  .tooth-btn { width: 30px; height: 36px; font-size: 10px; }
+  .work-item { flex-direction: column; align-items: flex-start; }
+  .work-teeth-label { margin-left: 0; width: 100%; text-align: right; margin-top: 4px; }
+  .full-screen-modal { margin: 0; border-radius: 0; min-height: 100vh; border: none; }
+  .overlay { padding: 0; }
 }
 </style>
 </head>
@@ -214,7 +215,7 @@ textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid va
   </div>
   <div class="header-right">
     <span id="connBadge" class="badge">⏳</span>
-    <span class="badge" style="background:var(--accent); color:#fff;">v4.1</span>
+    <span class="badge" style="background:var(--accent); color:#fff;">v4.2</span>
   </div>
 </header>
 
@@ -233,13 +234,13 @@ textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid va
         <div class="stat-val" style="color:var(--danger)" id="statOverdueCount">0</div>
       </div>
       <div class="stat-card">
-        <div class="stat-lbl">Готово к выдаче</div>
+        <div class="stat-lbl">Готово</div>
         <div class="stat-val" style="color:var(--accent2)" id="statReadyCount">0</div>
       </div>
     </div>
 
     <div style="display: flex; gap: 8px; margin-bottom: 16px;">
-      <input type="text" id="searchInput" class="form-control" style="border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px;" placeholder="Поиск по ФИО, номеру или клинике..." oninput="render()">
+      <input type="text" id="searchInput" class="form-control" style="border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px;" placeholder="Поиск..." oninput="render()">
       <button class="btn btn-primary" onclick="openNewOrder()">➕</button>
     </div>
 
@@ -250,7 +251,7 @@ textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid va
     </div>
 
     <div id="ordersList"></div>
-    <button id="loadMoreBtn" class="btn btn-ghost btn-block" style="display:none; margin-top: 10px;" onclick="loadMore()">Показать еще 100</button>
+    <button id="loadMoreBtn" class="btn btn-ghost btn-block" style="display:none; margin-top: 10px;" onclick="loadMore()">Показать еще</button>
   </section>
 
   <!-- VIEW: КАЛЕНДАРЬ -->
@@ -266,7 +267,7 @@ textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid va
     <div class="cal-grid" id="calGrid"></div>
     <div style="margin-top: 20px;">
       <h4 style="font-size: 13px; color: var(--dim); margin-bottom: 8px;">Заметки на <span id="calSelectedDateLabel"></span>:</h4>
-      <textarea id="calNotes" class="form-control" style="min-height: 80px;" placeholder="Напишите что-нибудь важное..." oninput="saveNotes()"></textarea>
+      <textarea id="calNotes" class="form-control" style="min-height: 80px;" placeholder="Напишите что-нибудь..." oninput="saveNotes()"></textarea>
     </div>
     <div style="margin-top: 20px;">
       <h4 style="font-size: 13px; color: var(--dim); margin-bottom: 8px;">Наряды на этот день:</h4>
@@ -276,13 +277,13 @@ textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid va
 
   <!-- VIEW: КЛИЕНТЫ -->
   <section id="view-clients" class="view-section">
-    <h2 style="font-size: 18px; margin-bottom: 16px; color: var(--accent);">Клиенты / Врачи</h2>
+    <h2 style="font-size: 18px; margin-bottom: 16px; color: var(--accent);">Клиенты</h2>
     <div id="clientsList"></div>
   </section>
 
   <!-- VIEW: ПЕРСОНАЛ -->
   <section id="view-staff" class="view-section">
-    <h2 style="font-size: 18px; margin-bottom: 16px; color: var(--accent);">Зубные техники</h2>
+    <h2 style="font-size: 18px; margin-bottom: 16px; color: var(--accent);">Техники</h2>
     <div id="staffList"></div>
   </section>
 
@@ -291,11 +292,11 @@ textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid va
     <h2 style="font-size: 18px; margin-bottom: 16px; color: var(--accent);">Учет денег</h2>
     <div class="stats-grid">
       <div class="stat-card">
-        <div class="stat-lbl">Выручка (Выдано)</div>
+        <div class="stat-lbl">Выручка</div>
         <div class="stat-val" style="color:var(--accent2);" id="moneyTotal">0 ₽</div>
       </div>
       <div class="stat-card">
-        <div class="stat-lbl">В работе (ожидается)</div>
+        <div class="stat-lbl">В работе</div>
         <div class="stat-val" style="color:var(--warn);" id="moneyPending">0 ₽</div>
       </div>
     </div>
@@ -303,14 +304,14 @@ textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid va
 
   <!-- VIEW: СТАТИСТИКА -->
   <section id="view-stats" class="view-section">
-    <h2 style="font-size: 18px; margin-bottom: 16px; color: var(--accent);">Статистика по работе</h2>
+    <h2 style="font-size: 18px; margin-bottom: 16px; color: var(--accent);">Статистика</h2>
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-lbl">Всего нарядов</div>
         <div class="stat-val" id="statTotalOrders">0</div>
       </div>
       <div class="stat-card">
-        <div class="stat-lbl">Уникальных клиентов</div>
+        <div class="stat-lbl">Клиентов</div>
         <div class="stat-val" id="statUniqueClients">0</div>
       </div>
     </div>
@@ -319,44 +320,35 @@ textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid va
   <!-- VIEW: НАСТРОЙКИ -->
   <section id="view-settings" class="view-section">
     <h2 style="font-size: 18px; margin-bottom: 16px; color: var(--accent);">Настройки</h2>
-    
     <div class="form-group">
-      <label class="form-label">Тема оформления</label>
+      <label class="form-label">Тема</label>
       <select id="themeSelect" class="form-control" onchange="changeTheme(this.value)">
-        <option value="dark">🌑 Тёмная (Неон)</option>
-        <option value="light">☀️ Светлая (Клиника)</option>
-        <option value="coffee">☕ Кофейная (DTLab)</option>
+        <option value="dark">🌑 Тёмная</option>
+        <option value="light">☀️ Светлая</option>
+        <option value="coffee">☕ Кофейная</option>
         <option value="cyber">👾 Киберпанк</option>
-        <option value="forest">🌲 Лесная (Изумруд)</option>
+        <option value="forest">🌲 Лесная</option>
       </select>
     </div>
-
     <div class="grid-3" style="margin-top: 20px;">
-      <button class="btn btn-ghost" onclick="exportJSON()" style="flex-direction: column; padding: 20px 10px;">
-        <span style="font-size: 24px;">📤</span><br>Экспорт
-      </button>
-      <button class="btn btn-ghost" onclick="document.getElementById('jsonFileInput').click()" style="flex-direction: column; padding: 20px 10px;">
-        <span style="font-size: 24px;">📥</span><br>Импорт
-      </button>
-      <button class="btn btn-ghost" onclick="clearDB()" style="flex-direction: column; padding: 20px 10px; color: var(--danger);">
-        <span style="font-size: 24px;">🧹</span><br>Очистить
-      </button>
+      <button class="btn btn-ghost" onclick="exportJSON()" style="flex-direction: column; padding: 20px 10px;"><span style="font-size: 24px;">📤</span><br>Экспорт</button>
+      <button class="btn btn-ghost" onclick="document.getElementById('jsonFileInput').click()" style="flex-direction: column; padding: 20px 10px;"><span style="font-size: 24px;">📥</span><br>Импорт</button>
+      <button class="btn btn-ghost" onclick="clearDB()" style="flex-direction: column; padding: 20px 10px; color: var(--danger);"><span style="font-size: 24px;">🧹</span><br>Очистить</button>
     </div>
     <input type="file" id="jsonFileInput" accept=".json" style="display:none" onchange="importJSON(this)">
   </section>
 
 </main>
 
-<!-- ФОРМА НОВОГО НАРЯДА -->
-<div id="newOrderOverlay" class="overlay" style="display:none; align-items: flex-start; padding: 0;">
-  <div style="background: var(--bg); width: 100%; min-height: 100vh; padding: 16px; overflow-y: auto; padding-bottom: 80px;">
+<!-- ФОРМА НОВОГО НАРЯДА (ИСПРАВЛЕННАЯ) -->
+<div id="newOrderOverlay" class="overlay" style="display:none;">
+  <div class="full-screen-modal">
     
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 16px;">
       <h2 style="font-size: 20px; color: var(--accent);">Новый наряд</h2>
       <button class="btn btn-ghost btn-small" onclick="closeNewOrder()">✖ Отмена</button>
     </div>
 
-    <!-- Блок: Основные данные -->
     <div class="grid-2">
       <div class="form-group">
         <label class="form-label">Клиент (Клиника/Врач)</label>
@@ -370,81 +362,62 @@ textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid va
       </div>
     </div>
 
-    <div class="form-group">
-      <label class="form-label">Имя пациента</label>
-      <input id="fPatient" class="form-control" placeholder="ФИО пациента">
-    </div>
-
     <div class="grid-2">
       <div class="form-group">
-        <label class="form-label">Пол</label>
-        <div class="radio-group">
-          <label class="radio-label"><input type="radio" name="fGender" value="Муж." checked> Муж.</label>
-          <label class="radio-label"><input type="radio" name="fGender" value="Жен."> Жен.</label>
-        </div>
+        <label class="form-label">Имя пациента</label>
+        <input id="fPatient" class="form-control" placeholder="ФИО пациента">
       </div>
-      <div class="form-group">
-        <label class="form-label">Возраст</label>
-        <input id="fAge" type="number" class="form-control" placeholder="Лет">
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">Пол</label>
+          <div class="radio-group">
+            <label class="radio-label"><input type="radio" name="fGender" value="Муж." checked> Муж.</label>
+            <label class="radio-label"><input type="radio" name="fGender" value="Жен."> Жен.</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Возраст</label>
+          <input id="fAge" type="number" class="form-control" placeholder="Лет">
+        </div>
       </div>
     </div>
 
-    <!-- Блок: Работы -->
+    <!-- Работы -->
     <div style="margin-top: 20px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
       <h3 style="font-size: 14px; color: var(--accent);">Работы в наряде</h3>
       <button class="btn btn-primary btn-small" onclick="addWorkRow()">➕ Добавить</button>
     </div>
     <div id="worksContainer"></div>
 
-    <!-- Блок: Схема зубов -->
-    <div class="teeth-wrapper" style="margin-top: 20px;">
-      <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-        <span class="form-label" style="margin:0;">Кликните по зубам, чтобы добавить их в <b style="color:var(--accent);" id="activeWorkLabel">выбранную работу</b>:</span>
+    <!-- Схема зубов -->
+    <div class="teeth-wrapper">
+      <div style="text-align: center; margin-bottom: 12px;">
+        <span class="form-label" style="font-size: 14px;">Кликайте по зубам, чтобы добавить их в <b style="color:var(--accent);" id="activeWorkLabel">работу</b></span>
       </div>
       <div class="teeth-chart" id="teethChart"></div>
-      <div id="toothLegend" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; font-size: 12px;"></div>
+      <div id="toothLegend" style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 12px; font-size: 12px;"></div>
     </div>
 
-    <!-- Блок: Даты -->
+    <!-- Даты -->
     <div class="grid-2" style="margin-top: 20px;">
-      <div>
-        <div class="form-group">
-          <label class="form-label">Примерка (Дата)</label>
-          <input id="fTryInDate" class="form-control" placeholder="Выберите дату" readonly style="cursor:pointer;">
-        </div>
+      <div class="form-group">
+        <label class="form-label">Примерка (Дата)</label>
+        <input id="fTryInDate" class="form-control" placeholder="Выберите дату" readonly style="cursor:pointer;">
       </div>
-      <div>
-        <div class="form-group">
-          <label class="form-label">Примерка (Время)</label>
-          <input id="fTryInTime" type="time" class="form-control">
-        </div>
+      <div class="form-group">
+        <label class="form-label">Примерка (Время)</label>
+        <input id="fTryInTime" type="time" class="form-control">
       </div>
     </div>
 
     <div class="grid-2">
-      <div>
-        <div class="form-group">
-          <label class="form-label">Сдача (Дата)</label>
-          <input id="fDeadline" class="form-control" placeholder="Выберите дату" readonly style="cursor:pointer;">
-        </div>
-      </div>
-      <div>
-        <div class="form-group">
-          <label class="form-label">Сдача (Время)</label>
-          <input id="fDeadlineTime" type="time" class="form-control">
-        </div>
-      </div>
-    </div>
-
-    <!-- Блок: Элементы и Финансы -->
-    <div class="grid-2">
       <div class="form-group">
-        <label class="form-label">Элементы протезирования</label>
-        <input id="fElements" class="form-control" placeholder="Например: 3 коронки">
+        <label class="form-label">Сдача (Дата)</label>
+        <input id="fDeadline" class="form-control" placeholder="Выберите дату" readonly style="cursor:pointer;">
       </div>
       <div class="form-group">
-        <label class="form-label">Удорожающие элементы</label>
-        <input id="fUpcharges" class="form-control" placeholder="Плечевая масса, абатмент...">
+        <label class="form-label">Сдача (Время)</label>
+        <input id="fDeadlineTime" type="time" class="form-control">
       </div>
     </div>
 
@@ -464,8 +437,8 @@ textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid va
       <textarea id="fNotes" class="form-control" placeholder="Дополнительная информация..."></textarea>
     </div>
 
-    <!-- Кнопка сохранения (FAB) -->
-    <button class="fab" onclick="addOrder()">✓</button>
+    <!-- Кнопка сохранения внизу -->
+    <button class="btn btn-success btn-block" style="padding: 16px; font-size: 16px; margin-top: 20px;" onclick="addOrder()">💾 Сохранить наряд</button>
 
   </div>
 </div>
@@ -473,9 +446,9 @@ textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid va
 <!-- ОВЕРЛЕЙ РЕДАКТИРОВАНИЯ -->
 <div id="editOverlay" class="overlay" style="display:none;">
   <div class="modal">
-    <h3 style="font-size: 18px; color: var(--accent); margin-bottom: 16px;">✏️ Редактировать наряд</h3>
+    <h3 style="font-size: 18px; color: var(--accent); margin-bottom: 16px;">✏️ Редактировать</h3>
     <div class="form-group">
-      <label class="form-label">ФИО Пациента</label>
+      <label class="form-label">Пациент</label>
       <input id="ePatient" class="form-control" style="border: 1px solid var(--border); border-radius: 8px; padding: 10px;">
     </div>
     <div class="form-group">
@@ -491,10 +464,6 @@ textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid va
         <option value="cancelled">❌ Отменён</option>
       </select>
     </div>
-    <div class="form-group">
-      <label class="form-label">Срок сдачи</label>
-      <input id="eDeadline" class="form-control" style="border: 1px solid var(--border); border-radius: 8px; padding: 10px;" readonly>
-    </div>
     <div style="display: flex; gap: 8px; margin-top: 20px;">
       <button class="btn btn-ghost btn-block" onclick="document.getElementById('editOverlay').style.display='none'">Отмена</button>
       <button class="btn btn-primary btn-block" onclick="saveEdit()">Сохранить</button>
@@ -505,7 +474,7 @@ textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid va
 <!-- ОВЕРЛЕЙ ОПЛАТЫ -->
 <div id="payOverlay" class="overlay" style="display:none;">
   <div class="modal" style="max-width: 320px;">
-    <h3 style="font-size: 18px; color: var(--accent); margin-bottom: 12px;">💰 Добавить оплату</h3>
+    <h3 style="font-size: 18px; color: var(--accent); margin-bottom: 12px;">💰 Оплата</h3>
     <p id="payOrderInfo" style="font-size: 13px; color: var(--dim); margin-bottom: 16px;"></p>
     <input id="payAmount" type="number" class="form-control" style="border: 1px solid var(--border); border-radius: 8px; padding: 10px; font-size: 18px; text-align: center; margin-bottom: 16px;" placeholder="Сумма ₽">
     <div style="display: flex; gap: 8px;">
@@ -527,12 +496,11 @@ textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid va
 <!-- ИНДИКАТОР ЗАГРУЗКИ -->
 <div id="importOverlay" class="overlay" style="display:none;">
   <div class="modal" style="text-align:center;">
-    <h3 style="font-size: 18px; color: var(--accent2); margin-bottom: 12px;">⏳ Загрузка базы</h3>
+    <h3 style="font-size: 18px; color: var(--accent2); margin-bottom: 12px;">⏳ Загрузка...</h3>
     <div style="font-size: 28px; font-weight: 800; margin: 15px 0; color: var(--accent2);" id="importProgressText">0 / 0</div>
     <div style="height: 8px; background: var(--inner); border-radius: 4px; overflow: hidden; margin-bottom: 12px;">
       <div id="importProgressBar" style="height: 100%; background: var(--accent2); width: 0%; transition: width 0.3s;"></div>
     </div>
-    <p id="importStatusText" style="font-size: 13px; color: var(--dim);">Пожалуйста, не закрывайте вкладку...</p>
   </div>
 </div>
 
@@ -560,13 +528,10 @@ let orders = [];
 let currentFilter = 'active';
 let visibleCount = 100;
 let currentEditId = null, currentPayId = null;
-window.showFullArchive = false;
 
-// --- ЦВЕТА РАБОТ ---
 const WORK_COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#a855f7', '#ef4444', '#06b6d4'];
 const WORK_TYPES = ['Коронка', 'Винир', 'Мост', 'Вкладка', 'Имплант', 'Абатмент', 'Бюгель', 'Съёмный протез'];
 
-// --- СОСТОЯНИЕ ФОРМЫ ---
 let currentWorks = [];
 let activeWorkIndex = 0;
 
@@ -654,7 +619,6 @@ window.openColorPicker = function(targetId) {
 window.selectVitaColor = function(color) {
   if (colorTargetInputId) {
     document.getElementById(colorTargetInputId).value = color;
-    // Обновляем состояние работы
     if (colorTargetInputId.startsWith('workColor_')) {
       const idx = parseInt(colorTargetInputId.split('_')[1]);
       currentWorks[idx].color = color;
@@ -670,15 +634,19 @@ window.openNewOrder = function() {
   document.getElementById('fTechnician').value = 'Зубной техник 1 - Евгений Мешков';
   renderWorksUI();
   updateToothChartColors();
+  
+  // Блокируем скролл body и открываем
+  document.body.style.overflow = 'hidden';
   document.getElementById('newOrderOverlay').style.display = 'flex';
 };
 
 window.closeNewOrder = function() {
   document.getElementById('newOrderOverlay').style.display = 'none';
+  document.body.style.overflow = '';
 };
 
 window.addWorkRow = function() {
-  if (currentWorks.length >= 6) return showToast('Максимум 6 работ в наряде', 'err');
+  if (currentWorks.length >= 6) return showToast('Максимум 6 работ', 'err');
   currentWorks.push({ type: 'Коронка', color: 'A2', teeth: [] });
   activeWorkIndex = currentWorks.length - 1;
   renderWorksUI();
@@ -686,7 +654,7 @@ window.addWorkRow = function() {
 };
 
 window.removeWorkRow = function(idx) {
-  if (currentWorks.length === 1) return showToast('Должна быть хотя бы одна работа', 'err');
+  if (currentWorks.length === 1) return showToast('Должна быть хотя бы одна', 'err');
   currentWorks.splice(idx, 1);
   if (activeWorkIndex >= currentWorks.length) activeWorkIndex = currentWorks.length - 1;
   renderWorksUI();
@@ -710,24 +678,19 @@ function renderWorksUI() {
   currentWorks.forEach((work, idx) => {
     const color = WORK_COLORS[idx % WORK_COLORS.length];
     const isActive = idx === activeWorkIndex;
-    
     let typeOptions = WORK_TYPES.map(t => `<option value="${t}" ${work.type === t ? 'selected' : ''}>${t}</option>`).join('');
     
     html += `
       <div class="work-item ${isActive ? 'active' : ''}" onclick="setActiveWork(${idx})" style="border-left-color: ${color};">
         <div class="work-header">
-          <div style="display:flex; align-items:center; gap:8px;">
-            <div style="width:12px; height:12px; border-radius:50%; background:${color};"></div>
-            <select onchange="changeWorkType(${idx}, this.value)" style="background:transparent; border:none; color:var(--text); font-weight:700; font-size:14px; outline:none;" onclick="event.stopPropagation()">
-              ${typeOptions}
-            </select>
-          </div>
-          <button class="btn btn-small btn-danger" onclick="event.stopPropagation(); removeWorkRow(${idx})" style="padding: 4px 8px; font-size: 10px;">×</button>
+          <div style="width:12px; height:12px; border-radius:50%; background:${color};"></div>
+          <select class="work-type-select" onchange="changeWorkType(${idx}, this.value)" onclick="event.stopPropagation()">
+            ${typeOptions}
+          </select>
         </div>
-        <div style="display:flex; gap:8px; align-items:center; margin-top:4px;" onclick="event.stopPropagation()">
-          <input type="text" class="form-control" style="padding:4px 0; font-size:13px; border-bottom:1px solid var(--border);" placeholder="Цвет" value="${work.color || ''}" id="workColor_${idx}" onclick="openColorPicker('workColor_${idx}')" readonly>
-          <div style="font-size:12px; color:var(--dim); white-space:nowrap;">Зубы: <b style="color:var(--text);">${work.teeth.length ? work.teeth.sort((a,b)=>a-b).join(', ') : '—'}</b></div>
-        </div>
+        <input type="text" class="work-color-input" placeholder="Цвет" value="${work.color || ''}" id="workColor_${idx}" onclick="event.stopPropagation(); openColorPicker('workColor_${idx}')" readonly>
+        <div class="work-teeth-label" onclick="event.stopPropagation()">Зубы: <b style="color:var(--text);">${work.teeth.length ? work.teeth.sort((a,b)=>a-b).join(', ') : '—'}</b></div>
+        <button class="btn btn-small btn-danger" onclick="event.stopPropagation(); removeWorkRow(${idx})" style="padding: 4px 8px; font-size: 12px; margin-left: 8px;">×</button>
       </div>
     `;
   });
@@ -748,6 +711,7 @@ function initTeethChart() {
   el.innerHTML = `
     <div class="jaw">${buildQuad(q1)}</div>
     <div class="jaw">${buildQuad(q2)}</div>
+    <div style="height: 10px;"></div>
     <div class="jaw">${buildQuad(q4)}</div>
     <div class="jaw">${buildQuad(q3)}</div>
   `;
@@ -760,7 +724,6 @@ window.toggleTooth = (num) => {
   if (work.teeth.includes(num)) {
     work.teeth = work.teeth.filter(t => t !== num);
   } else {
-    // Удаляем зуб из других работ, чтобы не было дублей
     currentWorks.forEach((w, i) => {
       if (i !== activeWorkIndex) w.teeth = w.teeth.filter(t => t !== num);
     });
@@ -772,14 +735,12 @@ window.toggleTooth = (num) => {
 };
 
 function updateToothChartColors() {
-  // Сброс
   document.querySelectorAll('.tooth-btn').forEach(btn => {
     btn.style.background = '';
     btn.style.color = '';
     btn.classList.remove('selected');
   });
   
-  // Применение цветов
   currentWorks.forEach((work, idx) => {
     const color = WORK_COLORS[idx % WORK_COLORS.length];
     work.teeth.forEach(t => {
@@ -792,7 +753,6 @@ function updateToothChartColors() {
     });
   });
   
-  // Легенда
   const legend = document.getElementById('toothLegend');
   legend.innerHTML = currentWorks.map((w, i) => {
     const color = WORK_COLORS[i % WORK_COLORS.length];
@@ -816,7 +776,6 @@ window.addOrder = async function() {
   const patientName = document.getElementById('fPatient').value.trim();
   if (!patientName) { showToast('Укажите имя пациента', 'err'); return; }
   
-  // Сбор всех зубов и работ для обратной совместимости
   let allTeeth = new Set();
   let workDescription = [];
   
@@ -836,15 +795,13 @@ window.addOrder = async function() {
     age: parseInt(document.getElementById('fAge').value) || null,
     clinic: document.getElementById('fClinic').value.trim(),
     technician: document.getElementById('fTechnician').value.trim(),
-    works: currentWorks, // Сохраняем структуру
+    works: currentWorks,
     orderType: workDescription.join(' | ') || 'Не указано',
     teeth: Array.from(allTeeth).sort((a,b)=>a-b).join(', '),
     tryInDate: document.getElementById('fTryInDate').value || '',
     tryInTime: document.getElementById('fTryInTime').value || '',
     deadline: document.getElementById('fDeadline').value || '',
     deadlineTime: document.getElementById('fDeadlineTime').value || '',
-    elements: document.getElementById('fElements').value.trim(),
-    upcharges: document.getElementById('fUpcharges').value.trim(),
     price: parseFloat(document.getElementById('fPrice').value) || 0,
     prepaid: parseFloat(document.getElementById('fPrepaid').value) || 0,
     notes: document.getElementById('fNotes').value.trim(),
@@ -858,8 +815,7 @@ window.addOrder = async function() {
     showToast('✅ Наряд создан');
     closeNewOrder();
     
-    // Очистка формы
-    ['fPatient','fClinic','fAge','fTryInDate','fTryInTime','fDeadline','fDeadlineTime','fElements','fUpcharges','fPrice','fPrepaid','fNotes'].forEach(id => document.getElementById(id).value = '');
+    ['fPatient','fClinic','fAge','fTryInDate','fTryInTime','fDeadline','fDeadlineTime','fPrice','fPrepaid','fNotes'].forEach(id => document.getElementById(id).value = '');
     document.getElementById('fTechnician').value = 'Зубной техник 1 - Евгений Мешков';
     if(document.getElementById('fDeadline')._flatpickr) document.getElementById('fDeadline')._flatpickr.clear();
     if(document.getElementById('fTryInDate')._flatpickr) document.getElementById('fTryInDate')._flatpickr.clear();
@@ -888,7 +844,6 @@ window.loadMore = function() { visibleCount += 100; render(); };
 function render() {
   const q = (document.getElementById('searchInput').value || '').trim().toLowerCase();
   
-  // СТАТИСТИКА
   let activeCount = 0, overdueCount = 0, readyCount = 0;
   orders.forEach(o => {
     const isOverdue = o.deadline && new Date(o.deadline + 'T23:59:59') < new Date() && o.status !== 'delivered' && o.status !== 'cancelled';
@@ -909,9 +864,7 @@ function render() {
     return true;
   });
 
-  if (q.length > 0) {
-    list = list.filter(o => JSON.stringify(o).toLowerCase().includes(q));
-  }
+  if (q.length > 0) list = list.filter(o => JSON.stringify(o).toLowerCase().includes(q));
 
   list.sort((a, b) => {
     if (currentFilter === 'archive') return (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0);
@@ -929,26 +882,18 @@ function render() {
   }
 
   const btn = document.getElementById('loadMoreBtn');
-  if (total > visibleCount) {
-    btn.style.display = 'block';
-    btn.textContent = `Показать еще 100 (из ${total - visibleCount} оставшихся)`;
-  } else {
-    btn.style.display = 'none';
-  }
+  btn.style.display = total > visibleCount ? 'block' : 'none';
 }
 
 function renderCard(o) {
   const isOverdue = o.deadline && new Date(o.deadline + 'T23:59:59') < new Date() && o.status !== 'delivered' && o.status !== 'cancelled';
   const dlText = o.deadline ? (isOverdue ? '⚠️ Просрочен' : `📅 ${o.deadline}`) : '—';
   const dlCls = isOverdue ? 'overdue' : 'ok';
-  
   const paid = (o.payments || []).reduce((s, p) => s + (p.sum || 0), 0) + (o.prepaid || 0);
   const debt = (o.price || 0) - paid;
-
   const statusMap = { received: '📥', modeling: '📐', production: '🔨', finishing: '🎨', tryin: '👁', ready: '✅', delivered: '📦', cancelled: '❌' };
   const statusStr = statusMap[o.status] || '';
 
-  // Если есть массив works, выводим детально
   let worksHtml = '';
   if (o.works && Array.isArray(o.works)) {
     worksHtml = o.works.map((w, i) => {
@@ -957,7 +902,6 @@ function renderCard(o) {
       return `<div class="card-row"><span style="color:${color}; font-weight:bold;">●</span> <span>${esc(w.type)} (${esc(w.color || '')}):</span> ${w.teeth.join(', ')}</div>`;
     }).join('');
   } else {
-    // Старый формат
     worksHtml = o.orderType ? `<div class="card-row"><span>Работа:</span> ${esc(o.orderType)}</div>` : '';
     worksHtml += o.teeth ? `<div class="card-row" style="color:var(--accent2); font-weight:700;"><span>Зубы:</span> ${esc(o.teeth)}</div>` : '';
   }
@@ -1017,17 +961,13 @@ window.openEdit = function(id) {
   currentEditId = id;
   document.getElementById('ePatient').value = o.patientName || '';
   document.getElementById('eStatus').value = o.status || 'received';
-  if (document.getElementById('eDeadline')._flatpickr) {
-    document.getElementById('eDeadline')._flatpickr.setDate(o.deadline || '');
-  }
   document.getElementById('editOverlay').style.display = 'flex';
 };
 window.saveEdit = async function() {
   if (!currentEditId) return;
   await updateDoc(doc(db, COLLECTION, currentEditId), {
     patientName: document.getElementById('ePatient').value.trim(),
-    status: document.getElementById('eStatus').value,
-    deadline: document.getElementById('eDeadline').value
+    status: document.getElementById('eStatus').value
   });
   document.getElementById('editOverlay').style.display = 'none';
   showToast('Сохранено');
@@ -1082,11 +1022,9 @@ function renderCalendar() {
     for (let d = 1; d <= daysInMonth; d++) {
         const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
         let dotsHtml = '';
-        let hasOrders = false;
         orders.forEach(o => {
             const isTarget = o.deadline === dateStr || o.tryInDate === dateStr;
             if (isTarget && o.status !== 'delivered' && o.status !== 'cancelled') {
-                hasOrders = true;
                 const isOverdue = new Date(dateStr + 'T23:59:59') < new Date();
                 dotsHtml += `<div class="cal-dot ${isOverdue ? 'overdue' : ''}"></div>`;
             }
@@ -1109,7 +1047,6 @@ function renderCalSidePanel() {
     document.getElementById('calSelectedDateLabel').textContent = `${parts[2]}.${parts[1]}.${parts[0]}`;
     const noteKey = 'dtlab_note_' + calSelectedDate;
     document.getElementById('calNotes').value = localStorage.getItem(noteKey) || '';
-    
     const dayOrders = orders.filter(o => o.deadline === calSelectedDate || o.tryInDate === calSelectedDate);
     document.getElementById('calOrdersContainer').innerHTML = dayOrders.length ? dayOrders.map(renderCard).join('') : `<div style="text-align:center; padding:20px; color:var(--mute);">На этот день нарядов нет</div>`;
 }
@@ -1121,13 +1058,11 @@ function renderClients() {
   orders.forEach(o => { if (o.clinic) clinics.add(o.clinic); });
   document.getElementById('clientsList').innerHTML = Array.from(clinics).sort().map(c => `<div class="card" style="padding: 16px;"><b>${esc(c)}</b></div>`).join('') || '<div style="color:var(--mute)">Пока нет клиентов</div>';
 }
-
 function renderStaff() {
   const techs = new Set();
   orders.forEach(o => { if (o.technician) techs.add(o.technician); });
   document.getElementById('staffList').innerHTML = Array.from(techs).sort().map(t => `<div class="card" style="padding: 16px;"><b>${esc(t)}</b></div>`).join('') || '<div style="color:var(--mute)">Пока нет техников</div>';
 }
-
 function renderMoney() {
   let total = 0, pending = 0;
   orders.forEach(o => {
@@ -1137,7 +1072,6 @@ function renderMoney() {
   document.getElementById('moneyTotal').textContent = fmtMoney(total);
   document.getElementById('moneyPending').textContent = fmtMoney(pending);
 }
-
 function renderStats() {
   document.getElementById('statTotalOrders').textContent = orders.length;
   const clients = new Set(orders.map(o => o.clinic).filter(Boolean));
@@ -1175,7 +1109,6 @@ window.importJSON = function(input) {
     try {
       const rawData = JSON.parse(e.target.result);
       let calcArr = rawData.orders || rawData.calculations || [];
-      
       const existingOrderNumbers = new Set(orders.map(o => String(o.orderNumber)));
       const overlay = document.getElementById('importOverlay');
       overlay.style.display = 'flex';
@@ -1229,7 +1162,6 @@ window.importJSON = function(input) {
 function printOrder(id) {
   const o = orders.find(x => x.id === id); if (!o) return;
   const win = window.open('', '_blank');
-  
   let worksHtml = '';
   if (o.works && o.works.length) {
     worksHtml = o.works.map(w => `<tr><td>${esc(w.type)} (${esc(w.color || '')})</td><td>${w.teeth.join(', ')}</td></tr>`).join('');
@@ -1239,31 +1171,12 @@ function printOrder(id) {
 
   win.document.write(`
     <html><head><meta charset="utf-8"><title>Наряд ${esc(o.orderNumber)}</title>
-    <style>
-      body{font-family:Arial;padding:30px;max-width:700px;margin:auto}
-      h1{font-size:20px;border-bottom:2px solid #000;padding-bottom:8px}
-      table{width:100%;border-collapse:collapse;margin-top:16px}
-      td, th{padding:8px;border-bottom:1px solid #ccc;text-align:left}
-      td:first-child, th:first-child { font-weight:bold; width:40% }
-      .footer{margin-top:30px;font-size:12px;color:#666;text-align:center}
-    </style></head>
-    <body>
-      <h1>Лаборатория Е. Мешкова — Наряд ${esc(o.orderNumber)}</h1>
-      <table>
-        <tr><td>Пациент</td><td>${esc(o.patientName)}</td></tr>
-        <tr><td>Клиент</td><td>${esc(o.clinic || '—')}</td></tr>
-        <tr><td>Техник</td><td>${esc(o.technician || '—')}</td></tr>
-        <tr><td>Примерка</td><td>${esc(o.tryInDate || '—')} ${esc(o.tryInTime || '')}</td></tr>
-        <tr><td>Сдача</td><td>${esc(o.deadline || '—')} ${esc(o.deadlineTime || '')}</td></tr>
-        <tr><td>Стоимость</td><td>${fmtMoney(o.price)}</td></tr>
-      </table>
-      <h3 style="margin-top:20px; font-size:16px;">Работы по зубам:</h3>
-      <table>
-        <tr><th>Работа (Цвет)</th><th>Зубы</th></tr>
-        ${worksHtml}
-      </table>
-      <div class="footer">Создан: ${o.createdAt ? new Date(o.createdAt.seconds * 1000).toLocaleString('ru-RU') : '—'}</div>
-    </body></html>
+    <style>body{font-family:Arial;padding:30px;max-width:700px;margin:auto}h1{font-size:20px;border-bottom:2px solid #000;padding-bottom:8px}table{width:100%;border-collapse:collapse;margin-top:16px}td, th{padding:8px;border-bottom:1px solid #ccc;text-align:left}td:first-child, th:first-child { font-weight:bold; width:40% }.footer{margin-top:30px;font-size:12px;color:#666;text-align:center}</style></head>
+    <body><h1>Лаборатория Е. Мешкова — Наряд ${esc(o.orderNumber)}</h1>
+    <table><tr><td>Пациент</td><td>${esc(o.patientName)}</td></tr><tr><td>Клиент</td><td>${esc(o.clinic || '—')}</td></tr><tr><td>Техник</td><td>${esc(o.technician || '—')}</td></tr><tr><td>Примерка</td><td>${esc(o.tryInDate || '—')} ${esc(o.tryInTime || '')}</td></tr><tr><td>Сдача</td><td>${esc(o.deadline || '—')} ${esc(o.deadlineTime || '')}</td></tr><tr><td>Стоимость</td><td>${fmtMoney(o.price)}</td></tr></table>
+    <h3 style="margin-top:20px; font-size:16px;">Работы по зубам:</h3>
+    <table><tr><th>Работа (Цвет)</th><th>Зубы</th></tr>${worksHtml}</table>
+    <div class="footer">Создан: ${o.createdAt ? new Date(o.createdAt.seconds * 1000).toLocaleString('ru-RU') : '—'}</div></body></html>
   `);
   win.document.close(); win.print();
 }
@@ -1271,7 +1184,6 @@ function printOrder(id) {
 // --- ИНИЦИАЛИЗАЦИЯ ---
 flatpickr("#fDeadline", { locale: "ru", dateFormat: "Y-m-d", altInput: true, altFormat: "d.m.Y", disableMobile: true });
 flatpickr("#fTryInDate", { locale: "ru", dateFormat: "Y-m-d", altInput: true, altFormat: "d.m.Y", disableMobile: true });
-flatpickr("#eDeadline", { locale: "ru", dateFormat: "Y-m-d", altInput: true, altFormat: "d.m.Y", disableMobile: true });
 
 function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
 function fmtMoney(n) { return Math.round(n || 0).toLocaleString('ru-RU') + ' ₽'; }

@@ -22,7 +22,6 @@
   --text: #e8e8f0; --dim: #8888a0; --mute: #55556a;
   --accent: #a855f7; --accent2: #10b981; --danger: #ef4444; --warn: #f59e0b; --info: #0ea5e9;
   --tooth-bg: #2a2a3a;
-  --chart-bg: radial-gradient(circle at center, #151522 0%, #0a0a12 100%);
   --header-bg: #1a1a28;
 }
 [data-theme="light"] {
@@ -31,7 +30,6 @@
   --text: #1e293b; --dim: #64748b; --mute: #94a3b8;
   --accent: #4f46e5; --accent2: #059669; --danger: #dc2626; --warn: #d97706; --info: #0284c7;
   --tooth-bg: #e2e8f0;
-  --chart-bg: radial-gradient(circle at center, #ffffff 0%, #f1f5f9 100%);
   --header-bg: #ffffff;
 }
 
@@ -72,7 +70,6 @@ main { flex: 1; padding: 16px; max-width: 1000px; margin: 0 auto; width: 100%; }
 .form-control { width: 100%; padding: 12px 0; border: none; border-bottom: 1px solid var(--border); background: transparent; color: var(--text); font-size: 15px; font-family: inherit; outline: none; transition: border-color 0.2s; }
 .form-control:focus { border-bottom-color: var(--accent); }
 
-/* ФИКС ВЫПАДАЮЩИХ СПИСКОВ */
 select.form-control { 
   cursor: pointer; 
   appearance: none; 
@@ -91,12 +88,10 @@ textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid va
 .radio-label input[type="radio"] { width: 18px; height: 18px; accent-color: var(--accent); }
 
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
 
 /* Кнопки */
 .btn { padding: 12px 20px; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; font-family: inherit; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
 .btn-primary { background: var(--accent); color: #fff; }
-.btn-primary:hover { opacity: 0.9; }
 .btn-success { background: var(--accent2); color: #fff; }
 .btn-danger { background: var(--danger); color: #fff; }
 .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text); }
@@ -104,8 +99,7 @@ textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid va
 .btn-small { padding: 6px 10px; font-size: 11px; border-radius: 6px; }
 
 /* Карточки нарядов */
-.card { background: var(--card); border: 1px solid var(--border); border-left: 4px solid var(--mute); border-radius: 12px; padding: 16px; margin-bottom: 12px; position: relative; transition: transform 0.2s; }
-.card:hover { transform: translateY(-2px); }
+.card { background: var(--card); border: 1px solid var(--border); border-left: 4px solid var(--mute); border-radius: 12px; padding: 16px; margin-bottom: 12px; position: relative; }
 .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
 .card-title { font-size: 16px; font-weight: 700; }
 .card-subtitle { font-size: 12px; color: var(--dim); margin-top: 2px; }
@@ -116,45 +110,26 @@ textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid va
 .deadline.ok { color: var(--accent2); }
 .card-actions { display: flex; gap: 8px; margin-top: 12px; border-top: 1px solid var(--border); padding-top: 12px; flex-wrap: wrap; }
 
-/* === СХЕМА ЗУБОВ (ДУГА) === */
+/* === СХЕМА ЗУБОВ (ИСПРАВЛЕННАЯ) === */
 .teeth-wrapper { margin-top: 20px; overflow-x: auto; padding-bottom: 10px; }
-.teeth-chart { display: flex; flex-direction: column; align-items: center; background: var(--chart-bg); padding: 30px 10px; border-radius: 20px; border: 1px solid var(--border); min-width: 450px; max-width: 600px; margin: 0 auto; }
-.arch-row { display: flex; justify-content: center; position: relative; margin-bottom: -10px; }
+.teeth-chart { display: flex; flex-direction: column; gap: 10px; align-items: center; background: var(--inner); padding: 20px 10px; border-radius: 12px; border: 1px solid var(--border); min-width: 500px; margin: 0 auto; }
+.jaw-row { display: flex; gap: 2px; justify-content: center; width: 100%; }
+.quadrant { display: flex; gap: 2px; }
+.quadrant.right { flex-direction: row-reverse; } /* Чтобы зубы шли от центра к краю */
 
 .tooth-btn { 
-  width: 36px; height: 46px; 
+  width: 30px; height: 42px; 
   background: var(--tooth-bg); 
   border: 1px solid var(--border); 
-  border-radius: 40% 40% 20% 20%; 
-  color: var(--dim); font-size: 11px; font-weight: 800; 
+  border-radius: 6px 6px 12px 12px; 
+  color: var(--dim); font-size: 11px; font-weight: 700; 
   display: flex; align-items: center; justify-content: center; 
   cursor: pointer; transition: all 0.2s; 
-  margin: 0 2px; position: relative; z-index: 1;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
-.tooth-btn:hover { transform: translateY(-2px); border-color: var(--accent); color: var(--text); z-index: 10; }
-.tooth-btn.selected { color: #fff; border-color: rgba(255,255,255,0.3); transform: scale(1.05); z-index: 5; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
-
-/* Изгиб дуги */
-.upper-arch .tooth-btn:nth-child(1) { transform: translateY(20px) rotate(-25deg); }
-.upper-arch .tooth-btn:nth-child(2) { transform: translateY(12px) rotate(-18deg); }
-.upper-arch .tooth-btn:nth-child(3) { transform: translateY(6px) rotate(-10deg); }
-.upper-arch .tooth-btn:nth-child(4) { transform: translateY(2px) rotate(-5deg); }
-.upper-arch .tooth-btn:nth-child(5) { transform: translateY(0px) rotate(0deg); }
-.upper-arch .tooth-btn:nth-child(6) { transform: translateY(2px) rotate(5deg); }
-.upper-arch .tooth-btn:nth-child(7) { transform: translateY(6px) rotate(10deg); }
-.upper-arch .tooth-btn:nth-child(8) { transform: translateY(12px) rotate(18deg); }
-.upper-arch .tooth-btn:nth-child(9) { transform: translateY(20px) rotate(25deg); }
-
-.lower-arch .tooth-btn:nth-child(1) { transform: translateY(-20px) rotate(25deg); }
-.lower-arch .tooth-btn:nth-child(2) { transform: translateY(-12px) rotate(18deg); }
-.lower-arch .tooth-btn:nth-child(3) { transform: translateY(-6px) rotate(10deg); }
-.lower-arch .tooth-btn:nth-child(4) { transform: translateY(-2px) rotate(5deg); }
-.lower-arch .tooth-btn:nth-child(5) { transform: translateY(0px) rotate(0deg); }
-.lower-arch .tooth-btn:nth-child(6) { transform: translateY(-2px) rotate(-5deg); }
-.lower-arch .tooth-btn:nth-child(7) { transform: translateY(-6px) rotate(-10deg); }
-.lower-arch .tooth-btn:nth-child(8) { transform: translateY(-12px) rotate(-18deg); }
-.lower-arch .tooth-btn:nth-child(9) { transform: translateY(-20px) rotate(-25deg); }
+.lower-jaw .tooth-btn { border-radius: 12px 12px 6px 6px; }
+.tooth-btn:hover { border-color: var(--accent); color: var(--text); z-index: 10; transform: scale(1.1); }
+.tooth-btn.selected { color: #fff; border-color: transparent; transform: scale(1.1); z-index: 5; box-shadow: 0 0 10px currentColor; }
 
 /* Палитра VITA */
 .vita-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
@@ -166,13 +141,26 @@ textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid va
 .modal { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; max-width: 500px; width: 100%; box-shadow: 0 20px 50px rgba(0,0,0,0.5); margin: auto; }
 .full-screen-modal { background: var(--bg); border: 1px solid var(--border); border-radius: 16px; width: 100%; max-width: 800px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); margin: 20px auto; padding: 20px; position: relative; }
 
-/* Блок работ в форме */
-.work-item { background: var(--inner); border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 8px; position: relative; border-left: 4px solid #ccc; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; cursor: pointer; transition: border-color 0.2s; }
-.work-item.active { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
-.work-header { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 150px; }
-.work-type-select { background: transparent; border: none; color: var(--text); font-weight: 700; font-size: 14px; outline: none; cursor: pointer; }
-.work-color-input { background: transparent; border: none; border-bottom: 1px dashed var(--border); color: var(--dim); font-size: 13px; width: 60px; outline: none; cursor: pointer; text-align: center; }
-.work-teeth-label { font-size: 12px; color: var(--dim); margin-left: auto; font-weight: 600; }
+/* === БЛОК РАБОТ В ФОРМЕ (ИСПРАВЛЕН) === */
+.work-item { 
+  background: var(--card); 
+  border: 1px solid var(--border); 
+  border-left: 4px solid #ccc; 
+  border-radius: 8px; 
+  padding: 12px; 
+  margin-bottom: 10px; 
+  display: grid; 
+  grid-template-columns: 1fr 80px auto 36px; 
+  gap: 10px; 
+  align-items: center; 
+  cursor: pointer; 
+  transition: all 0.2s; 
+}
+.work-item.active { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); background: var(--inner); }
+.work-header { display: flex; align-items: center; gap: 8px; overflow: hidden; }
+.work-type-select { background: transparent; border: none; color: var(--text); font-weight: 700; font-size: 14px; outline: none; cursor: pointer; width: 100%; }
+.work-color-input { background: var(--inner); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 12px; padding: 6px; outline: none; cursor: pointer; text-align: center; }
+.work-teeth-label { font-size: 12px; color: var(--dim); font-weight: 600; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* Статистика */
 .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 20px; }
@@ -194,14 +182,23 @@ textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid va
 .cal-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--accent2); position: absolute; bottom: 4px; }
 .cal-dot.overdue { background: var(--danger); }
 
-@media (max-width: 600px) {
+/* Адаптив */
+@media (max-width: 768px) {
   .header-title { display: none; }
-  .grid-2, .grid-3 { grid-template-columns: 1fr; }
-  .full-screen-modal { margin: 0; border-radius: 0; min-height: 100vh; border: none; }
+  .grid-2 { grid-template-columns: 1fr; }
+  .full-screen-modal { margin: 0; border-radius: 0; min-height: 100vh; border: none; padding-bottom: 80px; }
   .overlay { padding: 0; }
-  .tooth-btn { width: 28px; height: 36px; font-size: 10px; }
-  .work-item { flex-direction: column; align-items: flex-start; }
-  .work-teeth-label { margin-left: 0; width: 100%; text-align: right; margin-top: 4px; }
+  
+  /* Работы на мобиле - в столбик */
+  .work-item { grid-template-columns: 1fr; gap: 8px; padding: 16px; }
+  .work-teeth-label { text-align: left; margin-top: 4px; }
+  .work-color-input { width: 100%; text-align: left; }
+  
+  .teeth-chart { min-width: 100%; padding: 10px 5px; }
+  .tooth-btn { width: 20px; height: 30px; font-size: 9px; border-radius: 4px 4px 8px 8px; }
+  .lower-jaw .tooth-btn { border-radius: 8px 8px 4px 4px; }
+  .jaw-row { gap: 1px; }
+  .quadrant { gap: 1px; }
 }
 </style>
 </head>
@@ -237,7 +234,7 @@ textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid va
   </div>
   <div class="header-right">
     <span id="connBadge" class="badge">⏳</span>
-    <span class="badge" style="background:var(--accent); color:#fff;">v6.0</span>
+    <span class="badge" style="background:var(--accent); color:#fff;">v6.1</span>
   </div>
 </header>
 
@@ -349,7 +346,7 @@ textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid va
         <option value="light">☀️ Светлая</option>
       </select>
     </div>
-    <div class="grid-3" style="margin-top: 20px;">
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 20px;">
       <button class="btn btn-ghost" onclick="exportJSON()" style="flex-direction: column; padding: 20px 10px;"><span style="font-size: 24px;">📤</span><br>Экспорт</button>
       <button class="btn btn-ghost" onclick="document.getElementById('jsonFileInput').click()" style="flex-direction: column; padding: 20px 10px;"><span style="font-size: 24px;">📥</span><br>Импорт</button>
       <button class="btn btn-ghost" onclick="clearDB()" style="flex-direction: column; padding: 20px 10px; color: var(--danger);"><span style="font-size: 24px;">🧹</span><br>Очистить</button>
@@ -413,7 +410,10 @@ textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid va
       <div style="text-align: center; margin-bottom: 12px;">
         <span class="form-label" style="font-size: 14px;">Кликайте по зубам, чтобы добавить их в <b style="color:var(--accent);" id="activeWorkLabel">работу</b></span>
       </div>
+      
+      <!-- Нормальная схема -->
       <div class="teeth-chart" id="teethChart"></div>
+      
       <div id="toothLegend" style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 12px; font-size: 12px;"></div>
     </div>
 
@@ -522,7 +522,7 @@ let orders = [];
 let currentFilter = 'active';
 let visibleCount = 100;
 let currentPayId = null;
-let editingOrderId = null; // Если null - создаем новый, иначе - редактируем существующий
+let editingOrderId = null;
 
 const WORK_COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#a855f7', '#ef4444', '#06b6d4'];
 const WORK_TYPES = ['Коронка', 'Винир', 'Мост', 'Вкладка', 'Имплант', 'Абатмент', 'Бюгель', 'Съёмный протез'];
@@ -640,7 +640,6 @@ window.openNewOrderForm = function() {
   currentWorks = [{ type: 'Коронка', color: 'A2', teeth: [] }];
   activeWorkIndex = 0;
   
-  // Очистка полей
   ['fPatient','fClinic','fAge','fTryInDate','fTryInTime','fDeadline','fDeadlineTime','fPrice','fPrepaid','fNotes'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('fTechnician').value = 'Зубной техник 1 - Евгений Мешков';
   document.querySelector('input[name="fGender"][value="Муж."]').checked = true;
@@ -661,7 +660,6 @@ window.openEditOrderForm = function(id) {
   editingOrderId = id;
   document.getElementById('formTitle').textContent = 'Редактировать наряд';
   
-  // Заполнение полей
   document.getElementById('fPatient').value = o.patientName || '';
   document.getElementById('fClinic').value = o.clinic || '';
   document.getElementById('fTechnician').value = o.technician || '';
@@ -735,14 +733,14 @@ function renderWorksUI() {
     html += `
       <div class="work-item ${isActive ? 'active' : ''}" onclick="setActiveWork(${idx})" style="border-left-color: ${color};">
         <div class="work-header">
-          <div style="width:12px; height:12px; border-radius:50%; background:${color};"></div>
+          <div style="width:12px; height:12px; border-radius:50%; background:${color}; flex-shrink: 0;"></div>
           <select class="work-type-select" onchange="changeWorkType(${idx}, this.value)" onclick="event.stopPropagation()">
             ${typeOptions}
           </select>
         </div>
         <input type="text" class="work-color-input" placeholder="Цвет" value="${work.color || ''}" id="workColor_${idx}" onclick="event.stopPropagation(); openColorPicker('workColor_${idx}')" readonly>
         <div class="work-teeth-label" onclick="event.stopPropagation()">Зубы: <b style="color:var(--text);">${work.teeth.length ? work.teeth.sort((a,b)=>a-b).join(', ') : '—'}</b></div>
-        <button class="btn btn-small btn-danger" onclick="event.stopPropagation(); removeWorkRow(${idx})" style="padding: 4px 8px; font-size: 12px; margin-left: 8px;">×</button>
+        <button class="btn btn-small btn-danger" onclick="event.stopPropagation(); removeWorkRow(${idx})" style="padding: 4px 8px; font-size: 12px;">×</button>
       </div>
     `;
   });
@@ -751,25 +749,26 @@ function renderWorksUI() {
   document.getElementById('activeWorkLabel').textContent = `работу ${currentWorks[activeWorkIndex].type}`;
 }
 
-// --- ЗУБЫ ---
+// --- ЗУБЫ (ПРОСТАЯ СЕТКА) ---
 function initTeethChart() {
   const el = document.getElementById('teethChart');
   if (!el) return;
-  const q1 = [18, 17, 16, 15, 14, 13, 12, 11];
-  const q2 = [21, 22, 23, 24, 25, 26, 27, 28];
-  const q4 = [48, 47, 46, 45, 44, 43, 42, 41];
-  const q3 = [31, 32, 33, 34, 35, 36, 37, 38];
   
-  const buildArch = (arr) => arr.map(n => `<div class="tooth-btn" data-n="${n}" onclick="toggleTooth(${n})">${n}</div>`).join('');
+  const q1 = [18, 17, 16, 15, 14, 13, 12, 11]; // Верх лево
+  const q2 = [21, 22, 23, 24, 25, 26, 27, 28]; // Верх право
+  const q4 = [48, 47, 46, 45, 44, 43, 42, 41]; // Низ лево
+  const q3 = [31, 32, 33, 34, 35, 36, 37, 38]; // Низ право
+  
+  const buildQuad = (arr) => arr.map(n => `<div class="tooth-btn" data-n="${n}" onclick="toggleTooth(${n})">${n}</div>`).join('');
   
   el.innerHTML = `
-    <div class="arch-row upper-arch">
-      ${buildArch(q1)}
-      ${buildArch(q2)}
+    <div class="jaw-row upper-jaw">
+      <div class="quadrant left">${buildQuad(q1)}</div>
+      <div class="quadrant right">${buildQuad(q2)}</div>
     </div>
-    <div class="arch-row lower-arch" style="margin-top: 30px;">
-      ${buildArch(q4)}
-      ${buildArch(q3)}
+    <div class="jaw-row lower-jaw">
+      <div class="quadrant left">${buildQuad(q4)}</div>
+      <div class="quadrant right">${buildQuad(q3)}</div>
     </div>
   `;
 }
@@ -828,7 +827,7 @@ function updateSuggestions() {
   document.getElementById('staffSuggestions').innerHTML = Array.from(techs).sort().map(t => `<option value="${esc(t)}">`).join('');
 }
 
-// --- ПЕЧАТЬ (ЧЕРЕЗ BLOB, БЕЗ БЛОКИРОВЩИКОВ) ---
+// --- ПЕЧАТЬ (ЧЕРЕЗ BLOB) ---
 function generatePrintHtml(o) {
   let worksHtml = '';
   if (o.works && o.works.length) {
@@ -904,7 +903,7 @@ window.previewFromForm = function() {
   window.open(url, '_blank');
 };
 
-// --- СОХРАНЕНИЕ (СОЗДАНИЕ ИЛИ РЕДАКТИРОВАНИЕ) ---
+// --- СОХРАНЕНИЕ ---
 window.saveOrder = async function() {
   const patientName = document.getElementById('fPatient').value.trim();
   if (!patientName) { showToast('Укажите имя пациента', 'err'); return; }

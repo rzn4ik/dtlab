@@ -62,7 +62,7 @@
 body { font-family: 'Inter', -apple-system, system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; transition: background 0.3s, color 0.3s; display: flex; flex-direction: column; }
 
 /* Шапка */
-header { background: var(--header-bg); padding: 16px; display: flex; align-items: center; justify-content: space-between; gap: 10px; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+header { background: var(--header-bg); padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 10px; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
 .header-left { display: flex; align-items: center; gap: 12px; }
 .menu-btn { background: transparent; border: none; color: var(--text); font-size: 24px; cursor: pointer; padding: 4px; display: flex; align-items: center; }
 .site-logo { height: 32px; width: auto; border-radius: 6px; object-fit: contain; background: #fff; padding: 2px; border: 1px solid var(--border); }
@@ -88,7 +88,7 @@ main { flex: 1; padding: 16px; max-width: 1000px; margin: 0 auto; width: 100%; }
 .view-section.active { display: block; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-/* Формы и элементы (стиль под мобилки) */
+/* Формы и элементы */
 .form-group { margin-bottom: 16px; position: relative; }
 .form-label { font-size: 12px; color: var(--dim); margin-bottom: 6px; display: block; font-weight: 500; }
 .form-control { width: 100%; padding: 12px 0; border: none; border-bottom: 1px solid var(--border); background: transparent; color: var(--text); font-size: 16px; font-family: inherit; outline: none; transition: border-color 0.2s; }
@@ -137,7 +137,8 @@ textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid va
 .teeth-chart { display: flex; flex-direction: column; align-items: center; background: var(--chart-bg); padding: 20px 10px; border-radius: 12px; border: 1px solid var(--border); }
 .jaw { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; width: 100%; margin-bottom: 10px; }
 .tooth-btn { width: 100%; aspect-ratio: 1; background: var(--tooth-bg); border: 1px solid var(--border); border-radius: 6px; color: var(--dim); font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
-.tooth-btn.selected { background: var(--accent2); color: #fff; border-color: var(--accent2); }
+.tooth-btn.selected { color: #fff; border-color: transparent; }
+.tooth-btn.active-tooth { box-shadow: 0 0 0 2px var(--accent); }
 
 /* Палитра VITA */
 .vita-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
@@ -168,7 +169,13 @@ textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid va
 .cal-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--accent2); position: absolute; bottom: 4px; }
 .cal-dot.overdue { background: var(--danger); }
 
-/* Адаптив */
+/* Блок работ в форме */
+.work-item { background: var(--inner); border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 8px; position: relative; border-left: 4px solid #ccc; }
+.work-item.active { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
+.work-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; cursor: pointer; }
+.work-title { font-weight: 700; font-size: 14px; }
+.work-badge { font-size: 11px; padding: 2px 6px; border-radius: 4px; background: rgba(0,0,0,0.2); color: #fff; }
+
 @media (max-width: 600px) {
   .header-title { display: none; }
   .grid-2, .grid-3 { grid-template-columns: 1fr; }
@@ -207,7 +214,7 @@ textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid va
   </div>
   <div class="header-right">
     <span id="connBadge" class="badge">⏳</span>
-    <span class="badge" style="background:var(--accent); color:#fff;">v4.0</span>
+    <span class="badge" style="background:var(--accent); color:#fff;">v4.1</span>
   </div>
 </header>
 
@@ -340,34 +347,16 @@ textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid va
 
 </main>
 
-<!-- ФОРМА НОВОГО НАРЯДА (Модалка на весь экран) -->
+<!-- ФОРМА НОВОГО НАРЯДА -->
 <div id="newOrderOverlay" class="overlay" style="display:none; align-items: flex-start; padding: 0;">
   <div style="background: var(--bg); width: 100%; min-height: 100vh; padding: 16px; overflow-y: auto; padding-bottom: 80px;">
     
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-      <h2 style="font-size: 20px; color: var(--accent);">Новый наряд:</h2>
+      <h2 style="font-size: 20px; color: var(--accent);">Новый наряд</h2>
       <button class="btn btn-ghost btn-small" onclick="closeNewOrder()">✖ Отмена</button>
     </div>
 
-    <!-- Типы протезирования (Вкладки) -->
-    <div style="margin-bottom: 16px;">
-      <div style="font-size: 12px; color: var(--dim); margin-bottom: 8px;">Выберите тип протезирования</div>
-      <div style="display: flex; gap: 8px; border-bottom: 1px solid var(--border); padding-bottom: 8px; overflow-x: auto;">
-        <div id="ftype-tab-0" class="btn btn-small" style="background: transparent; color: var(--accent); font-weight: 800; border-bottom: 2px solid var(--accent); border-radius: 0;" onclick="selectTypeTab(0)">ОБЩИЕ</div>
-        <div id="ftype-tab-1" class="btn btn-small" style="background: transparent; color: var(--dim); font-weight: 800; border-radius: 0;" onclick="selectTypeTab(1)">ПРОМЕЖУТОЧНЫЕ</div>
-        <div id="ftype-tab-2" class="btn btn-small" style="background: transparent; color: var(--dim); font-weight: 800; border-radius: 0;" onclick="selectTypeTab(2)">СЪЕМНЫЕ</div>
-      </div>
-      <div style="margin-top: 12px;">
-        <select id="fType" class="form-control" style="border: 1px solid var(--border); border-radius: 8px; padding: 10px;">
-          <option value="">Выберите тип работы...</option>
-          <option>Винир</option><option>Металлокерамика</option><option>Коронка из циркония</option>
-          <option>Протез</option><option>Вкладка</option><option>Бюгель</option>
-          <option>Абатмент</option><option>Каппа</option><option>Ретейнер</option>
-        </select>
-      </div>
-    </div>
-
-    <!-- Основные поля -->
+    <!-- Блок: Основные данные -->
     <div class="grid-2">
       <div class="form-group">
         <label class="form-label">Клиент (Клиника/Врач)</label>
@@ -376,7 +365,7 @@ textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid va
       </div>
       <div class="form-group">
         <label class="form-label">Зубной техник</label>
-        <input id="fTechnician" class="form-control" list="staffSuggestions" placeholder="Введите имя" autocomplete="off">
+        <input id="fTechnician" class="form-control" list="staffSuggestions" placeholder="Введите имя" autocomplete="off" value="Зубной техник 1 - Евгений Мешков">
         <datalist id="staffSuggestions"></datalist>
       </div>
     </div>
@@ -400,48 +389,63 @@ textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid va
       </div>
     </div>
 
+    <!-- Блок: Работы -->
+    <div style="margin-top: 20px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+      <h3 style="font-size: 14px; color: var(--accent);">Работы в наряде</h3>
+      <button class="btn btn-primary btn-small" onclick="addWorkRow()">➕ Добавить</button>
+    </div>
+    <div id="worksContainer"></div>
+
+    <!-- Блок: Схема зубов -->
+    <div class="teeth-wrapper" style="margin-top: 20px;">
+      <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+        <span class="form-label" style="margin:0;">Кликните по зубам, чтобы добавить их в <b style="color:var(--accent);" id="activeWorkLabel">выбранную работу</b>:</span>
+      </div>
+      <div class="teeth-chart" id="teethChart"></div>
+      <div id="toothLegend" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; font-size: 12px;"></div>
+    </div>
+
+    <!-- Блок: Даты -->
+    <div class="grid-2" style="margin-top: 20px;">
+      <div>
+        <div class="form-group">
+          <label class="form-label">Примерка (Дата)</label>
+          <input id="fTryInDate" class="form-control" placeholder="Выберите дату" readonly style="cursor:pointer;">
+        </div>
+      </div>
+      <div>
+        <div class="form-group">
+          <label class="form-label">Примерка (Время)</label>
+          <input id="fTryInTime" type="time" class="form-control">
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div>
+        <div class="form-group">
+          <label class="form-label">Сдача (Дата)</label>
+          <input id="fDeadline" class="form-control" placeholder="Выберите дату" readonly style="cursor:pointer;">
+        </div>
+      </div>
+      <div>
+        <div class="form-group">
+          <label class="form-label">Сдача (Время)</label>
+          <input id="fDeadlineTime" type="time" class="form-control">
+        </div>
+      </div>
+    </div>
+
+    <!-- Блок: Элементы и Финансы -->
     <div class="grid-2">
       <div class="form-group">
-        <label class="form-label">Расцветка (VITA)</label>
-        <input id="fColor" class="form-control" placeholder="Нажмите чтобы выбрать" onclick="openColorPicker('fColor')" readonly>
+        <label class="form-label">Элементы протезирования</label>
+        <input id="fElements" class="form-control" placeholder="Например: 3 коронки">
       </div>
       <div class="form-group">
-        <label class="form-label">Доп. цвет / детали</label>
-        <input id="fColorDetails" class="form-control" placeholder="Например: верх А2, низ А3">
+        <label class="form-label">Удорожающие элементы</label>
+        <input id="fUpcharges" class="form-control" placeholder="Плечевая масса, абатмент...">
       </div>
-    </div>
-
-    <!-- Примерка -->
-    <div style="font-size: 12px; color: var(--dim); margin-bottom: 8px;">Примерка:</div>
-    <div class="grid-2">
-      <div class="form-group">
-        <input id="fTryInDate" class="form-control" placeholder="Выберите дату" readonly style="cursor:pointer;">
-      </div>
-      <div class="form-group">
-        <input id="fTryInTime" type="time" class="form-control">
-      </div>
-    </div>
-
-    <!-- Сдача -->
-    <div style="font-size: 12px; color: var(--dim); margin-bottom: 8px;">Сдача:</div>
-    <div class="grid-2">
-      <div class="form-group">
-        <input id="fDeadline" class="form-control" placeholder="Выберите дату" readonly style="cursor:pointer;">
-      </div>
-      <div class="form-group">
-        <input id="fDeadlineTime" type="time" class="form-control">
-      </div>
-    </div>
-
-    <!-- Элементы протезирования -->
-    <div class="form-group">
-      <label class="form-label">Элементы протезирования</label>
-      <input id="fElements" class="form-control" placeholder="Например: 3 коронки, 2 вкладки">
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">Удорожающие элементы</label>
-      <input id="fUpcharges" class="form-control" placeholder="Например: плечевая масса, индивидуальный абатмент">
     </div>
 
     <div class="grid-2">
@@ -460,23 +464,13 @@ textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid va
       <textarea id="fNotes" class="form-control" placeholder="Дополнительная информация..."></textarea>
     </div>
 
-    <!-- Схема зубов -->
-    <div class="teeth-wrapper">
-      <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-        <span class="form-label" style="margin:0;">Отметьте зубы:</span>
-        <b id="selectedTeethLabel" style="color: var(--accent2); font-size: 13px;">—</b>
-      </div>
-      <div class="teeth-chart" id="teethChart"></div>
-      <button class="btn btn-ghost btn-small" style="margin-top: 8px;" onclick="clearTeeth()">Сбросить зубы</button>
-    </div>
-
     <!-- Кнопка сохранения (FAB) -->
     <button class="fab" onclick="addOrder()">✓</button>
 
   </div>
 </div>
 
-<!-- ОВЕРЛЕЙ РЕДАКТИРОВАНИЯ (упрощенный) -->
+<!-- ОВЕРЛЕЙ РЕДАКТИРОВАНИЯ -->
 <div id="editOverlay" class="overlay" style="display:none;">
   <div class="modal">
     <h3 style="font-size: 18px; color: var(--accent); margin-bottom: 16px;">✏️ Редактировать наряд</h3>
@@ -530,7 +524,7 @@ textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid va
   </div>
 </div>
 
-<!-- ИНДИКАТОР ЗАГРУЗКИ ИМПОРТА -->
+<!-- ИНДИКАТОР ЗАГРУЗКИ -->
 <div id="importOverlay" class="overlay" style="display:none;">
   <div class="modal" style="text-align:center;">
     <h3 style="font-size: 18px; color: var(--accent2); margin-bottom: 12px;">⏳ Загрузка базы</h3>
@@ -564,10 +558,17 @@ const COLLECTION = 'orders';
 const THEME_KEY = 'dtlab_theme';
 let orders = [];
 let currentFilter = 'active';
-let searchQuery = '';
 let visibleCount = 100;
 let currentEditId = null, currentPayId = null;
 window.showFullArchive = false;
+
+// --- ЦВЕТА РАБОТ ---
+const WORK_COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#a855f7', '#ef4444', '#06b6d4'];
+const WORK_TYPES = ['Коронка', 'Винир', 'Мост', 'Вкладка', 'Имплант', 'Абатмент', 'Бюгель', 'Съёмный протез'];
+
+// --- СОСТОЯНИЕ ФОРМЫ ---
+let currentWorks = [];
+let activeWorkIndex = 0;
 
 // --- НАВИГАЦИЯ ---
 window.toggleMenu = function() {
@@ -653,33 +654,89 @@ window.openColorPicker = function(targetId) {
 window.selectVitaColor = function(color) {
   if (colorTargetInputId) {
     document.getElementById(colorTargetInputId).value = color;
+    // Обновляем состояние работы
+    if (colorTargetInputId.startsWith('workColor_')) {
+      const idx = parseInt(colorTargetInputId.split('_')[1]);
+      currentWorks[idx].color = color;
+    }
   }
   document.getElementById('colorOverlay').style.display = 'none';
 };
 
-// --- ФОРМА НОВОГО НАРЯДА ---
+// --- УПРАВЛЕНИЕ РАБОТАМИ ---
 window.openNewOrder = function() {
+  currentWorks = [{ type: 'Коронка', color: 'A2', teeth: [] }];
+  activeWorkIndex = 0;
+  document.getElementById('fTechnician').value = 'Зубной техник 1 - Евгений Мешков';
+  renderWorksUI();
+  updateToothChartColors();
   document.getElementById('newOrderOverlay').style.display = 'flex';
 };
+
 window.closeNewOrder = function() {
   document.getElementById('newOrderOverlay').style.display = 'none';
 };
 
-window.selectTypeTab = function(idx) {
-  for(let i=0; i<3; i++) {
-    const el = document.getElementById('ftype-tab-' + i);
-    if (i === idx) {
-      el.style.borderBottom = '2px solid var(--accent)';
-      el.style.color = 'var(--accent)';
-    } else {
-      el.style.borderBottom = 'none';
-      el.style.color = 'var(--dim)';
-    }
-  }
+window.addWorkRow = function() {
+  if (currentWorks.length >= 6) return showToast('Максимум 6 работ в наряде', 'err');
+  currentWorks.push({ type: 'Коронка', color: 'A2', teeth: [] });
+  activeWorkIndex = currentWorks.length - 1;
+  renderWorksUI();
+  updateToothChartColors();
 };
 
+window.removeWorkRow = function(idx) {
+  if (currentWorks.length === 1) return showToast('Должна быть хотя бы одна работа', 'err');
+  currentWorks.splice(idx, 1);
+  if (activeWorkIndex >= currentWorks.length) activeWorkIndex = currentWorks.length - 1;
+  renderWorksUI();
+  updateToothChartColors();
+};
+
+window.setActiveWork = function(idx) {
+  activeWorkIndex = idx;
+  renderWorksUI();
+};
+
+window.changeWorkType = function(idx, val) {
+  currentWorks[idx].type = val;
+  renderWorksUI();
+};
+
+function renderWorksUI() {
+  const container = document.getElementById('worksContainer');
+  let html = '';
+  
+  currentWorks.forEach((work, idx) => {
+    const color = WORK_COLORS[idx % WORK_COLORS.length];
+    const isActive = idx === activeWorkIndex;
+    
+    let typeOptions = WORK_TYPES.map(t => `<option value="${t}" ${work.type === t ? 'selected' : ''}>${t}</option>`).join('');
+    
+    html += `
+      <div class="work-item ${isActive ? 'active' : ''}" onclick="setActiveWork(${idx})" style="border-left-color: ${color};">
+        <div class="work-header">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <div style="width:12px; height:12px; border-radius:50%; background:${color};"></div>
+            <select onchange="changeWorkType(${idx}, this.value)" style="background:transparent; border:none; color:var(--text); font-weight:700; font-size:14px; outline:none;" onclick="event.stopPropagation()">
+              ${typeOptions}
+            </select>
+          </div>
+          <button class="btn btn-small btn-danger" onclick="event.stopPropagation(); removeWorkRow(${idx})" style="padding: 4px 8px; font-size: 10px;">×</button>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center; margin-top:4px;" onclick="event.stopPropagation()">
+          <input type="text" class="form-control" style="padding:4px 0; font-size:13px; border-bottom:1px solid var(--border);" placeholder="Цвет" value="${work.color || ''}" id="workColor_${idx}" onclick="openColorPicker('workColor_${idx}')" readonly>
+          <div style="font-size:12px; color:var(--dim); white-space:nowrap;">Зубы: <b style="color:var(--text);">${work.teeth.length ? work.teeth.sort((a,b)=>a-b).join(', ') : '—'}</b></div>
+        </div>
+      </div>
+    `;
+  });
+  
+  container.innerHTML = html;
+  document.getElementById('activeWorkLabel').textContent = `работу ${currentWorks[activeWorkIndex].type}`;
+}
+
 // --- ЗУБЫ ---
-let selectedTeeth = new Set();
 function initTeethChart() {
   const el = document.getElementById('teethChart');
   if (!el) return;
@@ -697,23 +754,50 @@ function initTeethChart() {
 }
 
 window.toggleTooth = (num) => {
-  if (selectedTeeth.has(num)) selectedTeeth.delete(num);
-  else selectedTeeth.add(num);
-  const btn = document.querySelector(`.tooth-btn[data-n="${num}"]`);
-  if (btn) btn.classList.toggle('selected', selectedTeeth.has(num));
-  updateTeethLabel();
+  const work = currentWorks[activeWorkIndex];
+  if (!work) return;
+  
+  if (work.teeth.includes(num)) {
+    work.teeth = work.teeth.filter(t => t !== num);
+  } else {
+    // Удаляем зуб из других работ, чтобы не было дублей
+    currentWorks.forEach((w, i) => {
+      if (i !== activeWorkIndex) w.teeth = w.teeth.filter(t => t !== num);
+    });
+    work.teeth.push(num);
+  }
+  
+  renderWorksUI();
+  updateToothChartColors();
 };
 
-window.clearTeeth = () => {
-  selectedTeeth.clear();
-  document.querySelectorAll('.tooth-btn').forEach(btn => btn.classList.remove('selected'));
-  updateTeethLabel();
-};
-
-function updateTeethLabel() {
-  const label = document.getElementById('selectedTeethLabel');
-  if (selectedTeeth.size === 0) label.textContent = '—';
-  else label.textContent = Array.from(selectedTeeth).sort((a, b) => a - b).join(', ');
+function updateToothChartColors() {
+  // Сброс
+  document.querySelectorAll('.tooth-btn').forEach(btn => {
+    btn.style.background = '';
+    btn.style.color = '';
+    btn.classList.remove('selected');
+  });
+  
+  // Применение цветов
+  currentWorks.forEach((work, idx) => {
+    const color = WORK_COLORS[idx % WORK_COLORS.length];
+    work.teeth.forEach(t => {
+      const btn = document.querySelector(`.tooth-btn[data-n="${t}"]`);
+      if (btn) {
+        btn.style.background = color;
+        btn.style.color = '#fff';
+        btn.classList.add('selected');
+      }
+    });
+  });
+  
+  // Легенда
+  const legend = document.getElementById('toothLegend');
+  legend.innerHTML = currentWorks.map((w, i) => {
+    const color = WORK_COLORS[i % WORK_COLORS.length];
+    return `<div style="display:flex; align-items:center; gap:4px;"><div style="width:10px;height:10px;border-radius:50%;background:${color}"></div> ${w.type} (${w.teeth.length})</div>`;
+  }).join('');
 }
 
 // --- АВТОКОМПЛИТ ---
@@ -732,7 +816,17 @@ window.addOrder = async function() {
   const patientName = document.getElementById('fPatient').value.trim();
   if (!patientName) { showToast('Укажите имя пациента', 'err'); return; }
   
-  const teethStr = Array.from(selectedTeeth).sort((a,b)=>a-b).join(', ');
+  // Сбор всех зубов и работ для обратной совместимости
+  let allTeeth = new Set();
+  let workDescription = [];
+  
+  currentWorks.forEach(w => {
+    w.teeth.forEach(t => allTeeth.add(t));
+    if (w.teeth.length > 0) {
+      workDescription.push(`${w.type} (${w.color || 'без цвета'}): ${w.teeth.sort((a,b)=>a-b).join(', ')}`);
+    }
+  });
+
   const gender = document.querySelector('input[name="fGender"]:checked')?.value || '';
   
   const data = {
@@ -742,10 +836,9 @@ window.addOrder = async function() {
     age: parseInt(document.getElementById('fAge').value) || null,
     clinic: document.getElementById('fClinic').value.trim(),
     technician: document.getElementById('fTechnician').value.trim(),
-    orderType: document.getElementById('fType').value,
-    material: '',
-    vitaColor: document.getElementById('fColor').value.trim(),
-    colorDetails: document.getElementById('fColorDetails').value.trim(),
+    works: currentWorks, // Сохраняем структуру
+    orderType: workDescription.join(' | ') || 'Не указано',
+    teeth: Array.from(allTeeth).sort((a,b)=>a-b).join(', '),
     tryInDate: document.getElementById('fTryInDate').value || '',
     tryInTime: document.getElementById('fTryInTime').value || '',
     deadline: document.getElementById('fDeadline').value || '',
@@ -755,7 +848,6 @@ window.addOrder = async function() {
     price: parseFloat(document.getElementById('fPrice').value) || 0,
     prepaid: parseFloat(document.getElementById('fPrepaid').value) || 0,
     notes: document.getElementById('fNotes').value.trim(),
-    teeth: teethStr,
     status: 'received',
     createdAt: serverTimestamp(),
     payments: []
@@ -767,12 +859,11 @@ window.addOrder = async function() {
     closeNewOrder();
     
     // Очистка формы
-    ['fPatient','fClinic','fTechnician','fAge','fColor','fColorDetails','fTryInDate','fTryInTime','fDeadline','fDeadlineTime','fElements','fUpcharges','fPrice','fPrepaid','fNotes'].forEach(id => document.getElementById(id).value = '');
+    ['fPatient','fClinic','fAge','fTryInDate','fTryInTime','fDeadline','fDeadlineTime','fElements','fUpcharges','fPrice','fPrepaid','fNotes'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('fTechnician').value = 'Зубной техник 1 - Евгений Мешков';
     if(document.getElementById('fDeadline')._flatpickr) document.getElementById('fDeadline')._flatpickr.clear();
     if(document.getElementById('fTryInDate')._flatpickr) document.getElementById('fTryInDate')._flatpickr.clear();
-    clearTeeth();
     
-    // Переключение в "Мои наряды" если не там
     switchView('orders');
   } catch(e) { showToast('Ошибка: ' + e.message, 'err'); }
 };
@@ -857,6 +948,20 @@ function renderCard(o) {
   const statusMap = { received: '📥', modeling: '📐', production: '🔨', finishing: '🎨', tryin: '👁', ready: '✅', delivered: '📦', cancelled: '❌' };
   const statusStr = statusMap[o.status] || '';
 
+  // Если есть массив works, выводим детально
+  let worksHtml = '';
+  if (o.works && Array.isArray(o.works)) {
+    worksHtml = o.works.map((w, i) => {
+      if (!w.teeth || w.teeth.length === 0) return '';
+      const color = WORK_COLORS[i % WORK_COLORS.length];
+      return `<div class="card-row"><span style="color:${color}; font-weight:bold;">●</span> <span>${esc(w.type)} (${esc(w.color || '')}):</span> ${w.teeth.join(', ')}</div>`;
+    }).join('');
+  } else {
+    // Старый формат
+    worksHtml = o.orderType ? `<div class="card-row"><span>Работа:</span> ${esc(o.orderType)}</div>` : '';
+    worksHtml += o.teeth ? `<div class="card-row" style="color:var(--accent2); font-weight:700;"><span>Зубы:</span> ${esc(o.teeth)}</div>` : '';
+  }
+
   return `<div class="card">
     <div class="card-header">
       <div>
@@ -869,9 +974,12 @@ function renderCard(o) {
     <div class="card-row"><span>Статус:</span> ${statusStr} ${o.status}</div>
     ${o.clinic ? `<div class="card-row"><span>Клиент:</span> ${esc(o.clinic)}</div>` : ''}
     ${o.technician ? `<div class="card-row"><span>Техник:</span> ${esc(o.technician)}</div>` : ''}
-    ${o.orderType ? `<div class="card-row"><span>Работа:</span> ${esc(o.orderType)} ${o.vitaColor ? '(' + esc(o.vitaColor) + ')' : ''}</div>` : ''}
-    ${o.tryInDate ? `<div class="card-row"><span>Примерка:</span> ${o.tryInDate} ${o.tryInTime || ''}</div>` : ''}
-    ${o.teeth ? `<div class="card-row" style="color:var(--accent2); font-weight:700;"><span>Зубы:</span> ${esc(o.teeth)}</div>` : ''}
+    
+    <div style="margin-top:8px; padding-top:8px; border-top:1px dashed var(--border);">
+      ${worksHtml}
+    </div>
+
+    ${o.tryInDate ? `<div class="card-row" style="margin-top:4px;"><span>Примерка:</span> ${o.tryInDate} ${o.tryInTime || ''}</div>` : ''}
     
     <div class="card-row" style="margin-top: 8px;">
       <span>Оплачено:</span> <b>${fmtMoney(paid)}</b> из ${fmtMoney(o.price)}
@@ -887,7 +995,7 @@ function renderCard(o) {
   </div>`;
 }
 
-// --- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ---
+// --- ВСПОМОГАТЕЛЬНЫЕ ---
 const STATUS_ORDER = ['received','modeling','production','finishing','tryin','ready','delivered'];
 window.nextStatus = async function(id, currentStatus) {
   const idx = STATUS_ORDER.indexOf(currentStatus);
@@ -904,7 +1012,6 @@ window.removeOrder = async function(id) {
   }
 };
 
-// --- РЕДАКТИРОВАНИЕ ---
 window.openEdit = function(id) {
   const o = orders.find(x => x.id === id); if (!o) return;
   currentEditId = id;
@@ -926,7 +1033,6 @@ window.saveEdit = async function() {
   showToast('Сохранено');
 };
 
-// --- ОПЛАТА ---
 window.openPay = function(id) {
   const o = orders.find(x => x.id === id); if (!o) return;
   currentPayId = id;
@@ -1090,6 +1196,7 @@ window.importJSON = function(input) {
           clinic: calc.clinic || '',
           technician: calc.technician || '',
           orderType: calc.orderType || '',
+          works: calc.works || [],
           vitaColor: calc.vitaColor || calc.color || '',
           teeth: calc.teeth || '',
           price: parseFloat(calc.price || calc.money) || 0,
@@ -1118,6 +1225,49 @@ window.importJSON = function(input) {
   reader.readAsText(file);
 };
 
+// --- ПЕЧАТЬ ---
+function printOrder(id) {
+  const o = orders.find(x => x.id === id); if (!o) return;
+  const win = window.open('', '_blank');
+  
+  let worksHtml = '';
+  if (o.works && o.works.length) {
+    worksHtml = o.works.map(w => `<tr><td>${esc(w.type)} (${esc(w.color || '')})</td><td>${w.teeth.join(', ')}</td></tr>`).join('');
+  } else {
+    worksHtml = `<tr><td>${esc(o.orderType || '—')}</td><td>${esc(o.teeth || '—')}</td></tr>`;
+  }
+
+  win.document.write(`
+    <html><head><meta charset="utf-8"><title>Наряд ${esc(o.orderNumber)}</title>
+    <style>
+      body{font-family:Arial;padding:30px;max-width:700px;margin:auto}
+      h1{font-size:20px;border-bottom:2px solid #000;padding-bottom:8px}
+      table{width:100%;border-collapse:collapse;margin-top:16px}
+      td, th{padding:8px;border-bottom:1px solid #ccc;text-align:left}
+      td:first-child, th:first-child { font-weight:bold; width:40% }
+      .footer{margin-top:30px;font-size:12px;color:#666;text-align:center}
+    </style></head>
+    <body>
+      <h1>Лаборатория Е. Мешкова — Наряд ${esc(o.orderNumber)}</h1>
+      <table>
+        <tr><td>Пациент</td><td>${esc(o.patientName)}</td></tr>
+        <tr><td>Клиент</td><td>${esc(o.clinic || '—')}</td></tr>
+        <tr><td>Техник</td><td>${esc(o.technician || '—')}</td></tr>
+        <tr><td>Примерка</td><td>${esc(o.tryInDate || '—')} ${esc(o.tryInTime || '')}</td></tr>
+        <tr><td>Сдача</td><td>${esc(o.deadline || '—')} ${esc(o.deadlineTime || '')}</td></tr>
+        <tr><td>Стоимость</td><td>${fmtMoney(o.price)}</td></tr>
+      </table>
+      <h3 style="margin-top:20px; font-size:16px;">Работы по зубам:</h3>
+      <table>
+        <tr><th>Работа (Цвет)</th><th>Зубы</th></tr>
+        ${worksHtml}
+      </table>
+      <div class="footer">Создан: ${o.createdAt ? new Date(o.createdAt.seconds * 1000).toLocaleString('ru-RU') : '—'}</div>
+    </body></html>
+  `);
+  win.document.close(); win.print();
+}
+
 // --- ИНИЦИАЛИЗАЦИЯ ---
 flatpickr("#fDeadline", { locale: "ru", dateFormat: "Y-m-d", altInput: true, altFormat: "d.m.Y", disableMobile: true });
 flatpickr("#fTryInDate", { locale: "ru", dateFormat: "Y-m-d", altInput: true, altFormat: "d.m.Y", disableMobile: true });
@@ -1126,27 +1276,6 @@ flatpickr("#eDeadline", { locale: "ru", dateFormat: "Y-m-d", altInput: true, alt
 function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
 function fmtMoney(n) { return Math.round(n || 0).toLocaleString('ru-RU') + ' ₽'; }
 function showToast(msg, type = '') { const el = document.createElement('div'); el.className = 'toast ' + type; el.textContent = msg; document.body.appendChild(el); setTimeout(() => el.remove(), 3000); }
-
-// Функция для печати (упрощенная)
-function printOrder(id) {
-  const o = orders.find(x => x.id === id); if (!o) return;
-  const win = window.open('', '_blank');
-  win.document.write(`
-    <html><head><meta charset="utf-8"><title>Наряд ${esc(o.orderNumber)}</title>
-    <style>body{font-family:Arial;padding:30px;max-width:700px;margin:auto}table{width:100%;border-collapse:collapse;margin-top:16px}td{padding:8px;border-bottom:1px solid #ccc}td:first-child{font-weight:bold;width:40%}</style></head>
-    <body><h1>Лаборатория Е. Мешкова — Наряд ${esc(o.orderNumber)}</h1>
-    <table>
-      <tr><td>Пациент</td><td>${esc(o.patientName)}</td></tr>
-      <tr><td>Клиент</td><td>${esc(o.clinic || '—')}</td></tr>
-      <tr><td>Техник</td><td>${esc(o.technician || '—')}</td></tr>
-      <tr><td>Работа</td><td>${esc(o.orderType || '—')} (${esc(o.vitaColor || '—')})</td></tr>
-      <tr><td>Зубы</td><td>${esc(o.teeth || '—')}</td></tr>
-      <tr><td>Сдача</td><td>${esc(o.deadline || '—')}</td></tr>
-      <tr><td>Стоимость</td><td>${fmtMoney(o.price)}</td></tr>
-    </table></body></html>
-  `);
-  win.document.close(); win.print();
-}
 
 async function initAuth() {
   return new Promise((resolve) => {

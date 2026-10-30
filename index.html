@@ -35,7 +35,7 @@
 
 /* ================= БАЗА ================= */
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Inter', -apple-system, system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; transition: background 0.3s, color 0.3s; display: flex; flex-direction: column; }
+body { font-family: 'Inter', -apple-system, system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
 
 /* Шапка */
 header { background: var(--header-bg); padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 10px; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
@@ -65,138 +65,136 @@ main { flex: 1; padding: 16px; max-width: 1000px; margin: 0 auto; width: 100%; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
 /* Формы и элементы */
-.form-group { margin-bottom: 16px; position: relative; }
-.form-label { font-size: 12px; color: var(--dim); margin-bottom: 6px; display: block; font-weight: 500; }
-.form-control { width: 100%; padding: 12px 0; border: none; border-bottom: 1px solid var(--border); background: transparent; color: var(--text); font-size: 15px; font-family: inherit; outline: none; transition: border-color 0.2s; }
+.form-group { margin-bottom: 12px; position: relative; }
+.form-label { font-size: 12px; color: var(--dim); margin-bottom: 4px; display: block; font-weight: 500; }
+.form-control { width: 100%; padding: 8px 0; border: none; border-bottom: 1px solid var(--border); background: transparent; color: var(--text); font-size: 14px; font-family: inherit; outline: none; transition: border-color 0.2s; }
 .form-control:focus { border-bottom-color: var(--accent); }
 
 select.form-control { 
-  cursor: pointer; 
-  appearance: none; 
+  cursor: pointer; appearance: none; 
   background: transparent url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="%238888a0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>') no-repeat right center;
   padding-right: 20px;
 }
-select.form-control option, .work-type-select option { 
-  background-color: var(--card) !important; 
-  color: var(--text) !important; 
-  font-weight: 500;
-}
-textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid var(--border); border-radius: 8px; padding: 10px; }
+select.form-control option, .work-type-select option { background-color: var(--card) !important; color: var(--text) !important; }
+textarea.form-control { resize: vertical; min-height: 50px; border: 1px solid var(--border); border-radius: 8px; padding: 8px; }
 
 .radio-group { display: flex; gap: 16px; }
-.radio-label { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; }
-.radio-label input[type="radio"] { width: 18px; height: 18px; accent-color: var(--accent); }
+.radio-label { display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 13px; }
+.radio-label input[type="radio"] { width: 16px; height: 16px; accent-color: var(--accent); }
 
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
 /* Кнопки */
-.btn { padding: 12px 20px; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; font-family: inherit; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.btn { padding: 10px 16px; border: none; border-radius: 8px; font-size: 13px; font-weight: 700; font-family: inherit; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
 .btn-primary { background: var(--accent); color: #fff; }
 .btn-success { background: var(--accent2); color: #fff; }
 .btn-danger { background: var(--danger); color: #fff; }
 .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text); }
 .btn-block { width: 100%; }
-.btn-small { padding: 6px 10px; font-size: 11px; border-radius: 6px; }
+.btn-small { padding: 4px 8px; font-size: 11px; border-radius: 6px; }
 
 /* Карточки нарядов */
-.card { background: var(--card); border: 1px solid var(--border); border-left: 4px solid var(--mute); border-radius: 12px; padding: 16px; margin-bottom: 12px; position: relative; }
-.card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
-.card-title { font-size: 16px; font-weight: 700; }
-.card-subtitle { font-size: 12px; color: var(--dim); margin-top: 2px; }
-.card-row { font-size: 13px; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; color: var(--text); }
+.card { background: var(--card); border: 1px solid var(--border); border-left: 4px solid var(--mute); border-radius: 10px; padding: 12px; margin-bottom: 10px; position: relative; }
+.card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+.card-title { font-size: 15px; font-weight: 700; }
+.card-subtitle { font-size: 11px; color: var(--dim); margin-top: 2px; }
+.card-row { font-size: 12px; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; color: var(--text); }
 .card-row span { color: var(--dim); }
-.deadline { font-family: monospace; font-size: 12px; font-weight: 700; padding: 4px 8px; border-radius: 6px; background: var(--inner); border: 1px solid var(--border); }
+.deadline { font-family: monospace; font-size: 11px; font-weight: 700; padding: 3px 6px; border-radius: 4px; background: var(--inner); border: 1px solid var(--border); }
 .deadline.overdue { color: var(--danger); border-color: var(--danger); background: rgba(239,68,68,0.1); }
 .deadline.ok { color: var(--accent2); }
-.card-actions { display: flex; gap: 8px; margin-top: 12px; border-top: 1px solid var(--border); padding-top: 12px; flex-wrap: wrap; }
+.card-actions { display: flex; gap: 6px; margin-top: 10px; border-top: 1px solid var(--border); padding-top: 10px; flex-wrap: wrap; }
 
-/* === СХЕМА ЗУБОВ (ИСПРАВЛЕННАЯ) === */
-.teeth-wrapper { margin-top: 20px; overflow-x: auto; padding-bottom: 10px; }
-.teeth-chart { display: flex; flex-direction: column; gap: 10px; align-items: center; background: var(--inner); padding: 20px 10px; border-radius: 12px; border: 1px solid var(--border); min-width: 500px; margin: 0 auto; }
+/* === НОВАЯ СХЕМА ЗУБОВ (2 РЯДА, ВЛЕЗАЕТ В ЭКРАН) === */
+.teeth-wrapper { margin-top: 10px; }
+.teeth-chart { 
+  display: flex; flex-direction: column; gap: 6px; align-items: center; 
+  background: var(--inner); padding: 10px 4px; border-radius: 12px; border: 1px solid var(--border); 
+  width: 100%; max-width: 100%; margin: 0 auto; 
+}
 .jaw-row { display: flex; gap: 2px; justify-content: center; width: 100%; }
-.quadrant { display: flex; gap: 2px; }
-.quadrant.right { flex-direction: row-reverse; } /* Чтобы зубы шли от центра к краю */
+.quadrant { display: flex; gap: 2px; flex: 1; }
+.quadrant.left { justify-content: flex-end; }
+.quadrant.right { justify-content: flex-start; }
 
 .tooth-btn { 
-  width: 30px; height: 42px; 
+  flex: 1 1 0; min-width: 0; max-width: 26px;
+  height: 34px; 
   background: var(--tooth-bg); 
   border: 1px solid var(--border); 
-  border-radius: 6px 6px 12px 12px; 
-  color: var(--dim); font-size: 11px; font-weight: 700; 
+  border-radius: 4px 4px 8px 8px; 
+  color: var(--dim); font-size: 10px; font-weight: 700; 
   display: flex; align-items: center; justify-content: center; 
-  cursor: pointer; transition: all 0.2s; 
+  cursor: pointer; transition: all 0.15s; 
   box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  padding: 0;
 }
-.lower-jaw .tooth-btn { border-radius: 12px 12px 6px 6px; }
-.tooth-btn:hover { border-color: var(--accent); color: var(--text); z-index: 10; transform: scale(1.1); }
-.tooth-btn.selected { color: #fff; border-color: transparent; transform: scale(1.1); z-index: 5; box-shadow: 0 0 10px currentColor; }
+.lower-jaw .tooth-btn { border-radius: 8px 8px 4px 4px; }
+.tooth-btn:hover { border-color: var(--accent); color: var(--text); z-index: 10; }
+.tooth-btn.selected { color: #fff; border-color: transparent; z-index: 5; box-shadow: 0 0 8px currentColor; transform: scale(1.1); }
 
 /* Палитра VITA */
-.vita-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-.vita-btn { padding: 16px 5px; border-radius: 8px; border: 1px solid var(--border); color: #000; font-weight: 800; font-size: 13px; text-align: center; cursor: pointer; text-shadow: 0 1px 2px rgba(255,255,255,0.8); transition: transform 0.1s; }
+.vita-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.vita-btn { padding: 12px 4px; border-radius: 6px; border: 1px solid var(--border); color: #000; font-weight: 800; font-size: 12px; text-align: center; cursor: pointer; text-shadow: 0 1px 2px rgba(255,255,255,0.8); transition: transform 0.1s; }
 .vita-btn:hover { transform: scale(1.05); border-color: var(--accent); }
 
 /* Модальные окна */
 .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); display: flex; justify-content: center; z-index: 10000; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 16px; }
-.modal { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; max-width: 500px; width: 100%; box-shadow: 0 20px 50px rgba(0,0,0,0.5); margin: auto; }
-.full-screen-modal { background: var(--bg); border: 1px solid var(--border); border-radius: 16px; width: 100%; max-width: 800px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); margin: 20px auto; padding: 20px; position: relative; }
+.modal { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; max-width: 450px; width: 100%; box-shadow: 0 20px 50px rgba(0,0,0,0.5); margin: auto; }
+.full-screen-modal { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; width: 100%; max-width: 600px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); margin: 10px auto; padding: 16px; position: relative; }
 
-/* === БЛОК РАБОТ В ФОРМЕ (ИСПРАВЛЕН) === */
+/* === БЛОК РАБОТ В ФОРМЕ === */
 .work-item { 
   background: var(--card); 
   border: 1px solid var(--border); 
   border-left: 4px solid #ccc; 
-  border-radius: 8px; 
-  padding: 12px; 
-  margin-bottom: 10px; 
+  border-radius: 6px; 
+  padding: 8px; 
+  margin-bottom: 6px; 
   display: grid; 
-  grid-template-columns: 1fr 80px auto 36px; 
-  gap: 10px; 
+  grid-template-columns: 1fr 60px auto 28px; 
+  gap: 6px; 
   align-items: center; 
   cursor: pointer; 
   transition: all 0.2s; 
 }
 .work-item.active { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); background: var(--inner); }
-.work-header { display: flex; align-items: center; gap: 8px; overflow: hidden; }
-.work-type-select { background: transparent; border: none; color: var(--text); font-weight: 700; font-size: 14px; outline: none; cursor: pointer; width: 100%; }
-.work-color-input { background: var(--inner); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 12px; padding: 6px; outline: none; cursor: pointer; text-align: center; }
-.work-teeth-label { font-size: 12px; color: var(--dim); font-weight: 600; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.work-header { display: flex; align-items: center; gap: 6px; overflow: hidden; }
+.work-type-select { background: transparent; border: none; color: var(--text); font-weight: 700; font-size: 13px; outline: none; cursor: pointer; width: 100%; padding: 0; }
+.work-color-input { background: var(--inner); border: 1px solid var(--border); border-radius: 4px; color: var(--text); font-size: 11px; padding: 4px; outline: none; cursor: pointer; text-align: center; }
+.work-teeth-label { font-size: 11px; color: var(--dim); font-weight: 600; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* Статистика */
-.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 20px; }
-.stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; text-align: center; }
-.stat-val { font-size: 24px; font-weight: 800; color: var(--accent); margin: 8px 0; }
-.stat-lbl { font-size: 11px; color: var(--dim); text-transform: uppercase; font-weight: 700; }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 8px; margin-bottom: 16px; }
+.stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px; text-align: center; }
+.stat-val { font-size: 20px; font-weight: 800; color: var(--accent); margin: 4px 0; }
+.stat-lbl { font-size: 10px; color: var(--dim); text-transform: uppercase; font-weight: 700; }
 
 /* Уведомления */
-.toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--accent2); color: #fff; padding: 12px 24px; border-radius: 30px; font-weight: 700; font-size: 13px; z-index: 9999; box-shadow: 0 8px 30px rgba(0,0,0,.3); text-align: center; animation: toastIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.toast { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); background: var(--accent2); color: #fff; padding: 10px 20px; border-radius: 20px; font-weight: 700; font-size: 12px; z-index: 9999; box-shadow: 0 6px 20px rgba(0,0,0,.3); text-align: center; animation: toastIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 .toast.err { background: var(--danger); }
 @keyframes toastIn { from { transform: translate(-50%, -20px) scale(0.9); opacity: 0; } to { transform: translate(-50%, 0) scale(1); opacity: 1; } }
 
 /* Календарь */
-.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 16px; }
-.cal-dow { text-align: center; font-size: 11px; font-weight: 700; color: var(--dim); padding: 8px 0; }
-.cal-day { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 8px; cursor: pointer; background: var(--inner); border: 1px solid transparent; font-weight: 600; font-size: 13px; position: relative; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 12px; }
+.cal-dow { text-align: center; font-size: 10px; font-weight: 700; color: var(--dim); padding: 6px 0; }
+.cal-day { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 6px; cursor: pointer; background: var(--inner); border: 1px solid transparent; font-weight: 600; font-size: 12px; position: relative; }
 .cal-day.today { border-color: var(--accent2); }
 .cal-day.selected { background: var(--accent); color: #fff; }
-.cal-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--accent2); position: absolute; bottom: 4px; }
+.cal-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--accent2); position: absolute; bottom: 4px; }
 .cal-dot.overdue { background: var(--danger); }
 
 /* Адаптив */
 @media (max-width: 768px) {
   .header-title { display: none; }
-  .grid-2 { grid-template-columns: 1fr; }
-  .full-screen-modal { margin: 0; border-radius: 0; min-height: 100vh; border: none; padding-bottom: 80px; }
+  .grid-2 { grid-template-columns: 1fr; gap: 8px; }
+  .full-screen-modal { margin: 0; border-radius: 0; min-height: 100vh; border: none; padding: 12px; padding-bottom: 80px; }
   .overlay { padding: 0; }
   
-  /* Работы на мобиле - в столбик */
-  .work-item { grid-template-columns: 1fr; gap: 8px; padding: 16px; }
-  .work-teeth-label { text-align: left; margin-top: 4px; }
-  .work-color-input { width: 100%; text-align: left; }
+  .work-item { grid-template-columns: 1fr 50px 24px; gap: 4px; padding: 6px; }
+  .work-teeth-label { grid-column: 1 / -1; text-align: left; margin-top: 2px; font-size: 10px; }
   
-  .teeth-chart { min-width: 100%; padding: 10px 5px; }
-  .tooth-btn { width: 20px; height: 30px; font-size: 9px; border-radius: 4px 4px 8px 8px; }
-  .lower-jaw .tooth-btn { border-radius: 8px 8px 4px 4px; }
+  .tooth-btn { max-width: 20px; height: 28px; font-size: 9px; }
   .jaw-row { gap: 1px; }
   .quadrant { gap: 1px; }
 }
@@ -234,7 +232,7 @@ textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid va
   </div>
   <div class="header-right">
     <span id="connBadge" class="badge">⏳</span>
-    <span class="badge" style="background:var(--accent); color:#fff;">v6.1</span>
+    <span class="badge" style="background:var(--accent); color:#fff;">v6.2</span>
   </div>
 </header>
 
@@ -258,15 +256,15 @@ textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid va
       </div>
     </div>
 
-    <div style="display: flex; gap: 8px; margin-bottom: 16px;">
-      <input type="text" id="searchInput" class="form-control" style="border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px;" placeholder="Поиск..." oninput="render()">
+    <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+      <input type="text" id="searchInput" class="form-control" style="border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px;" placeholder="Поиск..." oninput="render()">
       <button class="btn btn-primary" onclick="openNewOrderForm()">➕</button>
     </div>
 
-    <div style="display: flex; gap: 8px; margin-bottom: 16px; overflow-x: auto; padding-bottom: 4px;">
-      <button class="btn btn-ghost" id="tab-active" onclick="setFilter('active')" style="background: var(--accent); color: #fff; border: none;">🔥 В работе</button>
-      <button class="btn btn-ghost" id="tab-ready" onclick="setFilter('ready')">✅ Готово</button>
-      <button class="btn btn-ghost" id="tab-archive" onclick="setFilter('archive')">📦 Архив</button>
+    <div style="display: flex; gap: 6px; margin-bottom: 12px; overflow-x: auto; padding-bottom: 4px;">
+      <button class="btn btn-ghost btn-small" id="tab-active" onclick="setFilter('active')" style="background: var(--accent); color: #fff; border: none;">🔥 В работе</button>
+      <button class="btn btn-ghost btn-small" id="tab-ready" onclick="setFilter('ready')">✅ Готово</button>
+      <button class="btn btn-ghost btn-small" id="tab-archive" onclick="setFilter('archive')">📦 Архив</button>
     </div>
 
     <div id="ordersList"></div>
@@ -275,40 +273,40 @@ textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid va
 
   <!-- VIEW: КАЛЕНДАРЬ -->
   <section id="view-calendar" class="view-section">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-      <h2 id="calMonthTitle" style="font-size: 18px; color: var(--accent);">Месяц</h2>
-      <div style="display: flex; gap: 8px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+      <h2 id="calMonthTitle" style="font-size: 16px; color: var(--accent);">Месяц</h2>
+      <div style="display: flex; gap: 6px;">
         <button class="btn btn-ghost btn-small" onclick="changeMonth(-1)">←</button>
         <button class="btn btn-ghost btn-small" onclick="goToday()">Сегодня</button>
         <button class="btn btn-ghost btn-small" onclick="changeMonth(1)">→</button>
       </div>
     </div>
     <div class="cal-grid" id="calGrid"></div>
-    <div style="margin-top: 20px;">
-      <h4 style="font-size: 13px; color: var(--dim); margin-bottom: 8px;">Заметки на <span id="calSelectedDateLabel"></span>:</h4>
-      <textarea id="calNotes" class="form-control" style="min-height: 80px;" placeholder="Напишите что-нибудь..." oninput="saveNotes()"></textarea>
+    <div style="margin-top: 16px;">
+      <h4 style="font-size: 12px; color: var(--dim); margin-bottom: 6px;">Заметки на <span id="calSelectedDateLabel"></span>:</h4>
+      <textarea id="calNotes" class="form-control" style="min-height: 60px;" placeholder="Напишите..." oninput="saveNotes()"></textarea>
     </div>
-    <div style="margin-top: 20px;">
-      <h4 style="font-size: 13px; color: var(--dim); margin-bottom: 8px;">Наряды на этот день:</h4>
+    <div style="margin-top: 16px;">
+      <h4 style="font-size: 12px; color: var(--dim); margin-bottom: 6px;">Наряды на этот день:</h4>
       <div id="calOrdersContainer"></div>
     </div>
   </section>
 
   <!-- VIEW: КЛИЕНТЫ -->
   <section id="view-clients" class="view-section">
-    <h2 style="font-size: 18px; margin-bottom: 16px; color: var(--accent);">Клиенты</h2>
+    <h2 style="font-size: 16px; margin-bottom: 12px; color: var(--accent);">Клиенты</h2>
     <div id="clientsList"></div>
   </section>
 
   <!-- VIEW: ПЕРСОНАЛ -->
   <section id="view-staff" class="view-section">
-    <h2 style="font-size: 18px; margin-bottom: 16px; color: var(--accent);">Техники</h2>
+    <h2 style="font-size: 16px; margin-bottom: 12px; color: var(--accent);">Техники</h2>
     <div id="staffList"></div>
   </section>
 
   <!-- VIEW: УЧЕТ ДЕНЕГ -->
   <section id="view-money" class="view-section">
-    <h2 style="font-size: 18px; margin-bottom: 16px; color: var(--accent);">Учет денег</h2>
+    <h2 style="font-size: 16px; margin-bottom: 12px; color: var(--accent);">Учет денег</h2>
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-lbl">Выручка</div>
@@ -323,7 +321,7 @@ textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid va
 
   <!-- VIEW: СТАТИСТИКА -->
   <section id="view-stats" class="view-section">
-    <h2 style="font-size: 18px; margin-bottom: 16px; color: var(--accent);">Статистика</h2>
+    <h2 style="font-size: 16px; margin-bottom: 12px; color: var(--accent);">Статистика</h2>
     <div class="stats-grid">
       <div class="stat-card">
         <div class="stat-lbl">Всего нарядов</div>
@@ -338,7 +336,7 @@ textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid va
 
   <!-- VIEW: НАСТРОЙКИ -->
   <section id="view-settings" class="view-section">
-    <h2 style="font-size: 18px; margin-bottom: 16px; color: var(--accent);">Настройки</h2>
+    <h2 style="font-size: 16px; margin-bottom: 12px; color: var(--accent);">Настройки</h2>
     <div class="form-group">
       <label class="form-label">Тема</label>
       <select id="themeSelect" class="form-control" onchange="changeTheme(this.value)">
@@ -346,49 +344,49 @@ textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid va
         <option value="light">☀️ Светлая</option>
       </select>
     </div>
-    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 20px;">
-      <button class="btn btn-ghost" onclick="exportJSON()" style="flex-direction: column; padding: 20px 10px;"><span style="font-size: 24px;">📤</span><br>Экспорт</button>
-      <button class="btn btn-ghost" onclick="document.getElementById('jsonFileInput').click()" style="flex-direction: column; padding: 20px 10px;"><span style="font-size: 24px;">📥</span><br>Импорт</button>
-      <button class="btn btn-ghost" onclick="clearDB()" style="flex-direction: column; padding: 20px 10px; color: var(--danger);"><span style="font-size: 24px;">🧹</span><br>Очистить</button>
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 16px;">
+      <button class="btn btn-ghost" onclick="exportJSON()" style="flex-direction: column; padding: 16px 8px;"><span style="font-size: 20px;">📤</span><br>Экспорт</button>
+      <button class="btn btn-ghost" onclick="document.getElementById('jsonFileInput').click()" style="flex-direction: column; padding: 16px 8px;"><span style="font-size: 20px;">📥</span><br>Импорт</button>
+      <button class="btn btn-ghost" onclick="clearDB()" style="flex-direction: column; padding: 16px 8px; color: var(--danger);"><span style="font-size: 20px;">🧹</span><br>Очистить</button>
     </div>
     <input type="file" id="jsonFileInput" accept=".json" style="display:none" onchange="importJSON(this)">
   </section>
 
 </main>
 
-<!-- УНИВЕРСАЛЬНАЯ ФОРМА (СОЗДАНИЕ И РЕДАКТИРОВАНИЕ) -->
+<!-- УНИВЕРСАЛЬНАЯ ФОРМА -->
 <div id="orderFormOverlay" class="overlay" style="display:none;">
   <div class="full-screen-modal">
     
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 16px;">
-      <h2 id="formTitle" style="font-size: 20px; color: var(--accent);">Новый наряд</h2>
-      <button class="btn btn-ghost btn-small" onclick="closeOrderForm()">✖ Отмена</button>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 12px;">
+      <h2 id="formTitle" style="font-size: 18px; color: var(--accent);">Новый наряд</h2>
+      <button class="btn btn-ghost btn-small" onclick="closeOrderForm()">✖</button>
     </div>
 
     <div class="grid-2">
       <div class="form-group">
-        <label class="form-label">Клиент (Клиника/Врач)</label>
-        <input id="fClinic" class="form-control" list="clinicSuggestions" placeholder="Введите или выберите" autocomplete="off">
+        <label class="form-label">Клиент</label>
+        <input id="fClinic" class="form-control" list="clinicSuggestions" placeholder="Клиника/Врач" autocomplete="off">
         <datalist id="clinicSuggestions"></datalist>
       </div>
       <div class="form-group">
-        <label class="form-label">Зубной техник</label>
-        <input id="fTechnician" class="form-control" list="staffSuggestions" placeholder="Введите имя" autocomplete="off" value="Зубной техник 1 - Евгений Мешков">
+        <label class="form-label">Техник</label>
+        <input id="fTechnician" class="form-control" list="staffSuggestions" placeholder="Имя" autocomplete="off" value="Зубной техник 1 - Евгений Мешков">
         <datalist id="staffSuggestions"></datalist>
       </div>
     </div>
 
     <div class="grid-2">
       <div class="form-group">
-        <label class="form-label">Имя пациента</label>
-        <input id="fPatient" class="form-control" placeholder="ФИО пациента">
+        <label class="form-label">Пациент</label>
+        <input id="fPatient" class="form-control" placeholder="ФИО">
       </div>
       <div class="grid-2">
         <div class="form-group">
           <label class="form-label">Пол</label>
-          <div class="radio-group">
-            <label class="radio-label"><input type="radio" name="fGender" value="Муж." checked> Муж.</label>
-            <label class="radio-label"><input type="radio" name="fGender" value="Жен."> Жен.</label>
+          <div class="radio-group" style="height: 32px; align-items: center;">
+            <label class="radio-label"><input type="radio" name="fGender" value="Муж." checked> М</label>
+            <label class="radio-label"><input type="radio" name="fGender" value="Жен."> Ж</label>
           </div>
         </div>
         <div class="form-group">
@@ -398,44 +396,38 @@ textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid va
       </div>
     </div>
 
-    <!-- Работы -->
-    <div style="margin-top: 20px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
-      <h3 style="font-size: 14px; color: var(--accent);">Работы в наряде</h3>
-      <button class="btn btn-primary btn-small" onclick="addWorkRow()">➕ Добавить</button>
+    <div style="margin-top: 12px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center;">
+      <h3 style="font-size: 13px; color: var(--accent);">Работы</h3>
+      <button class="btn btn-primary btn-small" onclick="addWorkRow()">➕</button>
     </div>
     <div id="worksContainer"></div>
 
-    <!-- Схема зубов -->
     <div class="teeth-wrapper">
-      <div style="text-align: center; margin-bottom: 12px;">
-        <span class="form-label" style="font-size: 14px;">Кликайте по зубам, чтобы добавить их в <b style="color:var(--accent);" id="activeWorkLabel">работу</b></span>
+      <div style="text-align: center; margin-bottom: 6px;">
+        <span class="form-label" style="font-size: 11px; margin:0;">Кликайте по зубам для: <b style="color:var(--accent);" id="activeWorkLabel">работы</b></span>
       </div>
-      
-      <!-- Нормальная схема -->
       <div class="teeth-chart" id="teethChart"></div>
-      
-      <div id="toothLegend" style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 12px; font-size: 12px;"></div>
+      <div id="toothLegend" style="display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-top: 8px; font-size: 10px;"></div>
     </div>
 
-    <!-- Даты -->
-    <div class="grid-2" style="margin-top: 20px;">
+    <div class="grid-2" style="margin-top: 12px;">
       <div class="form-group">
-        <label class="form-label">Примерка (Дата)</label>
-        <input id="fTryInDate" class="form-control" placeholder="Выберите дату" readonly style="cursor:pointer;">
+        <label class="form-label">Примерка</label>
+        <input id="fTryInDate" class="form-control" placeholder="Дата" readonly style="cursor:pointer;">
       </div>
       <div class="form-group">
-        <label class="form-label">Примерка (Время)</label>
+        <label class="form-label">Время</label>
         <input id="fTryInTime" type="time" class="form-control">
       </div>
     </div>
 
     <div class="grid-2">
       <div class="form-group">
-        <label class="form-label">Сдача (Дата)</label>
-        <input id="fDeadline" class="form-control" placeholder="Выберите дату" readonly style="cursor:pointer;">
+        <label class="form-label">Сдача</label>
+        <input id="fDeadline" class="form-control" placeholder="Дата" readonly style="cursor:pointer;">
       </div>
       <div class="form-group">
-        <label class="form-label">Сдача (Время)</label>
+        <label class="form-label">Время</label>
         <input id="fDeadlineTime" type="time" class="form-control">
       </div>
     </div>
@@ -453,13 +445,12 @@ textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid va
 
     <div class="form-group">
       <label class="form-label">Примечания</label>
-      <textarea id="fNotes" class="form-control" placeholder="Дополнительная информация..."></textarea>
+      <textarea id="fNotes" class="form-control" placeholder="Дополнительно..."></textarea>
     </div>
 
-    <!-- Кнопки внизу -->
-    <div style="display: flex; gap: 12px; margin-top: 20px;">
-      <button class="btn btn-ghost btn-block" style="padding: 16px; font-size: 15px;" onclick="previewFromForm()">👁 Предпросмотр</button>
-      <button class="btn btn-success btn-block" style="padding: 16px; font-size: 15px;" onclick="saveOrder()">💾 Сохранить</button>
+    <div style="display: flex; gap: 8px; margin-top: 16px; position: sticky; bottom: -12px; background: var(--bg); padding: 10px 0;">
+      <button class="btn btn-ghost btn-block" onclick="previewFromForm()">👁 Предпросмотр</button>
+      <button class="btn btn-success btn-block" onclick="saveOrder()">💾 Сохранить</button>
     </div>
 
   </div>
@@ -467,10 +458,10 @@ textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid va
 
 <!-- ОВЕРЛЕЙ ОПЛАТЫ -->
 <div id="payOverlay" class="overlay" style="display:none;">
-  <div class="modal" style="max-width: 320px;">
-    <h3 style="font-size: 18px; color: var(--accent); margin-bottom: 12px;">💰 Оплата</h3>
-    <p id="payOrderInfo" style="font-size: 13px; color: var(--dim); margin-bottom: 16px;"></p>
-    <input id="payAmount" type="number" min="0" class="form-control" style="border: 1px solid var(--border); border-radius: 8px; padding: 10px; font-size: 18px; text-align: center; margin-bottom: 16px;" placeholder="Сумма ₽">
+  <div class="modal" style="max-width: 300px;">
+    <h3 style="font-size: 16px; color: var(--accent); margin-bottom: 12px;">💰 Оплата</h3>
+    <p id="payOrderInfo" style="font-size: 12px; color: var(--dim); margin-bottom: 12px;"></p>
+    <input id="payAmount" type="number" min="0" class="form-control" style="border: 1px solid var(--border); border-radius: 6px; padding: 8px; font-size: 16px; text-align: center; margin-bottom: 12px;" placeholder="Сумма ₽">
     <div style="display: flex; gap: 8px;">
       <button class="btn btn-ghost btn-block" onclick="document.getElementById('payOverlay').style.display='none'">Отмена</button>
       <button class="btn btn-success btn-block" onclick="savePayment()">Внести</button>
@@ -480,19 +471,19 @@ textarea.form-control { resize: vertical; min-height: 60px; border: 1px solid va
 
 <!-- ПАЛИТРА VITA -->
 <div id="colorOverlay" class="overlay" style="display:none;">
-  <div class="modal" style="max-width: 400px;">
-    <h3 style="font-size: 18px; color: var(--accent); margin-bottom: 16px;">🎨 Выберите цвет</h3>
+  <div class="modal" style="max-width: 350px;">
+    <h3 style="font-size: 16px; color: var(--accent); margin-bottom: 12px;">🎨 Выберите цвет</h3>
     <div class="vita-grid" id="vitaGrid"></div>
-    <button class="btn btn-ghost btn-block" style="margin-top: 16px;" onclick="document.getElementById('colorOverlay').style.display='none'">Закрыть</button>
+    <button class="btn btn-ghost btn-block" style="margin-top: 12px;" onclick="document.getElementById('colorOverlay').style.display='none'">Закрыть</button>
   </div>
 </div>
 
 <!-- ИНДИКАТОР ЗАГРУЗКИ -->
 <div id="importOverlay" class="overlay" style="display:none;">
   <div class="modal" style="text-align:center;">
-    <h3 style="font-size: 18px; color: var(--accent2); margin-bottom: 12px;">⏳ Загрузка...</h3>
-    <div style="font-size: 28px; font-weight: 800; margin: 15px 0; color: var(--accent2);" id="importProgressText">0 / 0</div>
-    <div style="height: 8px; background: var(--inner); border-radius: 4px; overflow: hidden; margin-bottom: 12px;">
+    <h3 style="font-size: 16px; color: var(--accent2); margin-bottom: 12px;">⏳ Загрузка...</h3>
+    <div style="font-size: 24px; font-weight: 800; margin: 12px 0; color: var(--accent2);" id="importProgressText">0 / 0</div>
+    <div style="height: 6px; background: var(--inner); border-radius: 4px; overflow: hidden; margin-bottom: 12px;">
       <div id="importProgressBar" style="height: 100%; background: var(--accent2); width: 0%; transition: width 0.3s;"></div>
     </div>
   </div>
@@ -658,7 +649,7 @@ window.openEditOrderForm = function(id) {
   if (!o) return;
   
   editingOrderId = id;
-  document.getElementById('formTitle').textContent = 'Редактировать наряд';
+  document.getElementById('formTitle').textContent = 'Редактировать';
   
   document.getElementById('fPatient').value = o.patientName || '';
   document.getElementById('fClinic').value = o.clinic || '';
@@ -733,36 +724,36 @@ function renderWorksUI() {
     html += `
       <div class="work-item ${isActive ? 'active' : ''}" onclick="setActiveWork(${idx})" style="border-left-color: ${color};">
         <div class="work-header">
-          <div style="width:12px; height:12px; border-radius:50%; background:${color}; flex-shrink: 0;"></div>
+          <div style="width:10px; height:10px; border-radius:50%; background:${color}; flex-shrink: 0;"></div>
           <select class="work-type-select" onchange="changeWorkType(${idx}, this.value)" onclick="event.stopPropagation()">
             ${typeOptions}
           </select>
         </div>
         <input type="text" class="work-color-input" placeholder="Цвет" value="${work.color || ''}" id="workColor_${idx}" onclick="event.stopPropagation(); openColorPicker('workColor_${idx}')" readonly>
         <div class="work-teeth-label" onclick="event.stopPropagation()">Зубы: <b style="color:var(--text);">${work.teeth.length ? work.teeth.sort((a,b)=>a-b).join(', ') : '—'}</b></div>
-        <button class="btn btn-small btn-danger" onclick="event.stopPropagation(); removeWorkRow(${idx})" style="padding: 4px 8px; font-size: 12px;">×</button>
+        <button class="btn btn-small btn-danger" onclick="event.stopPropagation(); removeWorkRow(${idx})" style="padding: 2px 6px; font-size: 10px;">×</button>
       </div>
     `;
   });
   
   container.innerHTML = html;
-  document.getElementById('activeWorkLabel').textContent = `работу ${currentWorks[activeWorkIndex].type}`;
+  document.getElementById('activeWorkLabel').textContent = `${currentWorks[activeWorkIndex].type}`;
 }
 
-// --- ЗУБЫ (ПРОСТАЯ СЕТКА) ---
+// --- ЗУБЫ (РОВНО 2 РЯДА) ---
 function initTeethChart() {
   const el = document.getElementById('teethChart');
   if (!el) return;
   
-  const q1 = [18, 17, 16, 15, 14, 13, 12, 11]; // Верх лево
-  const q2 = [21, 22, 23, 24, 25, 26, 27, 28]; // Верх право
-  const q4 = [48, 47, 46, 45, 44, 43, 42, 41]; // Низ лево
-  const q3 = [31, 32, 33, 34, 35, 36, 37, 38]; // Низ право
+  const q1 = [18, 17, 16, 15, 14, 13, 12, 11];
+  const q2 = [21, 22, 23, 24, 25, 26, 27, 28];
+  const q4 = [48, 47, 46, 45, 44, 43, 42, 41];
+  const q3 = [31, 32, 33, 34, 35, 36, 37, 38];
   
   const buildQuad = (arr) => arr.map(n => `<div class="tooth-btn" data-n="${n}" onclick="toggleTooth(${n})">${n}</div>`).join('');
   
   el.innerHTML = `
-    <div class="jaw-row upper-jaw">
+    <div class="jaw-row">
       <div class="quadrant left">${buildQuad(q1)}</div>
       <div class="quadrant right">${buildQuad(q2)}</div>
     </div>
@@ -812,7 +803,7 @@ function updateToothChartColors() {
   const legend = document.getElementById('toothLegend');
   legend.innerHTML = currentWorks.map((w, i) => {
     const color = WORK_COLORS[i % WORK_COLORS.length];
-    return `<div style="display:flex; align-items:center; gap:4px;"><div style="width:10px;height:10px;border-radius:50%;background:${color}"></div> ${w.type} (${w.teeth.length})</div>`;
+    return `<div style="display:flex; align-items:center; gap:4px;"><div style="width:8px;height:8px;border-radius:50%;background:${color}"></div> ${w.type} (${w.teeth.length})</div>`;
   }).join('');
 }
 
@@ -944,11 +935,11 @@ window.saveOrder = async function() {
   try {
     if (editingOrderId) {
       await updateDoc(doc(db, COLLECTION, editingOrderId), data);
-      showToast('✅ Наряд обновлен');
+      showToast('✅ Обновлено');
     } else {
       data.createdAt = serverTimestamp();
       await addDoc(collection(db, COLLECTION), data);
-      showToast('✅ Наряд создан');
+      showToast('✅ Создано');
     }
     
     closeOrderForm();
@@ -1050,21 +1041,21 @@ function renderCard(o) {
     ${o.clinic ? `<div class="card-row"><span>Клиент:</span> ${esc(o.clinic)}</div>` : ''}
     ${o.technician ? `<div class="card-row"><span>Техник:</span> ${esc(o.technician)}</div>` : ''}
     
-    <div style="margin-top:8px; padding-top:8px; border-top:1px dashed var(--border);">
+    <div style="margin-top:6px; padding-top:6px; border-top:1px dashed var(--border);">
       ${worksHtml}
     </div>
 
     ${o.tryInDate ? `<div class="card-row" style="margin-top:4px;"><span>Примерка:</span> ${o.tryInDate} ${o.tryInTime || ''}</div>` : ''}
     
-    <div class="card-row" style="margin-top: 8px;">
+    <div class="card-row" style="margin-top: 6px;">
       <span>Оплачено:</span> <b>${fmtMoney(paid)}</b> из ${fmtMoney(o.price)}
     </div>
 
     <div class="card-actions">
       ${o.status !== 'delivered' && o.status !== 'cancelled' ? `<button class="btn btn-small btn-primary" onclick="nextStatus('${o.id}', '${o.status}')">→ Вперед</button>` : ''}
-      ${debt > 0 && o.status !== 'delivered' ? `<button class="btn btn-small btn-success" onclick="openPay('${o.id}')">💰 Оплата</button>` : ''}
-      <button class="btn btn-small btn-ghost" onclick="openEditOrderForm('${o.id}')">✏️ Изменить</button>
-      <button class="btn btn-small btn-ghost" onclick="printOrder('${o.id}')">🖨 Печать</button>
+      ${debt > 0 && o.status !== 'delivered' ? `<button class="btn btn-small btn-success" onclick="openPay('${o.id}')">💰</button>` : ''}
+      <button class="btn btn-small btn-ghost" onclick="openEditOrderForm('${o.id}')">✏️</button>
+      <button class="btn btn-small btn-ghost" onclick="printOrder('${o.id}')">🖨</button>
       <button class="btn btn-small btn-danger" onclick="removeOrder('${o.id}')" style="margin-left:auto;">×</button>
     </div>
   </div>`;
@@ -1170,12 +1161,12 @@ window.saveNotes = function() { localStorage.setItem('dtlab_note_' + calSelected
 function renderClients() {
   const clinics = new Set();
   orders.forEach(o => { if (o.clinic) clinics.add(o.clinic); });
-  document.getElementById('clientsList').innerHTML = Array.from(clinics).sort().map(c => `<div class="card" style="padding: 16px;"><b>${esc(c)}</b></div>`).join('') || '<div style="color:var(--mute)">Пока нет клиентов</div>';
+  document.getElementById('clientsList').innerHTML = Array.from(clinics).sort().map(c => `<div class="card" style="padding: 12px;"><b>${esc(c)}</b></div>`).join('') || '<div style="color:var(--mute)">Пока нет клиентов</div>';
 }
 function renderStaff() {
   const techs = new Set();
   orders.forEach(o => { if (o.technician) techs.add(o.technician); });
-  document.getElementById('staffList').innerHTML = Array.from(techs).sort().map(t => `<div class="card" style="padding: 16px;"><b>${esc(t)}</b></div>`).join('') || '<div style="color:var(--mute)">Пока нет техников</div>';
+  document.getElementById('staffList').innerHTML = Array.from(techs).sort().map(t => `<div class="card" style="padding: 12px;"><b>${esc(t)}</b></div>`).join('') || '<div style="color:var(--mute)">Пока нет техников</div>';
 }
 function renderMoney() {
   let total = 0, pending = 0;
